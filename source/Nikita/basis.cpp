@@ -31,6 +31,10 @@ class _Basis_function{
 
 public:
 	_Basis_function( char angular_part ): angular_part( angular_part ) {} // инициализируем
+	~_Basis_function(){ //деструктор
+		for( int i = 0; i < primitives.size(); ++i) primitives[i].~_Primitive();
+	}
+
 
 // Добавим метод, дописывающий в набор примитивов новую гауссову функцию
 // функция emplace_back записывает в конец вектора primitives объект класса примитив с параметрами i, alpha, coeff
@@ -61,7 +65,13 @@ private: // задаем параметры
 class _Element{
 
 public:
-	_Element( std::string name ): name(name) {} // инициализируем
+	_Element( std::string name ): name(name) {} // конструктор
+	~_Element() { // деструктор
+		for( int i = 0; i < basis_functions.size(); ++i) {
+			delete basis_functions[i];
+//			basis_functions[i] -> ~_Basis_function();
+		}
+	}
 
 // Добавим метод, дописывающий в вектор базовых функций новую функцию
 	void add_basis_function( _Basis_function * bf ){
@@ -91,8 +101,12 @@ class _Basis{
 
 public:
 	_Basis( ) { } // конструктор
-	~_Basis( ) { }	// деструктор
-
+	~_Basis( ) {
+		for( int i = 0; i < elements.size(); ++i ){ // деструктор
+			delete elements[i];
+			elements[i] -> ~_Element();
+		}
+	}
 
 // Проверяем, что файл существует
 // если существуем, вызываем функцию для его чтения
@@ -129,24 +143,23 @@ public:
 
 			current_string = line;
 
-		// Если строка начинается на ! или пустую строку --- не чиатем ее
+		// Если строка начинается на !, $ или пустую строку --- не читaем ее, но проверяем, не пора ли добавить элемент в базис
 
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
-				if ( element_pointer != NULL ) {
-					elements.push_back( element_pointer );
+				if ( element_pointer != NULL ) { // если указатель не пуст, то мы ранее проинициализировали элемент --- пора добавить его в базис
+					elements.push_back( element_pointer ); // Добавляем в массив элементов новый элемент
 					show();
-					element_pointer = NULL;
+					element_pointer = NULL; // занулим, чтобы показать, что элемент добавлен
 				} 
 				continue;
 			}
 
-		// В противном случае 
-		// Ищем строчки, содержащие одно слово --- это наши элементы
+		// Ищем строчки, содержащие одно слово --- это названия наших элементов
 
 			first_ws = current_string.find_first_of(' ');
 			last_not_ws = current_string.find_last_not_of(' ');
 
-		// Проверяем, что в строке первый пробел встречается после всех слов
+		// Проверяем, что в строке первый пробел встречается только после всех слов
 
 			if ( ( first_ws == std::string::npos ) || ( first_ws > last_not_ws ) ) { 
 				current_element = current_string.substr(current_string.find_first_not_of(' '), \
@@ -156,6 +169,7 @@ public:
 				continue;
 			}
 
+		// Ищем строки с указанием симметрии угловых частей
 		// Вытаскиваем первый значимый элемент строки
 
 			first_char = current_string[ current_string.find_first_not_of(' ') ];
@@ -166,12 +180,15 @@ public:
 				bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
 				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
 				continue;
+
 			}else{ // иначе --- тройки параметров примитивов
+
 				std::stringstream ss( current_string ); // задаем вывод строки в переменные
 				int i;
 				double alpha, coeff;
-				ss >> i >> alpha >> coeff; // выводим
-				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляю новый примитив
+
+				ss >> i >> alpha >> coeff; // выводим значения в переменные
+				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляем новый примитив
 				bf_pointer -> show_p(); 
 
 				// если примитивы кончились, по указателю добавляем функцию
@@ -209,6 +226,8 @@ int main(){
 	_Basis bs;
 	bs.read( filename ); 
 	
+	bs.~_Basis();
+
 	return 0;
 
 }
