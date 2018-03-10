@@ -1,12 +1,12 @@
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include <vector>
-#include <string>
-#include <stdexcept>
-#include <locale>
-#include <sstream>
-#include <iomanip>
+#include <iostream>  // библиотека стандартного ввода/вывода
+#include <fstream>   // библиотека ввода/вывода из файла
+#include <cmath>     // библиотека математических функций
+#include <vector>    // библиотека для класса векторов
+#include <string>    // библиотека для класса строк
+#include <stdexcept> // библиотека для выдачи сообщений об ошибках
+#include <locale>    // нужно в isdigit (?)
+#include <sstream>   // для перевода данных из строки в переменные
+#include <iomanip>   // для задания точности вывода
 
 // Создадим класс, объекты которого --- тройки параметров гауссовых примитивов
 // номер, множитель в экспоненте, коэффициент перед экспонентой
@@ -15,6 +15,7 @@ class _Primitive{
 public:
 	_Primitive( int i, double alpha, double coeff ): i(i), alpha(alpha), coeff(coeff) {} // инициализируем
 
+	// определим функции для вытаскивания свойств примитива (чтобы не делать их public переменными)
 	int get_i( ) { return i; }
 	double get_alpha( ) { return alpha; }
 	double get_coeff( ) { return coeff; }		
@@ -31,7 +32,7 @@ class _Basis_function{
 public:
 	_Basis_function( char angular_part ): angular_part( angular_part ) {} // инициализируем
 
-// Добавим метод:
+// Добавим метод, дописывающий в набор примитивов новую гауссову функцию
 // функция emplace_back записывает в конец вектора primitives объект класса примитив с параметрами i, alpha, coeff
 	void add_primitive( int i, double alpha, double coeff ){
 		primitives.emplace_back( i, alpha, coeff );
@@ -44,9 +45,9 @@ public:
 
 	}
 	void show_p(){
-		std::cout << "Primitive: " <<  primitives.end()[-1].get_i() \
-			  << " " << primitives.end()[-1].get_alpha() \
-			  << " " << primitives.end()[-1].get_coeff() << std::endl;
+		std::cout << "Primitive number  " <<  primitives.end()[-1].get_i() \
+			  << " with exp. mult. " << primitives.end()[-1].get_alpha() \
+			  << " and contract. coeff." << primitives.end()[-1].get_coeff() << std::endl;
 	}
 
 private: // задаем параметры
@@ -61,7 +62,7 @@ class _Element{
 public:
 	_Element( std::string name ): name(name) {} // инициализируем
 
-// Добавим метод
+// Добавим метод, дописывающий в вектор базовых функций новую функцию
 	void add_basis_function( _Basis_function & bf ){
 		basis_functions.emplace_back( bf );
 	}
@@ -70,31 +71,38 @@ public:
 		std::cout << "Successfully created new element: " << name << std::endl;
 	}
 
-private:
+private:// инициализируем
 	std::string name;
-	std::vector<_Basis_function*> basis_functions;
+	std::vector<_Basis_function*> basis_functions; // вектор указателей на элементы класса _Basis_function
 
 };
 
+//Создадим класс базисных функций
+//его объекты хранят базисные функции всех элементов, лежащих в файле filename
 class _Basis{
 
 public:
-	_Basis( ) { }
-	~_Basis( ) { }	
+	_Basis( ) { } // конструктор
+	~_Basis( ) { }	// деструктор
 
+
+// Проверяем, что файл существует
+// если существуем, вызываем функцию для его чтения
 	void read( std::string filename ){
 
 		std::ifstream fin( filename );
 
-		if ( !fin ) throw std::invalid_argument( " Can't open a file " );
+		if ( !fin ) throw std::invalid_argument( " Can't open a file " ); // если не существует, выдай ошибку
 		else {
-			std::cout << "File is opened" << std::endl;
-			parse_file( fin );
+			std::cout << "File is opened" << std::endl; 
+			parse_file( fin ); // иначе --- читай его
 		}
 
 		fin.close();
 	}
 
+//Функция для чтения файла
+// раскидывает информацию по соответствующим классам
 	void parse_file( std::ifstream & fin ){
 
 		const int MAX_SIZE = 256;
@@ -107,14 +115,14 @@ public:
 		_Basis_function * bf_pointer = NULL;
 		std::locale loc;		
 
-		// Будем парсить файлик
+		// Будем читать файлик построчно
 		while ( fin.getline( line, MAX_SIZE ) ){
 			current_string = line;
-		// Если строка начинается на ! или $ --- не чиатем ее
+		// Если строка начинается на ! или пустую строку --- не чиатем ее
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) continue;
 
 		// В противном случае 
-		// Ищем строчки, начинающиеся со слова --- это наши элементы
+		// Ищем строчки, содержащие одно слово --- это наши элементы
 			first_ws = current_string.find_first_of(' ');
 			last_not_ws = current_string.find_last_not_of(' ');
 
@@ -135,20 +143,25 @@ public:
 				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
 				bf_pointer -> show_bf();
 				continue;
-			}else{
-				std::stringstream ss( current_string );
+			}else{ // иначе --- тройки параметров примитивов
+				std::stringstream ss( current_string ); // задаем вывод строки в переменные
 				int i;
 				double alpha, coeff;
-				ss >> i >> alpha >> coeff;
-				bf_pointer -> add_primitive( i, alpha, coeff );
-				bf_pointer -> show_p();
-				if ( i == primitives_num ) { element_pointer -> add_basis_function( bf_pointer ) }
+				ss >> i >> alpha >> coeff; // выводим
+				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляю новый примитив
+				bf_pointer -> show_p(); 
+				// если примитивы кончились, по указателю добавляем функцию
+				if ( i == primitives_num ) element_pointer -> add_basis_function( bf_pointer );
 			}
 		}
 	}
 
-private:
+	void show(){
+		std::cout << "Successfully created basis" << std::endl;
+	}
 
+private:
+	std::vector<_Element*> elements;
 };
 
 
