@@ -1,10 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdexcept> // invalid_argument
+#include <stdexcept>
 #include <fstream> 
 #include <sstream> // streamstring
-#include <memory> // make_unique
 
 using std::cout;
 using std::endl;
@@ -22,7 +21,9 @@ public:
 		number(number), exponent(exponent), coefficient(coefficient)
 		{
 		}
+
 	~Primitive() { }
+
 private:
 	int number;
 	double exponent;
@@ -39,8 +40,6 @@ public:
 
 	~BasisFunction()
 	{
-		for ( Primitive & p : primitives )
-			p.~Primitive();
 	}
 
 	void add_primitive( int n, double exponent, double coefficient )
@@ -64,13 +63,12 @@ class Element
 public:
 	Element( string name ) : name(name)
 	{
-		//show();	
 	}
 
 	~Element()
 	{
 		for ( BasisFunction * bf : basis_functions )
-			bf->~BasisFunction();
+			delete bf;
 	}
 
 	void add_basis_function( BasisFunction * bf )
@@ -95,9 +93,7 @@ public:
 	~Basis()
 	{
 		for ( Element * el : elements )
-		{
 			delete el;
-		}
 	}
 
 	void read( string filename )
@@ -164,7 +160,6 @@ public:
 				current_element = current_string.substr(current_string.find_first_not_of(" "), current_string.find_last_not_of(" ") + 1);
 				// создали новый элемент
 				elp = new Element( current_element );
-				cout << "created Element" << endl;
 
 				continue;
 			}
@@ -180,8 +175,6 @@ public:
 				// скармливаем функции stoi указатель на следующую за буквой позицию строки
 				// например в строке "S  4" даем указатель на пробел, stoi стрипит пробелы и возвращает (int) 4
 				primitives_counter = std::stoi(&current_string[1]);
-			   	
-				//cout << "primitives_counter: " << primitives_counter << endl;	
 			}
 			// парсим строку вида "номер примитива, показатель экспоненты, коэффициент контрактации"
 			// добавляем примитив в базисную функцию
@@ -192,7 +185,6 @@ public:
 				double alpha, coeff;
 				ss >> i >> alpha >> coeff;
 				bfp->add_primitive( i, alpha, coeff );		
-				//bfp->show();
 
 				// как только номер примитива совпадает с заявленным количеством примитивов, добавляем функцию текущему элементу
 				if ( i == primitives_counter )
