@@ -104,7 +104,7 @@ public:
 	~_Basis( ) {
 		for( int i = 0; i < elements.size(); ++i ){ // деструктор
 			delete elements[i];
-			elements[i] -> ~_Element();
+//			elements[i] -> ~_Element();
 		}
 	}
 
