@@ -65,7 +65,7 @@ public:
 
 // Добавим метод, дописывающий в вектор базовых функций новую функцию
 	void add_basis_function( _Basis_function * bf ){
-		basis_functions.emplace_back( bf );
+		basis_functions.push_back( bf );
 	}
 
 	void show(){
