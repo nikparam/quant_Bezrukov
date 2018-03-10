@@ -42,12 +42,13 @@ public:
 		std::cout << "Successfully created new basis function  of " << angular_part \
 			  << " angular simmetry, contracted from: " << primitives.size() \
 			  << " primitives." << std::endl;
+		std::cout << std::endl;
 
 	}
 	void show_p(){
-		std::cout << "Primitive number  " <<  primitives.end()[-1].get_i() \
+		std::cout << primitives.end()[-1].get_i() << ") Primitive "  \
 			  << " with exp. mult. " << primitives.end()[-1].get_alpha() \
-			  << " and contract. coeff." << primitives.end()[-1].get_coeff() << std::endl;
+			  << " and contract. coeff. " << primitives.end()[-1].get_coeff() << std::endl;
 	}
 
 private: // задаем параметры
@@ -63,12 +64,19 @@ public:
 	_Element( std::string name ): name(name) {} // инициализируем
 
 // Добавим метод, дописывающий в вектор базовых функций новую функцию
-	void add_basis_function( _Basis_function & bf ){
+	void add_basis_function( _Basis_function * bf ){
 		basis_functions.emplace_back( bf );
 	}
 
 	void show(){
-		std::cout << "Successfully created new element: " << name << std::endl;
+		std::cout << "_______________________________________________________" << std::endl;
+		std::cout << "!!! Successfully created new element: " << name << " !!!" << std::endl;
+		std::cout << "_______________________________________________________" << std::endl;
+		std::cout << std::endl;
+	}
+
+	std::string get_name(){
+		return name;
 	}
 
 private:// инициализируем
@@ -113,20 +121,33 @@ public:
 		char first_char;
 		_Element * element_pointer = NULL;
 		_Basis_function * bf_pointer = NULL;
-		std::locale loc;		
+		std::locale loc;
 
 		// Будем читать файлик построчно
+
 		while ( fin.getline( line, MAX_SIZE ) ){
+
 			current_string = line;
+
 		// Если строка начинается на ! или пустую строку --- не чиатем ее
-			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) continue;
+
+			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
+				if ( element_pointer != NULL ) {
+					elements.push_back( element_pointer );
+					show();
+					element_pointer = NULL;
+				} 
+				continue;
+			}
 
 		// В противном случае 
 		// Ищем строчки, содержащие одно слово --- это наши элементы
+
 			first_ws = current_string.find_first_of(' ');
 			last_not_ws = current_string.find_last_not_of(' ');
 
 		// Проверяем, что в строке первый пробел встречается после всех слов
+
 			if ( ( first_ws == std::string::npos ) || ( first_ws > last_not_ws ) ) { 
 				current_element = current_string.substr(current_string.find_first_not_of(' '), \
 								        current_string.find_last_not_of(' ') + 1 ); // вытаскиваем имя
@@ -136,12 +157,14 @@ public:
 			}
 
 		// Вытаскиваем первый значимый элемент строки
+
 			first_char = current_string[ current_string.find_first_not_of(' ') ];
+
 		// Если он не переводится в цифру, то это угловая часть
+
 			if ( ! ( std::isdigit( first_char, loc ) ) ){
 				bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
 				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
-				bf_pointer -> show_bf();
 				continue;
 			}else{ // иначе --- тройки параметров примитивов
 				std::stringstream ss( current_string ); // задаем вывод строки в переменные
@@ -150,14 +173,28 @@ public:
 				ss >> i >> alpha >> coeff; // выводим
 				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляю новый примитив
 				bf_pointer -> show_p(); 
+
 				// если примитивы кончились, по указателю добавляем функцию
-				if ( i == primitives_num ) element_pointer -> add_basis_function( bf_pointer );
+
+				if ( i == primitives_num ) {
+					element_pointer -> add_basis_function( bf_pointer );
+					bf_pointer -> show_bf(); 
+				}
+				continue;
 			}
 		}
+		show_end();
 	}
 
 	void show(){
-		std::cout << "Successfully created basis" << std::endl;
+		std::cout << std::endl;
+		std::cout << "Complited basis with functions for: " << elements.end()[-1] -> get_name() << std::endl;
+		std::cout << std::endl;
+	}
+
+	void show_end(){
+		std::cout << "Basis file is scanned successfully" << std::endl;
+		std::cout << "Proceed with the analisys" << std::endl;
 	}
 
 private:
@@ -171,6 +208,7 @@ int main(){
 	std::string filename = "./tests/basis/cc-pvdz.gamess-us.dat";
 	_Basis bs;
 	bs.read( filename ); 
+	
 	return 0;
 
 }
