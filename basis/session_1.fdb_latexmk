@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1520717055 "session_1.tex" "session_1.pdf" "session_1" 1520717055
+["pdflatex"] 1520717055 "session_1.tex" "session_1.pdf" "session_1" 1520717329
   "/etc/texmf/web2c/texmf.cnf" 1499338588 1101 af7716885e081ab43982cab7b4672c1a ""
   "/home/artfin/.texmf-var/fonts/tfm/lh/lh-t2a/larm0700.tfm" 1491906671 3256 b15a2ce2310c0038b96c5235b038f0eb ""
   "/home/artfin/.texmf-var/fonts/tfm/lh/lh-t2a/larm1000.tfm" 1491517732 3220 0e417eaf233b160335902e97259a6c77 ""
@@ -93,8 +93,8 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1499338691 1863403 f3ff9a4253bcb5fb9a9baaf0c572cb01 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1499338756 3859297 bb1e70cac6101c8240393ab02e68dece ""
   "session_1.aux" 1520717055 186 d84bf62585b18c5b92804f4b0a9189f3 ""
-  "session_1.tex" 1520717054 7975 b3a1b0d2ecdf0c21b062e55b6f21065a ""
+  "session_1.tex" 1520717323 7975 b3a1b0d2ecdf0c21b062e55b6f21065a ""
   (generated)
   "session_1.pdf"
-  "session_1.aux"
   "session_1.log"
+  "session_1.aux"
