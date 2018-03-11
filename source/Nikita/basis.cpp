@@ -14,7 +14,7 @@ class _Primitive{
 
 public:
 	_Primitive( int i, double alpha, double coeff ): i(i), alpha(alpha), coeff(coeff) {} // инициализируем
-
+	~_Primitive() {}
 	// определим функции для вытаскивания свойств примитива (чтобы не делать их public переменными)
 	int get_i( ) { return i; }
 	double get_alpha( ) { return alpha; }
@@ -197,7 +197,6 @@ public:
 					element_pointer -> add_basis_function( bf_pointer );
 					bf_pointer -> show_bf(); 
 				}
-				continue;
 			}
 		}
 		show_end();
@@ -226,7 +225,7 @@ int main(){
 	_Basis bs;
 	bs.read( filename ); 
 	
-	bs.~_Basis();
+//	bs.~_Basis();
 
 	return 0;
 
