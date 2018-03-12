@@ -18,10 +18,20 @@ public:
 		powers.push_back( k );
 	}
 
-private:
-	vector<int> powers;
+	int get_i(){ return powers[0]; }
+	int get_j(){ return powers[1]; }
+	int get_k(){ return powers[2]; }
 
-}
+	void show(){
+		std::cout << get_i() << " " \
+			  << get_j() << " " \
+			  << get_k() << std::endl;
+	}
+
+private:
+	std::vector<int> powers;
+
+};
 
 class _Center{
 
@@ -32,9 +42,9 @@ public:
 		coords.push_back( z );
 	}
 private:
-	vector<double> coords;
+	std::vector<double> coords;
 
-}
+};
 
 
 // Создадим класс, объекты которого --- тройки параметров гауссовых примитивов
@@ -52,8 +62,10 @@ public:
 
 	// определим функцию для пересчета коэффициентов контрактации с учетом нормировки примитивов
 	void recalc_coeff( ){
-		double N = ;
+		double N = std::pow( 2 * alpha / M_PI, 0.75 );
+		coeff *= N;
 	}
+
 private: // задаем внутренние переменные --- недоступны изве
 	int i;
 	double alpha, coeff;
@@ -75,12 +87,59 @@ public:
 // функция emplace_back записывает в конец вектора primitives объект класса примитив с параметрами i, alpha, coeff
 	void add_primitive( int i, double alpha, double coeff ){
 		primitives.emplace_back( i, alpha, coeff );
+		primitives.end()[-1].recalc_coeff();
+	}
+
+	void add_triples(){
+
+		int l;
+
+		switch ( angular_part ){
+
+			case 'S':
+			{
+				l = 0;
+				break;
+			}
+
+			case 'P':
+			{
+				l = 1;
+				break;
+			}
+
+			case 'D':
+			{
+				l = 2;
+				break;
+			}
+
+			case 'F':
+			{
+				l = 3;
+				break;
+			}
+
+			default:
+			{
+				throw std::invalid_argument("Can't identify angular part");
+			}
+		}
+
+		for( int i = 0; i <= l; ++i ){
+			for( int j = 0; j <= l - i; ++j ){
+				for( int k = 0; k <= l - i - j; ++k ){
+					if ( i + j + k == l ) triples.emplace_back( i, j, k );
+				}
+			}
+		}
+
 	}
 
 	void show_bf(){
-		std::cout << "Successfully created new basis function  of " << angular_part \
+		std::cout << "--> Successfully created new basis function  of " << angular_part \
 			  << " angular simmetry, contracted from: " << primitives.size() \
-			  << " primitives." << std::endl;
+			  << " primitive(s)." << std::endl;
 		std::cout << std::endl;
 
 	}
@@ -89,10 +148,16 @@ public:
 			  << " with exp. mult. " << primitives.end()[-1].get_alpha() \
 			  << " and contract. coeff. " << primitives.end()[-1].get_coeff() << std::endl;
 	}
+	void show_t(){
+		for ( auto el : triples )
+			el.show();
+			std::cout << std::endl;
+	}
 
 private: // задаем параметры
 	char angular_part;
 	std::vector <_Primitive> primitives;
+	std::vector <_Triple> triples;
 };
 
 // Создадим класс хим. элементов
@@ -183,7 +248,7 @@ public:
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
 				if ( element_pointer != NULL ) { // если указатель не пуст, то мы ранее проинициализировали элемент --- пора добавить его в базис
 					elements.push_back( element_pointer ); // Добавляем в массив элементов новый элемент
-					show();
+//					show();
 					element_pointer = NULL; // занулим, чтобы показать, что элемент добавлен
 				} 
 				continue;
@@ -213,6 +278,8 @@ public:
 
 			if ( ! ( std::isdigit( first_char, loc ) ) ){
 				bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
+				bf_pointer -> add_triples();
+//				bf_pointer -> show_t();
 				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
 				continue;
 
