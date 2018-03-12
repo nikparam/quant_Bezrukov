@@ -8,6 +8,35 @@
 #include <sstream>   // для перевода данных из строки в переменные
 #include <iomanip>   // для задания точности вывода
 
+
+class _Triple{
+
+public:
+	_Triple( int i, int j, int k ) {
+		powers.push_back( i );
+		powers.push_back( j );
+		powers.push_back( k );
+	}
+
+private:
+	vector<int> powers;
+
+}
+
+class _Center{
+
+public:
+	_Center( double x, double y, double z ){
+		coords.push_back( x );
+		coords.push_back( y );
+		coords.push_back( z );
+	}
+private:
+	vector<double> coords;
+
+}
+
+
 // Создадим класс, объекты которого --- тройки параметров гауссовых примитивов
 // номер, множитель в экспоненте, коэффициент перед экспонентой
 class _Primitive{
@@ -15,10 +44,16 @@ class _Primitive{
 public:
 	_Primitive( int i, double alpha, double coeff ): i(i), alpha(alpha), coeff(coeff) {} // инициализируем
 	~_Primitive() {}
+
 	// определим функции для вытаскивания свойств примитива (чтобы не делать их public переменными)
 	int get_i( ) { return i; }
 	double get_alpha( ) { return alpha; }
-	double get_coeff( ) { return coeff; }		
+	double get_coeff( ) { return coeff; }
+
+	// определим функцию для пересчета коэффициентов контрактации с учетом нормировки примитивов
+	void recalc_coeff( ){
+		double N = ;
+	}
 private: // задаем внутренние переменные --- недоступны изве
 	int i;
 	double alpha, coeff;
