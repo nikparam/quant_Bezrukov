@@ -138,21 +138,25 @@ public:
 
 	}
 
-/*	void renormalization(){
+	void renormalization(){
 
-		for( auto a : primitives ){
+		for( auto p : primitives ){
+
+			std::cout << angular_part << " " ;
 
 			for( auto t: triples ){
 
-				double N_x = a.renorm_factor( t.get_i() );
-				double N_y = a.renorm_factor( t.get_j() );
-				double N_z = a.renorm_factor( t.get_k() );
+				double N_x = p.renorm_factor( t.get_i() );
+				double N_y = p.renorm_factor( t.get_j() );
+				double N_z = p.renorm_factor( t.get_k() );
 
-			 	std::cout << angular_part << " " << std::sqrt( N_x * N_y * N_z ) << std::endl;
+			 	std::cout << 1 / std::sqrt( N_x * N_y * N_z ) << " ";
 
 			}
+
+			std::cout << std::endl;
 		}
-	} */
+	} 
 
 	char get_ap(){ return angular_part; }
 
@@ -200,26 +204,6 @@ public:
 // Добавим метод, дописывающий в вектор базовых функций новую функцию
 	void add_basis_function( _Basis_function * bf ){
 		basis_functions.push_back( bf );
-	}
-
-	void norm(){
-
-		double sum = 0.0;
-
-		for ( auto bf : basis_functions ){
-			for ( auto t: bf -> get_triples() ){
-				for ( auto p: bf -> get_primitives() ){
-					double N_x = p.renorm_factor( t.get_i() );
-					double N_y = p.renorm_factor( t.get_j() );
-					double N_z = p.renorm_factor( t.get_k() );
-
-					sum += p.get_coeff() * p.get_coeff() * N_x * N_y * N_z ;
-				}
-			}
-		}
-
-		std::cout << name << ": " << sum << std::endl;
-
 	}
 
 	void show(){
@@ -292,8 +276,7 @@ public:
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
 				if ( element_pointer != NULL ) { // если указатель не пуст, то мы ранее проинициализировали элемент --- пора добавить его в базис
 					elements.push_back( element_pointer ); // Добавляем в массив элементов новый элемент
-					element_pointer -> norm();
-//					show();
+					show();
 					element_pointer = NULL; // занулим, чтобы показать, что элемент добавлен
 				} 
 				continue;
@@ -310,7 +293,7 @@ public:
 				current_element = current_string.substr(current_string.find_first_not_of(' '), \
 								        current_string.find_last_not_of(' ') + 1 ); // вытаскиваем имя
 				element_pointer = new _Element( current_element ); // создаем указатель типа _Element
-//				element_pointer -> show();
+				element_pointer -> show();
 				continue;
 			}
 
@@ -324,7 +307,6 @@ public:
 			if ( ! ( std::isdigit( first_char, loc ) ) ){
 				bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
 				bf_pointer -> add_triples();
-//				bf_pointer -> show_t();
 				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
 				continue;
 
@@ -342,8 +324,10 @@ public:
 
 				if ( i == primitives_num ) {
 					element_pointer -> add_basis_function( bf_pointer );
-//					bf_pointer -> renormalization();
-//					bf_pointer -> show_bf(); 
+					bf_pointer -> show_bf(); 
+					bf_pointer -> show_t();
+					bf_pointer -> renormalization();
+					std::cout << std::endl;
 				}
 			}
 		}
