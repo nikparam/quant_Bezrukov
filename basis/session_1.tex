@@ -81,7 +81,8 @@ d-aug-cc-pvTZ водорода = 3s + 2s, 2p + 2p, 1d + 2d (дважды рас�
 (9s,4p,1d)/[3s,2p,1d] = cc-pvDZ --- 9 разных гауссовых примитивов собраны в 3 s--функций, 4 --- в 2 p, 1 --- в одну d.
 
 
-$$ \chi = \sum_{\substack { \{k,m,n\} \\ k+m+n = l} } x^ky^mz^n\sum_{i = 1} ^ K C_ie^{-\alpha_ir^2} = \sum_{i=1}^K C_i\sum_{\substack { \{k,m,n\} \\ k+m+n = l} } \phi_i(k,m,n) $$
+$$ \chi = \sum_{i = 1} ^ K\sum_{\substack { \{k,m,n\} \\ k+m+n = l} } N_i(k,m,n) x^ky^mz^n C_ie^{-\alpha_ir^2} = $$
+$$ =\sum_{i=1}^K C_i\sum_{\substack { \{k,m,n\} \\ k+m+n = l} } N_i(k,m,n)\phi_i(k,m,n) $$
 
 где $C_i$ --- коэффициенты контрактации при нормированных примитивах (из файла базиса)
 
@@ -90,6 +91,16 @@ $$ = \left( \int x^{2k} e^{-2\alpha_i x^2}\,dx \right)\left( \int y^{2m} e^{-2\a
 $$ \int x^{2k} e^{-2\alpha_i x^2}\,dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}\int e^{-2\alpha_i x^2}\, dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}% 
 																	 \sqrt{\frac{\pi}{2\alpha_i}} =$$
 $$ = \frac{(-1)^k}{2^k}\sqrt{\frac{\pi}{2}}\frac{(-1)^kk!}{2^k}\alpha_i^{-k-1/2} = \frac{k!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}$$
+$$N_i = \left( |\phi_i(k,m,n)|^2 \right)^{-1/2} = $$ 
+$$ = \left(%
+	    \frac{k!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}\cdot %
+	    \frac{m!}{2^{2m}}\sqrt{\frac{\pi}{2}}\alpha_i^{-m-1/2}\cdot %
+	    \frac{n!}{2^{2n}}\sqrt{\frac{\pi}{2}}\alpha_i^{-n-1/2} %
+	    \right)^{-1/2} = $$
+
+$$ = \left( \left( \frac{\pi}{2\alpha_i}\right)^{3/2} \left(\frac{1}{4\alpha_i}\right)^{l}k!m!n! \right)^{-1/2} = \left(\sqrt{ \frac{2\alpha_i}{\pi} } \right)^{3/4}%
+															\left(\frac{(4\alpha_i)^l}{k!m!n!}\right)^{1/2}$$
+
 
 
 
