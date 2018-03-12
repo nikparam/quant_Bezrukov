@@ -80,14 +80,25 @@ aug-cc-pvDZ углерода = 3s + 1s, 2p + 1p, 1d + 1d (расширенный
 d-aug-cc-pvTZ водорода = 3s + 2s, 2p + 2p, 1d + 2d (дважды расширенный)\\
 (9s,4p,1d)/[3s,2p,1d] = cc-pvDZ --- 9 разных гауссовых примитивов собраны в 3 s--функций, 4 --- в 2 p, 1 --- в одну d.
 
-$$ \chi = \sum_{i=1}^N C_iN_ie^{-\alpha_i r^2} $$
-где $C_i$ --- коэффициенты контрактации при нормированных примитивах (из файла базиса), $N_i$ --- нормировка примитива:
-$$1 = N_i^2\int_{\infty}^{\infty} e^{-2\alpha_i r^2} dxdydz = N_i^2 \int_0^{2\pi}\int_0^{\pi}\int_0^{\infty} e^{-2\alpha_i r^2} r^2\sin\theta\,drd\theta d\varphi = $$
-$$ = 4\pi N_i^2 \int_0^{\infty} e^{-2\alpha_i r^2} r^2\,dr = 2\pi N_i^2 \int_{\infty}^{\infty} e^{-2\alpha_i r^2} r^2\,dr = $$
-$$ = -\pi N_i^2\frac{\partial}{\partial \alpha_i} \int_0^{\infty} e^{-2\alpha_i r^2} \,dr = %
-     \pi N_i^2\frac{\partial}{\partial \alpha_i} \frac{1}{\sqrt{2\alpha_i}}\int_0^{\infty} e^{-( r\sqrt{ 2\alpha_i} )^2} \,dr\sqrt{2\alpha} = $$
-$$ = \pi N_i^2\frac{\partial}{\partial \alpha_i} \sqrt{\frac{\pi}{2\alpha_i}} = N_i^2 \left(\frac{\pi}{2\alpha}\right)^{3/2}$$
-$$N_i^2 = \left(\frac{2\alpha_i}{\pi}\right)^{3/2},\ N_i = \left(\frac{2\alpha_i}{\pi}\right)^{3/4}$$
+
+$$ \chi = \sum_{\substack { \{k,m,n\} \\ k+m+n = l} } x^ky^mz^n\sum_{i = 1} ^ K C_ie^{-\alpha_ir^2} = \sum_{i=1}^K C_i\sum_{\substack { \{k,m,n\} \\ k+m+n = l} } \phi_i(k,m,n) $$
+
+где $C_i$ --- коэффициенты контрактации при нормированных примитивах (из файла базиса)
+
+$$|\phi_i(k,m,n)|^2 = \int x^{2k}y^{2m}z^{2n} e^{-2\alpha_ir^2}\,dxdydz = $$
+$$ = \left( \int x^{2k} e^{-2\alpha_i x^2}\,dx \right)\left( \int y^{2m} e^{-2\alpha_i y^2}\,dy \right)\left( \int z^{2n} e^{-2\alpha_i z^2}\,dz \right)$$
+$$ \int x^{2k} e^{-2\alpha_i x^2}\,dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}\int e^{-2\alpha_i x^2}\, dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}% 
+																	 \sqrt{\frac{\pi}{2\alpha_i}} =$$
+$$ = \frac{(-1)^k}{2^k}\sqrt{\frac{\pi}{2}}\frac{(-1)^kk!}{2^k}\alpha_i^{-k-1/2} = \frac{k!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}$$
+
+
+
+%$$1 = N_i^2\int_{\infty}^{\infty} e^{-2\alpha_i r^2} dxdydz = N_i^2 \int_0^{2\pi}\int_0^{\pi}\int_0^{\infty} e^{-2\alpha_i r^2} r^2\sin\theta\,drd\theta d\varphi = $$
+%$$ = 4\pi N_i^2 \int_0^{\infty} e^{-2\alpha_i r^2} r^2\,dr = 2\pi N_i^2 \int_{\infty}^{\infty} e^{-2\alpha_i r^2} r^2\,dr = $$
+%$$ = -\pi N_i^2\frac{\partial}{\partial \alpha_i} \int_0^{\infty} e^{-2\alpha_i r^2} \,dr = %
+%     \pi N_i^2\frac{\partial}{\partial \alpha_i} \frac{1}{\sqrt{2\alpha_i}}\int_0^{\infty} e^{-( r\sqrt{ 2\alpha_i} )^2} \,dr\sqrt{2\alpha} = $$
+%$$ = \pi N_i^2\frac{\partial}{\partial \alpha_i} \sqrt{\frac{\pi}{2\alpha_i}} = N_i^2 \left(\frac{\pi}{2\alpha}\right)^{3/2}$$
+%$$N_i^2 = \left(\frac{2\alpha_i}{\pi}\right)^{3/2},\ N_i = \left(\frac{2\alpha_i}{\pi}\right)^{3/4}$$
 \item комбинация s, p$_{\text{x}}$, p$_{\text{y}}$, p$_{\text{z}}$ 
 с одинаковыми экспонентами, но разными коэффициентами контрактации --- L функция.
 В файле базисов состоит из трех колонок --- показатель экспоненты, 
