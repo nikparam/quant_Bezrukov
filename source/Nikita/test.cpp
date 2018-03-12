@@ -1,11 +1,11 @@
 #include <iostream>
 
 int main(){
-	int * p1 = nullptr;
-	int * p2 = nullptr;
-	int a, b;
-	if ( std::cin >> a ) p1 = &a;
-	if ( std::cin >> a ) p2 = &b;
-	if ( * p1 != * p2 ) std::cout << "Success" << std::endl;
+	int a = 1, b = 2;
+	int * p1 = &a;
+	int * p2 = &b;
+
+	std::cout << *p1 + 1 << " " << *p2 * 2 << std::endl;
+
 	return 0;
 }
