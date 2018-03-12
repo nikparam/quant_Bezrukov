@@ -8,6 +8,10 @@
 #include <sstream>   // для перевода данных из строки в переменные
 #include <iomanip>   // для задания точности вывода
 
+int factorial( int n ){
+
+	return ( n == 0 || n == 1) ? 1 : n * factorial( n - 1 );
+}
 
 class _Triple{
 
@@ -61,12 +65,11 @@ public:
 	double get_coeff( ) { return coeff; }
 
 	// определим функцию для пересчета коэффициентов контрактации с учетом нормировки примитивов
-	void recalc_coeff( ){
-		double N = std::pow( 2 * alpha / M_PI, 0.75 );
-		coeff *= N;
+	double renorm_factor( int n ){
+		return factorial( n ) / std::pow( 2, 2 * n ) * std::sqrt( M_PI / ( 2.0 * alpha ) ) /  std::pow( alpha, n );
 	}
 
-private: // задаем внутренние переменные --- недоступны изве
+private: // задаем внутренние переменные --- недоступны извне
 	int i;
 	double alpha, coeff;
 };
@@ -87,7 +90,6 @@ public:
 // функция emplace_back записывает в конец вектора primitives объект класса примитив с параметрами i, alpha, coeff
 	void add_primitive( int i, double alpha, double coeff ){
 		primitives.emplace_back( i, alpha, coeff );
-		primitives.end()[-1].recalc_coeff();
 	}
 
 	void add_triples(){
@@ -136,6 +138,28 @@ public:
 
 	}
 
+/*	void renormalization(){
+
+		for( auto a : primitives ){
+
+			for( auto t: triples ){
+
+				double N_x = a.renorm_factor( t.get_i() );
+				double N_y = a.renorm_factor( t.get_j() );
+				double N_z = a.renorm_factor( t.get_k() );
+
+			 	std::cout << angular_part << " " << std::sqrt( N_x * N_y * N_z ) << std::endl;
+
+			}
+		}
+	} */
+
+	char get_ap(){ return angular_part; }
+
+	std::vector<_Primitive> get_primitives(){ return primitives; }
+
+	std::vector<_Triple> get_triples(){ return triples; }
+
 	void show_bf(){
 		std::cout << "--> Successfully created new basis function  of " << angular_part \
 			  << " angular simmetry, contracted from: " << primitives.size() \
@@ -176,6 +200,26 @@ public:
 // Добавим метод, дописывающий в вектор базовых функций новую функцию
 	void add_basis_function( _Basis_function * bf ){
 		basis_functions.push_back( bf );
+	}
+
+	void norm(){
+
+		double sum = 0.0;
+
+		for ( auto bf : basis_functions ){
+			for ( auto t: bf -> get_triples() ){
+				for ( auto p: bf -> get_primitives() ){
+					double N_x = p.renorm_factor( t.get_i() );
+					double N_y = p.renorm_factor( t.get_j() );
+					double N_z = p.renorm_factor( t.get_k() );
+
+					sum += p.get_coeff() * p.get_coeff() * N_x * N_y * N_z ;
+				}
+			}
+		}
+
+		std::cout << name << ": " << sum << std::endl;
+
 	}
 
 	void show(){
@@ -248,6 +292,7 @@ public:
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
 				if ( element_pointer != NULL ) { // если указатель не пуст, то мы ранее проинициализировали элемент --- пора добавить его в базис
 					elements.push_back( element_pointer ); // Добавляем в массив элементов новый элемент
+					element_pointer -> norm();
 //					show();
 					element_pointer = NULL; // занулим, чтобы показать, что элемент добавлен
 				} 
@@ -265,7 +310,7 @@ public:
 				current_element = current_string.substr(current_string.find_first_not_of(' '), \
 								        current_string.find_last_not_of(' ') + 1 ); // вытаскиваем имя
 				element_pointer = new _Element( current_element ); // создаем указатель типа _Element
-				element_pointer -> show();
+//				element_pointer -> show();
 				continue;
 			}
 
@@ -291,17 +336,18 @@ public:
 
 				ss >> i >> alpha >> coeff; // выводим значения в переменные
 				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляем новый примитив
-				bf_pointer -> show_p(); 
+//				bf_pointer -> show_p(); 
 
 				// если примитивы кончились, по указателю добавляем функцию
 
 				if ( i == primitives_num ) {
 					element_pointer -> add_basis_function( bf_pointer );
-					bf_pointer -> show_bf(); 
+//					bf_pointer -> renormalization();
+//					bf_pointer -> show_bf(); 
 				}
 			}
 		}
-		show_end();
+//		show_end();
 	}
 
 	void show(){
@@ -327,8 +373,6 @@ int main(){
 	_Basis bs;
 	bs.read( filename ); 
 	
-//	bs.~_Basis();
-
 	return 0;
 
 }
