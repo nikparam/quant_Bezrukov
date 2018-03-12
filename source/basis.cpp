@@ -4,6 +4,13 @@
 #include <stdexcept>
 #include <fstream> 
 #include <sstream> // streamstring
+#include <cmath>
+
+#include "Vector3D.hpp"
+#include "quantumNumbers.hpp"
+#include "Primitive.hpp"
+#include "BasisFunction.hpp"
+#include "Element.hpp"
 
 using std::cout;
 using std::endl;
@@ -13,78 +20,6 @@ using std::invalid_argument;
 using std::vector;
 
 #define MAXLINE 100
-
-class Primitive
-{
-public:
-	Primitive( int number, double exponent, double coefficient ) :
-		number(number), exponent(exponent), coefficient(coefficient)
-		{
-		}
-
-	~Primitive() { }
-
-private:
-	int number;
-	double exponent;
-	double coefficient;
-};
-
-class BasisFunction
-{
-public:
-	BasisFunction( char angular_part )
-		: angular_part(angular_part)
-	{
-	}
-
-	~BasisFunction()
-	{
-	}
-
-	void add_primitive( int n, double exponent, double coefficient )
-	{
-		primitives.emplace_back( n, exponent, coefficient );
-	}
-
-	void show()
-	{
-		cout << "Angular part: " << angular_part << endl;
-		cout << "Number of added primitives: " << primitives.size() << endl;
-	}
-
-private:
-	char angular_part;
-	vector <Primitive> primitives;
-};
-
-class Element
-{
-public:
-	Element( string name ) : name(name)
-	{
-	}
-
-	~Element()
-	{
-		for ( BasisFunction * bf : basis_functions )
-			delete bf;
-	}
-
-	void add_basis_function( BasisFunction * bf )
-	{
-		basis_functions.push_back( bf );
-	}
-
-	void show()
-	{
-		cout << "Element name: " << name << endl;
-	}
-
-private:
-	string name;
-	vector<BasisFunction*> basis_functions;
-};
 
 class Basis
 {
@@ -184,11 +119,15 @@ public:
 				int i;
 				double alpha, coeff;
 				ss >> i >> alpha >> coeff;
-				bfp->add_primitive( i, alpha, coeff );		
+				bfp->add_primitive( i, alpha, coeff );
 
 				// как только номер примитива совпадает с заявленным количеством примитивов, добавляем функцию текущему элементу
 				if ( i == primitives_counter )
+				{
+					bfp->fillQuantumNumbers();
+					//bfp->showQuantumNumbers();
 					elp->add_basis_function( bfp ); 
+				}
 			}
 
 		}
@@ -199,7 +138,7 @@ public:
 		cout << "no of elements: " << elements.size() << endl;
 		for ( Element * el : elements )
 		{
-			el->show();
+			el->show();	
 		}
 	}
 

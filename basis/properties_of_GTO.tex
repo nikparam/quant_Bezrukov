@@ -1,0 +1,129 @@
+\documentclass[a4paper,12pt]{extarticle}
+% Стандартные формульные пакеты
+\usepackage{float,amsmath,esint,amsfonts,wrapfig,bbm,bbold}
+\usepackage{indentfirst}
+\usepackage[usenames]{color}
+\usepackage{multirow}
+%выставляем поля
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm,bindingoffset=0cm]{geometry}
+% Русский текст в формулах
+\usepackage{mathtext}
+% Подключение русского языка
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+% Рисунки
+\usepackage{graphicx,caption,subcaption}
+% Landscape page
+\usepackage{lscape}
+\renewcommand{\arraystretch}{1.1}
+
+\newcommand{\lb}{\left(}
+\newcommand{\rb}{\right)}
+\newcommand{\lsq}{\left[}
+\newcommand{\rsq}{\right]}
+\newcommand{\mf}{\mathbf}
+\newcommand{\vr}{\mathbf{r}}
+
+\newcommand{\intfty}{\int\limits_{-\infty}^{+\infty}}
+
+\begin{document}
+
+\section*{Свойства GTO's (Gaussian Type Orbitals) [1, sec.10, p.792]}
+Будем записывать гауссову функцию в координатном представлении в следующем виде
+\begin{gather}
+	G_{ijk}(\vr, \alpha, \mf{A}) = x_A^i y_A^j z_A^k \exp \lb - \alpha r_A^2 \rb,
+\end{gather}
+
+где $\alpha$ -- показатель экспоненты, $\vr$ -- координаты электрона, $\mf{A}$ -- центр гауссовой функции (обычно совпадает с положением некоторого ядра) и 
+\begin{gather}
+	\vr_A = \mf{r} - \mf{A}.
+\end{gather}
+
+Набор неотрицательных чисел $i, j, k$ обычно назвают набором "угловых квантовых чисел" (angular quantum numbers). Гауссова функции в координатном представлении может быть факторизована в произведение гауссовых функций
+\begin{gather}
+	G_{ijk}(\vr, \alpha, \mf{A}) = G_i(x, \alpha, A_x) \, G_j(y, \alpha, A_y) \, G_k(z, \alpha, A_z), 
+\end{gather}
+где, например, $G_i(x, \alpha, A_x)$ равен
+\begin{gather}
+	G_i(x, \alpha, A_x) = x_A^i \exp ( -\alpha x_A^2 ) = (x - A_x) \exp \lb - \alpha ( x - A_x )^2 \rb.
+\end{gather} 
+
+Эрмитовой гауссовой функцией с показателем $p$ и центрированной в $\mf{P}$ называют функцию вида
+\begin{gather}
+	\Lambda_{tuv}(\vr, p, \mf{P}) = (\partial / \partial P_x)^t (\partial / \partial P_y)^u (\partial / \partial P_z)^v \exp (-p r_P^2 ),
+\end{gather}
+где
+\begin{gather}
+	\vr_P = \vr - \mf{P}.
+\end{gather}
+
+Как и GTO эрмитовы гауссовы функции могут быть представлены в виде произведения функций вида
+\begin{gather}
+	\Lambda_t(x, p, P_x) = (\partial / \partial P_x)^t \exp (-p (x - P_x)^2).
+\end{gather}
+
+Исходя из определения эрмитовой гауссовой функции устанавливаем следующее дифференциальное соотношение
+\begin{gather}
+		\frac{\partial \Lambda_t}{\partial P_x} = \Lambda_{t + 1} = 2p (\partial / \partial P_x)^t (x - P_x) \exp(-p(x - P_x)^2) = - \frac{\partial \Lambda_t}{\partial x}. 
+\end{gather}
+
+\begin{gather}
+		\Lambda_{t + 1} = (\partial / \partial P_x)^t \frac{\partial \Lambda_0}{\partial P_x} = (\partial / \partial P_x)^t \frac{\partial \exp \lb -p (x - P_x)^2 \rb}{\partial P_x}  = 2p (\partial / \partial P_x)^t (x - P_x) \Lambda_0. \label{lambda_t_plus_one} 
+\end{gather}
+
+Чтобы вытащить $x_P = x - P_x$ из под операторов дифференцирования, воспользуемся коммутатором
+\begin{gather}
+	[ (\partial / \partial P_x)^t, x_P ] = -t (\partial / \partial P_x)^{t - 1}.
+\end{gather}
+Покажем, что коммутатор оператора дифференицрования по $P_x$ t-го порядка с $x_P$ действительно равен $-t (\partial / \partial P_x)^{t - 1}$. Для этого возьмем некоторую пробную функцию $f(P_x)$, дифференцируемую вплоть до порядка $t$ и подействуем коммутатором на нее:
+\begin{gather}
+		\lsq \lb \frac{\partial}{\partial P_x} \rb^t, (x - P_x) \rsq f(P_x) = \lb \frac{\partial}{\partial P_x} \rb^t (x - P_x) f(P_x) - (x - P_x) \lb \frac{\partial}{\partial P_x} \rb^t f(P_x).
+\end{gather}
+
+Для рассмотрения первого слагаемого воспользуемся формулой Лейбница для производной произведения произвольного порядка (аналог бинома Ньютона):
+\begin{gather}
+	\lb \frac{\partial}{\partial P_x} \rb^t (x - P_x) f(P_x) = \sum_{k = 0}^{t} C_{t}^{k} \lb \frac{\partial}{\partial P_x} \rb^{k} \lb x - P_x \rb \lb \frac{\partial}{\partial P_x} \rb^{t - k} f(P_x).
+\end{gather}
+
+Заметим, что лишь два слагаемых, соответствующие $k = 0, 1$ не равны 0:
+\begin{gather}
+	\lb \frac{\partial}{\partial P_x} \rb^0 (x - P_x) = x - P_x, \quad  \lb \frac{\partial}{\partial P_x} \rb^1 (x - P_x) = -1. 
+\end{gather}
+
+То есть, производная $t$-го порядка от произведения $(x - P_x) f(P_x)$ равна
+\begin{gather}
+		\lb \frac{\partial}{\partial P_x} \rb^t (x - P_x) f(P_x) = (x - P_x) \lb \frac{\partial}{\partial P_x} \rb^t f(P_x) - t \lb \frac{\partial}{\partial P_x} \rb^{t - 1} f(P_x). 
+\end{gather}
+
+Подставляя полученное выражение в выражение для коммутатора, приходим к:
+\begin{gather}
+	\lsq \lb \frac{\partial}{\partial P_k} \rb^t, (x - P_x) \rsq f(P_x) = - t \lb \frac{\partial}{\partial P_x} \rb^{t - 1} f(P_x), 
+\end{gather}
+или, в операторном виде, опуская пробную функцию $f(P_x)$:
+\begin{gather}
+	\lsq \lb \partial / \partial P_x \rb^t, x_P \rsq = -t \lb \partial / \partial P_x \rb^{t - 1}.
+\end{gather}
+
+Подставляем левую часть коммутатора в выражение \eqref{lambda_t_plus_one}:
+\begin{gather}
+	\Lambda_{t + 1} = 2p x_P (\partial/\partial P_x)^t \Lambda_0  - 2p t (\partial/\partial P_x)^{t - 1} \Lambda_0 = 2p \lb x_P \Lambda_t - t \Lambda_{t - 1} \rb, \\
+	x_P \Lambda_t = \frac{1}{2 p} \Lambda_{t + 1} + t \Lambda_{t - 1}.
+\end{gather}
+
+Также обратим внимание на интеграл от \textit{единичной} эрмитовой гауссовой функции.
+\begin{gather}
+	\intfty \Lambda_t(x) dx = \lb \partial/\partial P_x \rb^t \intfty \exp (-p (x - P_x)^2 ) dx.
+\end{gather}
+Т.к. интеграл в правой части независит от $P_x$, то при дифференцировании по $P_x$ получаем 0; представим это в виде дельта-функции.
+\begin{gather}
+	\intfty \Lambda_t (x) dx = \delta_{t0} \intfty \exp \lb - p x_P^2 \rb dx = \delta_{t0} \sqrt{\frac{\pi}{p}}.
+\end{gather}
+
+
+
+\newpage
+\section*{Список литературы}
+1. T. Helgraker, P. R. Taylor. Gaussian Basis Sets and Molecular Integrals, Modern Electronic Structure Theory, ch.12, 1995.
+
+\end{document}
