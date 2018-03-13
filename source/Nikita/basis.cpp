@@ -12,6 +12,10 @@ int d_factorial( int n ){
 	return ( n <= 1 ) ? 1 : n * d_factorial( n - 2 );
 }
 
+double factor( int i, double alpha ){
+	return  d_factorial( 2 * i - 1 ) * std::sqrt( M_PI ) / std::pow( 2, i ) / std::pow( alpha, i + 0.5 ) ;
+}
+
 class _Triple{
 
 public:
@@ -35,6 +39,12 @@ private:
 	std::vector<int> powers;
 
 };
+
+bool triples_eq( _Triple t1, _Triple t2 ){
+	if ( ( t1.get_i() != t2.get_i() ) || \
+	   ( t1.get_j() != t2.get_j() ) || \
+	   ( t1.get_k() != t2.get_k() ) ) { return false; } else { return true; }
+}
 
 class _Center{
 
@@ -68,21 +78,18 @@ public:
 	_Triple get_powers() { return powers; }
 
 	// определим функцию для пересчета коэффициентов контрактации с учетом нормировки примитивов
-	double factor( int i ){
-		return  std::pow( 2, 2 * i + 0.5 ) * std::pow( alpha, i + 0.5 ) / d_factorial( 2 * i - 1 ) / std::sqrt( M_PI )  ;
-	}
 
 	void renormalize( ){
 		int i = powers.get_i();
 		int j = powers.get_j();
 		int k = powers.get_k();
 
-		double N_x = factor( i );
-		double N_y = factor( j );
-		double N_z = factor( k );
+		double N_x = factor( i, 2.0 * alpha );
+		double N_y = factor( j, 2.0 * alpha );
+		double N_z = factor( k, 2.0 * alpha );
 		double N = std::sqrt( N_x * N_y * N_z );
 
-		coeff *= N;
+		coeff /= N;
 	}
 
 private: // задаем внутренние переменные --- недоступны извне
@@ -91,6 +98,22 @@ private: // задаем внутренние переменные --- недо�
 	_Triple powers;
 };
 
+
+class _Projection{
+
+public:
+	_Projection( _Triple triple ): triple(triple){}
+	~_Projection(){}
+
+	void add_primitives( int i, double alpha, double coeff ){
+		primitives.emplace_back( i, alpha, coeff, triple );
+	}
+
+private:	
+	_Triple triple;
+	std::vector<_Primitive> primitives;
+
+};
 
 // Создадим класс базисных функций
 // его элементы хранят символ угловой части и вектор примитивов
@@ -156,11 +179,7 @@ public:
 
 	}
 
-	double factor( int p, double alpha ){
-		return d_factorial( 2 * p - 1 ) * std::sqrt( M_PI ) / std::pow( 2, p ) / std::pow( alpha, p + 0.5 );
-	}
-
-	double int_two_p( _Primitive p1, _Primitive p2){
+	double int_two_p( _Primitive p1, _Primitive p2 ){
 
 		int i = p1.get_powers().get_i();
 		int j = p1.get_powers().get_j();
@@ -186,6 +205,9 @@ public:
 			double N_y = factor( 0.5 * ( j + j_prime ), alpha1 + alpha2 );
 			double N_z = factor( 0.5 * ( k + k_prime ), alpha1 + alpha2 );
 
+			std::cout << "(" << i << j << k << ") " << \
+				     "(" << i_prime << j_prime << k_prime << ") "<< \
+					    coeff1 * coeff2 * N_x * N_y * N_z << std::endl;
 			return  coeff1 * coeff2 * N_x * N_y * N_z;
 			
 		} else { return 0; }
@@ -194,8 +216,7 @@ public:
 	void count_norm(){
 		double sum = 0.0;
 		for ( int i = 0; i < primitives.size(); ++i ){
-			for ( int j = i; j < primitives.size(); ++j ){
-//				std::cout << int_two_p( primitives[i], primitives[j] ) << std::endl;
+			for ( int j = 0; j < primitives.size(); ++j ){
 				sum += int_two_p ( primitives[i], primitives[j] ); 
 			}
 		}
