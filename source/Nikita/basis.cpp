@@ -156,6 +156,52 @@ public:
 
 	}
 
+	double factor( int p, double alpha ){
+		return d_factorial( 2 * p - 1 ) * std::sqrt( M_PI ) / std::pow( 2, p ) / std::pow( alpha, p + 0.5 );
+	}
+
+	double int_two_p( _Primitive p1, _Primitive p2){
+
+		int i = p1.get_powers().get_i();
+		int j = p1.get_powers().get_j();
+		int k = p1.get_powers().get_k();
+
+		int i_prime = p2.get_powers().get_i();
+		int j_prime = p2.get_powers().get_j();
+		int k_prime = p2.get_powers().get_k();
+
+		int res1 = ( ( i + i_prime ) % 2 );
+		int res2 = ( ( j + j_prime ) % 2 );
+		int res3 = ( ( k + k_prime ) % 2 );
+
+		if ( res1 == 0 && res2 == 0 && res3 == 0 ){
+
+			double coeff1 = p1.get_coeff();
+			double coeff2 = p2.get_coeff();
+
+			double alpha1 = p1.get_alpha();
+			double alpha2 = p2.get_alpha();
+
+			double N_x = factor( 0.5 * ( i + i_prime ), alpha1 + alpha2 );
+			double N_y = factor( 0.5 * ( j + j_prime ), alpha1 + alpha2 );
+			double N_z = factor( 0.5 * ( k + k_prime ), alpha1 + alpha2 );
+
+			return  coeff1 * coeff2 * N_x * N_y * N_z;
+			
+		} else { return 0; }
+	}
+
+	void count_norm(){
+		double sum = 0.0;
+		for ( int i = 0; i < primitives.size(); ++i ){
+			for ( int j = i; j < primitives.size(); ++j ){
+//				std::cout << int_two_p( primitives[i], primitives[j] ) << std::endl;
+				sum += int_two_p ( primitives[i], primitives[j] ); 
+			}
+		}
+		std::cout << " norm " << sum << std::endl; 
+	}
+
 	char get_ap(){ return angular_part; }
 	std::vector<_Primitive> get_primitives(){ return primitives; }
 	std::vector<_Triple> get_triples(){ return triples; }
@@ -320,8 +366,8 @@ public:
 
 				if ( i == primitives_num ) {
 					element_pointer -> add_basis_function( bf_pointer );
-					bf_pointer -> show_bf(); 
 					bf_pointer -> show_p(); 
+					bf_pointer -> count_norm();
 //					bf_pointer -> show_t();
 					std::cout << std::endl;
 				}
