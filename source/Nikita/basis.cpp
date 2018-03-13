@@ -8,9 +8,8 @@
 #include <sstream>   // для перевода данных из строки в переменные
 #include <iomanip>   // для задания точности вывода
 
-int factorial( int n ){
-
-	return ( n == 0 || n == 1) ? 1 : n * factorial( n - 1 );
+int d_factorial( int n ){
+	return ( n <= 1 ) ? 1 : n * d_factorial( n - 2 );
 }
 
 class _Triple{
@@ -56,22 +55,40 @@ private:
 class _Primitive{
 
 public:
-	_Primitive( int i, double alpha, double coeff ): i(i), alpha(alpha), coeff(coeff) {} // инициализируем
-	~_Primitive() {}
+	_Primitive( int i, double alpha, double coeff, _Triple powers ): \
+			i(i),     alpha(alpha), coeff(coeff),  powers(powers) { // инициализируем
+		renormalize();
+	} 
+	~_Primitive() { }
 
 	// определим функции для вытаскивания свойств примитива (чтобы не делать их public переменными)
 	int get_i( ) { return i; }
 	double get_alpha( ) { return alpha; }
 	double get_coeff( ) { return coeff; }
+	_Triple get_powers() { return powers; }
 
 	// определим функцию для пересчета коэффициентов контрактации с учетом нормировки примитивов
-	double renorm_factor( int n ){
-		return factorial( n ) / std::pow( 2, 2 * n ) * std::sqrt( M_PI / ( 2.0 * alpha ) ) /  std::pow( alpha, n );
+	double factor( int i ){
+		return  std::pow( 2, 2 * i + 0.5 ) * std::pow( alpha, i + 0.5 ) / d_factorial( 2 * i - 1 ) / std::sqrt( M_PI )  ;
+	}
+
+	void renormalize( ){
+		int i = powers.get_i();
+		int j = powers.get_j();
+		int k = powers.get_k();
+
+		double N_x = factor( i );
+		double N_y = factor( j );
+		double N_z = factor( k );
+		double N = std::sqrt( N_x * N_y * N_z );
+
+		coeff *= N;
 	}
 
 private: // задаем внутренние переменные --- недоступны извне
 	int i;
 	double alpha, coeff;
+	_Triple powers;
 };
 
 
@@ -80,16 +97,17 @@ private: // задаем внутренние переменные --- недо�
 class _Basis_function{
 
 public:
-	_Basis_function( char angular_part ): angular_part( angular_part ) {} // инициализируем
+	_Basis_function( char angular_part ): angular_part( angular_part ) { add_triples(); } // инициализируем
 	~_Basis_function(){ //деструктор
-		for( int i = 0; i < primitives.size(); ++i) primitives[i].~_Primitive();
 	}
 
 
 // Добавим метод, дописывающий в набор примитивов новую гауссову функцию
 // функция emplace_back записывает в конец вектора primitives объект класса примитив с параметрами i, alpha, coeff
 	void add_primitive( int i, double alpha, double coeff ){
-		primitives.emplace_back( i, alpha, coeff );
+		for ( auto t: triples ){
+			primitives.emplace_back( i, alpha, coeff, t );
+		}
 	}
 
 	void add_triples(){
@@ -138,30 +156,8 @@ public:
 
 	}
 
-	void renormalization(){
-
-		for( auto p : primitives ){
-
-			std::cout << angular_part << " " ;
-
-			for( auto t: triples ){
-
-				double N_x = p.renorm_factor( t.get_i() );
-				double N_y = p.renorm_factor( t.get_j() );
-				double N_z = p.renorm_factor( t.get_k() );
-
-			 	std::cout << 1 / std::sqrt( N_x * N_y * N_z ) << " ";
-
-			}
-
-			std::cout << std::endl;
-		}
-	} 
-
 	char get_ap(){ return angular_part; }
-
 	std::vector<_Primitive> get_primitives(){ return primitives; }
-
 	std::vector<_Triple> get_triples(){ return triples; }
 
 	void show_bf(){
@@ -172,9 +168,13 @@ public:
 
 	}
 	void show_p(){
-		std::cout << primitives.end()[-1].get_i() << ") Primitive "  \
-			  << " with exp. mult. " << primitives.end()[-1].get_alpha() \
-			  << " and contract. coeff. " << primitives.end()[-1].get_coeff() << std::endl;
+		for ( auto p: primitives){
+			std::cout << p.get_i() << ") Primitive " << p.get_powers().get_i() \
+								 << p.get_powers().get_j() \
+								 << p.get_powers().get_k() \
+				  << " with exp. mult. " << p.get_alpha() \
+				  << " contract. coeff. " << p.get_coeff() << std::endl;
+		}
 	}
 	void show_t(){
 		for ( auto el : triples )
@@ -197,7 +197,6 @@ public:
 	~_Element() { // деструктор
 		for( int i = 0; i < basis_functions.size(); ++i) {
 			delete basis_functions[i];
-//			basis_functions[i] -> ~_Basis_function();
 		}
 	}
 
@@ -232,7 +231,6 @@ public:
 	~_Basis( ) {
 		for( int i = 0; i < elements.size(); ++i ){ // деструктор
 			delete elements[i];
-//			elements[i] -> ~_Element();
 		}
 	}
 
@@ -306,7 +304,6 @@ public:
 
 			if ( ! ( std::isdigit( first_char, loc ) ) ){
 				bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
-				bf_pointer -> add_triples();
 				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
 				continue;
 
@@ -318,20 +315,19 @@ public:
 
 				ss >> i >> alpha >> coeff; // выводим значения в переменные
 				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляем новый примитив
-//				bf_pointer -> show_p(); 
 
 				// если примитивы кончились, по указателю добавляем функцию
 
 				if ( i == primitives_num ) {
 					element_pointer -> add_basis_function( bf_pointer );
 					bf_pointer -> show_bf(); 
-					bf_pointer -> show_t();
-					bf_pointer -> renormalization();
+					bf_pointer -> show_p(); 
+//					bf_pointer -> show_t();
 					std::cout << std::endl;
 				}
 			}
 		}
-//		show_end();
+		show_end();
 	}
 
 	void show(){
@@ -351,7 +347,7 @@ private:
 
 
 int main(){
-	std::cout << std::fixed << std::setprecision(6);
+	std::cout << std::fixed << std::setprecision(7);
 
 	std::string filename = "./tests/basis/cc-pvdz.gamess-us.dat";
 	_Basis bs;
