@@ -90,16 +90,16 @@ $$|\phi_i(k,m,n)|^2 = \int x^{2k}y^{2m}z^{2n} e^{-2\alpha_ir^2}\,dxdydz = $$
 $$ = \left( \int x^{2k} e^{-2\alpha_i x^2}\,dx \right)\left( \int y^{2m} e^{-2\alpha_i y^2}\,dy \right)\left( \int z^{2n} e^{-2\alpha_i z^2}\,dz \right)$$
 $$ \int x^{2k} e^{-2\alpha_i x^2}\,dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}\int e^{-2\alpha_i x^2}\, dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}% 
 																	 \sqrt{\frac{\pi}{2\alpha_i}} =$$
-$$ = \frac{(-1)^k}{2^k}\sqrt{\frac{\pi}{2}}\frac{(-1)^kk!}{2^k}\alpha_i^{-k-1/2} = \frac{k!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}$$
+$$ = \frac{(-1)^k}{2^k}\sqrt{\frac{\pi}{2}}\frac{(-1)^k(2k-1)!!}{2^k}\alpha_i^{-k-1/2} = \frac{(2k-1)!!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}$$
 $$N_i = \left( |\phi_i(k,m,n)|^2 \right)^{-1/2} = $$ 
 $$ = \left(%
-	    \frac{k!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}\cdot %
-	    \frac{m!}{2^{2m}}\sqrt{\frac{\pi}{2}}\alpha_i^{-m-1/2}\cdot %
-	    \frac{n!}{2^{2n}}\sqrt{\frac{\pi}{2}}\alpha_i^{-n-1/2} %
+	    \frac{(2k-1)!!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2} %
+	    \frac{(2m-1)!!}{2^{2m}}\sqrt{\frac{\pi}{2}}\alpha_i^{-m-1/2} %
+	    \frac{(2n-1)!!}{2^{2n}}\sqrt{\frac{\pi}{2}}\alpha_i^{-n-1/2} %
 	    \right)^{-1/2} = $$
 
-$$ = \left( \left( \frac{\pi}{2\alpha_i}\right)^{3/2} \left(\frac{1}{4\alpha_i}\right)^{l}k!m!n! \right)^{-1/2} = \left(\sqrt{ \frac{2\alpha_i}{\pi} } \right)^{3/4}%
-															\left(\frac{(4\alpha_i)^l}{k!m!n!}\right)^{1/2}$$
+$$ = \left( \left( \frac{\pi}{2\alpha_i}\right)^{3/2} \left(\frac{1}{4\alpha_i}\right)^{l}(2k-1)!!(2m-1)!!(2n-1)!! \right)^{-1/2} $$
+$$ = \left(\sqrt{ \frac{2\alpha_i}{\pi} } \right)^{3/4}\left(\frac{(4\alpha_i)^l}{(2k-1)!!(2m-1)!!(2n-1)!!}\right)^{1/2}$$
 
 
 
