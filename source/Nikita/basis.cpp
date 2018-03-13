@@ -416,7 +416,7 @@ private:
 int main(){
 	std::cout << std::fixed << std::setprecision(7);
 
-	std::string filename = "./tests/basis/cc-pvdz.gamess-us.dat";
+	std::string filename = "./tests/basis/cc-pvtz.gamess-us.dat";
 	_Basis bs;
 	bs.read( filename ); 
 	
