@@ -102,8 +102,18 @@ $$ = \left( \left( \frac{\pi}{2\alpha_i}\right)^{3/2} \left(\frac{1}{4\alpha_i}\
 $$ = \left(\sqrt{ \frac{2\alpha_i}{\pi} } \right)^{3/4}\left(\frac{(4\alpha_i)^l}{(2k-1)!!(2m-1)!!(2n-1)!!}\right)^{1/2}$$
 
 
+$$\langle\chi|\chi\rangle = %
+	 \sum_{i,j}C_iC_j\sum_{\substack { \{k,m,n\},\\ \{k',m',n'\} }} N_i(k,m,n)N_j(k',m',n') I_{ij}(k,m,n,k',m',n')$$
+$$I_{ij}(k,m,n,k',m',n') = \int x^{k+k'}y^{m+m'}z^{n+n'}e^{-(\alpha_i+\alpha_j)r^2}\,dxdydz = $$
+$$ = I_{ij}(k,k')I_{ij}(m,m')I_{ij}(n,n')$$
+$$ I_{ij}(k,k') = \int x^{k+k'}e^{-(\alpha_i+\alpha_j)x^2}\,dx$$
+$$ I_{ij}(m,m') = \int y^{m+m'}e^{-(\alpha_i+\alpha_j)y^2}\,dy$$
+$$ I_{ij}(n,n') = \int z^{n+n'}e^{-(\alpha_i+\alpha_j)z^2}\,dz$$
 
-
+Если хотя бы одна из сумм: $(k + k')$, $(m + m')$, $(n + n')$ --- нечетна, то весь интеграл равен нулю. Иначе:
+$$ I_{ij}(k,k') = \frac{(k+k'-1)!!\sqrt{\pi}}{2^{(k+k')/2}(\alpha_i+\alpha_j)^{(k+k'+1)/2}}$$
+$$ I_{ij}(k,m,n,k',m',n') = \frac{(k+k'-1)!!(m+m'-1)!!(n+n'-1)!!\pi^{3/2}}{2^{(L+L')/2}(\alpha_i+\alpha_j)^{(L+L'+3)/2}}$$
+где $L = k+m+n,\ L' = k' + m' + n'$
 %$$1 = N_i^2\int_{\infty}^{\infty} e^{-2\alpha_i r^2} dxdydz = N_i^2 \int_0^{2\pi}\int_0^{\pi}\int_0^{\infty} e^{-2\alpha_i r^2} r^2\sin\theta\,drd\theta d\varphi = $$
 %$$ = 4\pi N_i^2 \int_0^{\infty} e^{-2\alpha_i r^2} r^2\,dr = 2\pi N_i^2 \int_{\infty}^{\infty} e^{-2\alpha_i r^2} r^2\,dr = $$
 %$$ = -\pi N_i^2\frac{\partial}{\partial \alpha_i} \int_0^{\infty} e^{-2\alpha_i r^2} \,dr = %
