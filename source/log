@@ -6,226 +6,258 @@ Primitive: (exponent) 13.01; (coefficient): 0.0961067; (quantumNumbers) 0 0 0
 Primitive: (exponent) 1.962; (coefficient): 0.16302; (quantumNumbers) 0 0 0
 Primitive: (exponent) 0.4446; (coefficient): 0.185545; (quantumNumbers) 0 0 0
 Primitive: (exponent) 0.122; (coefficient): 0.0737438; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.122; (coefficient): 0.147123; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.12200; (coefficient): 0.14712; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.02974; (coefficient): 0.0510406; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.02974; (coefficient): 0.05104; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.727; (coefficient): 0.956881; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.727; (coefficient): 0.956881; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.727; (coefficient): 0.956881; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.72700; (coefficient): 0.95688; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.72700; (coefficient): 0.95688; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.72700; (coefficient): 0.95688; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.141; (coefficient): 0.123158; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.141; (coefficient): 0.123158; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.141; (coefficient): 0.123158; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.14100; (coefficient): 0.12316; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.14100; (coefficient): 0.12316; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.14100; (coefficient): 0.12316; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Element name: CARBON
 Angular part: S
 Number of added primitives: 9
-Primitive: (exponent) 6665; (coefficient): 0.363803; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1000; (coefficient): 0.675392; (quantumNumbers) 0 0 0
-Primitive: (exponent) 228; (coefficient): 1.1323; (quantumNumbers) 0 0 0
-Primitive: (exponent) 64.71; (coefficient): 1.654; (quantumNumbers) 0 0 0
-Primitive: (exponent) 21.06; (coefficient): 1.92498; (quantumNumbers) 0 0 0
-Primitive: (exponent) 7.495; (coefficient): 1.44815; (quantumNumbers) 0 0 0
-Primitive: (exponent) 2.797; (coefficient): 0.439427; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.5215; (coefficient): 0.0066498; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.1596; (coefficient): -0.000574264; (quantumNumbers) 0 0 0
+Primitive: (exponent) 6665.00000; (coefficient): 0.36380; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1000.00000; (coefficient): 0.67539; (quantumNumbers) 0 0 0
+Primitive: (exponent) 228.00000; (coefficient): 1.13230; (quantumNumbers) 0 0 0
+Primitive: (exponent) 64.71000; (coefficient): 1.65400; (quantumNumbers) 0 0 0
+Primitive: (exponent) 21.06000; (coefficient): 1.92498; (quantumNumbers) 0 0 0
+Primitive: (exponent) 7.49500; (coefficient): 1.44815; (quantumNumbers) 0 0 0
+Primitive: (exponent) 2.79700; (coefficient): 0.43943; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.52150; (coefficient): 0.00665; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.15960; (coefficient): -0.00057; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 9
-Primitive: (exponent) 6665; (coefficient): -0.0767561; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1000; (coefficient): -0.146257; (quantumNumbers) 0 0 0
-Primitive: (exponent) 228; (coefficient): -0.239407; (quantumNumbers) 0 0 0
-Primitive: (exponent) 64.71; (coefficient): -0.379069; (quantumNumbers) 0 0 0
-Primitive: (exponent) 21.06; (coefficient): -0.448104; (quantumNumbers) 0 0 0
-Primitive: (exponent) 7.495; (coefficient): -0.4842; (quantumNumbers) 0 0 0
-Primitive: (exponent) 2.797; (coefficient): -0.196168; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.5215; (coefficient): 0.238162; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.1596; (coefficient): 0.104468; (quantumNumbers) 0 0 0
+Primitive: (exponent) 6665.00000; (coefficient): -0.07676; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1000.00000; (coefficient): -0.14626; (quantumNumbers) 0 0 0
+Primitive: (exponent) 228.00000; (coefficient): -0.23941; (quantumNumbers) 0 0 0
+Primitive: (exponent) 64.71000; (coefficient): -0.37907; (quantumNumbers) 0 0 0
+Primitive: (exponent) 21.06000; (coefficient): -0.44810; (quantumNumbers) 0 0 0
+Primitive: (exponent) 7.49500; (coefficient): -0.48420; (quantumNumbers) 0 0 0
+Primitive: (exponent) 2.79700; (coefficient): -0.19617; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.52150; (coefficient): 0.23816; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.15960; (coefficient): 0.10447; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.1596; (coefficient): 0.179964; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.15960; (coefficient): 0.17996; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.0469; (coefficient): 0.0718273; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.04690; (coefficient): 0.07183; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: P
 Number of added primitives: 12
-Primitive: (exponent) 9.439; (coefficient): 0.898721; (quantumNumbers) 0 0 1
-Primitive: (exponent) 9.439; (coefficient): 0.898721; (quantumNumbers) 0 1 0
-Primitive: (exponent) 9.439; (coefficient): 0.898721; (quantumNumbers) 1 0 0
-Primitive: (exponent) 2.002; (coefficient): 0.711071; (quantumNumbers) 0 0 1
-Primitive: (exponent) 2.002; (coefficient): 0.711071; (quantumNumbers) 0 1 0
-Primitive: (exponent) 2.002; (coefficient): 0.711071; (quantumNumbers) 1 0 0
-Primitive: (exponent) 0.5456; (coefficient): 0.339917; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.5456; (coefficient): 0.339917; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.5456; (coefficient): 0.339917; (quantumNumbers) 1 0 0
-Primitive: (exponent) 0.1517; (coefficient): 0.0632701; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.1517; (coefficient): 0.0632701; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.1517; (coefficient): 0.0632701; (quantumNumbers) 1 0 0
+Primitive: (exponent) 9.43900; (coefficient): 0.89872; (quantumNumbers) 0 0 1
+Primitive: (exponent) 9.43900; (coefficient): 0.89872; (quantumNumbers) 0 1 0
+Primitive: (exponent) 9.43900; (coefficient): 0.89872; (quantumNumbers) 1 0 0
+Primitive: (exponent) 2.00200; (coefficient): 0.71107; (quantumNumbers) 0 0 1
+Primitive: (exponent) 2.00200; (coefficient): 0.71107; (quantumNumbers) 0 1 0
+Primitive: (exponent) 2.00200; (coefficient): 0.71107; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.54560; (coefficient): 0.33992; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.54560; (coefficient): 0.33992; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.54560; (coefficient): 0.33992; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.15170; (coefficient): 0.06327; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.15170; (coefficient): 0.06327; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.15170; (coefficient): 0.06327; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.1517; (coefficient): 0.13495; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.1517; (coefficient): 0.13495; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.1517; (coefficient): 0.13495; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.15170; (coefficient): 0.13495; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.15170; (coefficient): 0.13495; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.15170; (coefficient): 0.13495; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.04041; (coefficient): 0.0258256; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.04041; (coefficient): 0.0258256; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.04041; (coefficient): 0.0258256; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.04041; (coefficient): 0.02583; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.04041; (coefficient): 0.02583; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.04041; (coefficient): 0.02583; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: D
 Number of added primitives: 6
-Primitive: (exponent) 0.55; (coefficient): 0.578155; (quantumNumbers) 0 0 2
-Primitive: (exponent) 0.55; (coefficient): 1.00139; (quantumNumbers) 0 1 1
-Primitive: (exponent) 0.55; (coefficient): 0.578155; (quantumNumbers) 0 2 0
-Primitive: (exponent) 0.55; (coefficient): 1.00139; (quantumNumbers) 1 0 1
-Primitive: (exponent) 0.55; (coefficient): 1.00139; (quantumNumbers) 1 1 0
-Primitive: (exponent) 0.55; (coefficient): 0.578155; (quantumNumbers) 2 0 0
+Primitive: (exponent) 0.55000; (coefficient): 0.57815; (quantumNumbers) 0 0 2
+Primitive: (exponent) 0.55000; (coefficient): 1.00139; (quantumNumbers) 0 1 1
+Primitive: (exponent) 0.55000; (coefficient): 0.57815; (quantumNumbers) 0 2 0
+Primitive: (exponent) 0.55000; (coefficient): 1.00139; (quantumNumbers) 1 0 1
+Primitive: (exponent) 0.55000; (coefficient): 1.00139; (quantumNumbers) 1 1 0
+Primitive: (exponent) 0.55000; (coefficient): 0.57815; (quantumNumbers) 2 0 0
+(BasisFunction) sum = 8.00000
 Angular part: D
 Number of added primitives: 6
-Primitive: (exponent) 0.151; (coefficient): 0.0602031; (quantumNumbers) 0 0 2
-Primitive: (exponent) 0.151; (coefficient): 0.104275; (quantumNumbers) 0 1 1
-Primitive: (exponent) 0.151; (coefficient): 0.0602031; (quantumNumbers) 0 2 0
-Primitive: (exponent) 0.151; (coefficient): 0.104275; (quantumNumbers) 1 0 1
-Primitive: (exponent) 0.151; (coefficient): 0.104275; (quantumNumbers) 1 1 0
-Primitive: (exponent) 0.151; (coefficient): 0.0602031; (quantumNumbers) 2 0 0
+Primitive: (exponent) 0.15100; (coefficient): 0.06020; (quantumNumbers) 0 0 2
+Primitive: (exponent) 0.15100; (coefficient): 0.10427; (quantumNumbers) 0 1 1
+Primitive: (exponent) 0.15100; (coefficient): 0.06020; (quantumNumbers) 0 2 0
+Primitive: (exponent) 0.15100; (coefficient): 0.10427; (quantumNumbers) 1 0 1
+Primitive: (exponent) 0.15100; (coefficient): 0.10427; (quantumNumbers) 1 1 0
+Primitive: (exponent) 0.15100; (coefficient): 0.06020; (quantumNumbers) 2 0 0
+(BasisFunction) sum = 8.00000
 Element name: NITROGEN
 Angular part: S
 Number of added primitives: 9
-Primitive: (exponent) 9046; (coefficient): 0.462754; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1357; (coefficient): 0.858723; (quantumNumbers) 0 0 0
-Primitive: (exponent) 309.3; (coefficient): 1.44059; (quantumNumbers) 0 0 0
-Primitive: (exponent) 87.73; (coefficient): 2.10853; (quantumNumbers) 0 0 0
-Primitive: (exponent) 28.56; (coefficient): 2.45415; (quantumNumbers) 0 0 0
-Primitive: (exponent) 10.21; (coefficient): 1.82592; (quantumNumbers) 0 0 0
-Primitive: (exponent) 3.838; (coefficient): 0.543758; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.7466; (coefficient): 0.00883839; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.2248; (coefficient): -0.000666393; (quantumNumbers) 0 0 0
+Primitive: (exponent) 9046.00000; (coefficient): 0.46275; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1357.00000; (coefficient): 0.85872; (quantumNumbers) 0 0 0
+Primitive: (exponent) 309.30000; (coefficient): 1.44059; (quantumNumbers) 0 0 0
+Primitive: (exponent) 87.73000; (coefficient): 2.10853; (quantumNumbers) 0 0 0
+Primitive: (exponent) 28.56000; (coefficient): 2.45415; (quantumNumbers) 0 0 0
+Primitive: (exponent) 10.21000; (coefficient): 1.82592; (quantumNumbers) 0 0 0
+Primitive: (exponent) 3.83800; (coefficient): 0.54376; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.74660; (coefficient): 0.00884; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.22480; (coefficient): -0.00067; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 9
-Primitive: (exponent) 9046; (coefficient): -0.101145; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1357; (coefficient): -0.192492; (quantumNumbers) 0 0 0
-Primitive: (exponent) 309.3; (coefficient): -0.314968; (quantumNumbers) 0 0 0
-Primitive: (exponent) 87.73; (coefficient): -0.501437; (quantumNumbers) 0 0 0
-Primitive: (exponent) 28.56; (coefficient): -0.593976; (quantumNumbers) 0 0 0
-Primitive: (exponent) 10.21; (coefficient): -0.643503; (quantumNumbers) 0 0 0
-Primitive: (exponent) 3.838; (coefficient): -0.238093; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.7466; (coefficient): 0.314268; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.2248; (coefficient): 0.134678; (quantumNumbers) 0 0 0
+Primitive: (exponent) 9046.00000; (coefficient): -0.10114; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1357.00000; (coefficient): -0.19249; (quantumNumbers) 0 0 0
+Primitive: (exponent) 309.30000; (coefficient): -0.31497; (quantumNumbers) 0 0 0
+Primitive: (exponent) 87.73000; (coefficient): -0.50144; (quantumNumbers) 0 0 0
+Primitive: (exponent) 28.56000; (coefficient): -0.59398; (quantumNumbers) 0 0 0
+Primitive: (exponent) 10.21000; (coefficient): -0.64350; (quantumNumbers) 0 0 0
+Primitive: (exponent) 3.83800; (coefficient): -0.23809; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.74660; (coefficient): 0.31427; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.22480; (coefficient): 0.13468; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.2248; (coefficient): 0.232679; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.22480; (coefficient): 0.23268; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.06124; (coefficient): 0.0877377; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.06124; (coefficient): 0.08774; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: P
 Number of added primitives: 12
-Primitive: (exponent) 13.55; (coefficient): 1.47926; (quantumNumbers) 0 0 1
-Primitive: (exponent) 13.55; (coefficient): 1.47926; (quantumNumbers) 0 1 0
-Primitive: (exponent) 13.55; (coefficient): 1.47926; (quantumNumbers) 1 0 0
-Primitive: (exponent) 2.917; (coefficient): 1.18007; (quantumNumbers) 0 0 1
-Primitive: (exponent) 2.917; (coefficient): 1.18007; (quantumNumbers) 0 1 0
-Primitive: (exponent) 2.917; (coefficient): 1.18007; (quantumNumbers) 1 0 0
-Primitive: (exponent) 0.7973; (coefficient): 0.548036; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.7973; (coefficient): 0.548036; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.7973; (coefficient): 0.548036; (quantumNumbers) 1 0 0
-Primitive: (exponent) 0.2185; (coefficient): 0.0984232; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.2185; (coefficient): 0.0984232; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.2185; (coefficient): 0.0984232; (quantumNumbers) 1 0 0
+Primitive: (exponent) 13.55000; (coefficient): 1.47926; (quantumNumbers) 0 0 1
+Primitive: (exponent) 13.55000; (coefficient): 1.47926; (quantumNumbers) 0 1 0
+Primitive: (exponent) 13.55000; (coefficient): 1.47926; (quantumNumbers) 1 0 0
+Primitive: (exponent) 2.91700; (coefficient): 1.18007; (quantumNumbers) 0 0 1
+Primitive: (exponent) 2.91700; (coefficient): 1.18007; (quantumNumbers) 0 1 0
+Primitive: (exponent) 2.91700; (coefficient): 1.18007; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.79730; (coefficient): 0.54804; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.79730; (coefficient): 0.54804; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.79730; (coefficient): 0.54804; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.21850; (coefficient): 0.09842; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.21850; (coefficient): 0.09842; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.21850; (coefficient): 0.09842; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.2185; (coefficient): 0.212939; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.2185; (coefficient): 0.212939; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.2185; (coefficient): 0.212939; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.21850; (coefficient): 0.21294; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.21850; (coefficient): 0.21294; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.21850; (coefficient): 0.21294; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.05611; (coefficient): 0.0389261; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.05611; (coefficient): 0.0389261; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.05611; (coefficient): 0.0389261; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.05611; (coefficient): 0.03893; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.05611; (coefficient): 0.03893; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.05611; (coefficient): 0.03893; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: D
 Number of added primitives: 6
-Primitive: (exponent) 0.817; (coefficient): 1.15557; (quantumNumbers) 0 0 2
-Primitive: (exponent) 0.817; (coefficient): 2.00151; (quantumNumbers) 0 1 1
-Primitive: (exponent) 0.817; (coefficient): 1.15557; (quantumNumbers) 0 2 0
-Primitive: (exponent) 0.817; (coefficient): 2.00151; (quantumNumbers) 1 0 1
-Primitive: (exponent) 0.817; (coefficient): 2.00151; (quantumNumbers) 1 1 0
-Primitive: (exponent) 0.817; (coefficient): 1.15557; (quantumNumbers) 2 0 0
+Primitive: (exponent) 0.81700; (coefficient): 1.15557; (quantumNumbers) 0 0 2
+Primitive: (exponent) 0.81700; (coefficient): 2.00151; (quantumNumbers) 0 1 1
+Primitive: (exponent) 0.81700; (coefficient): 1.15557; (quantumNumbers) 0 2 0
+Primitive: (exponent) 0.81700; (coefficient): 2.00151; (quantumNumbers) 1 0 1
+Primitive: (exponent) 0.81700; (coefficient): 2.00151; (quantumNumbers) 1 1 0
+Primitive: (exponent) 0.81700; (coefficient): 1.15557; (quantumNumbers) 2 0 0
+(BasisFunction) sum = 8.00000
 Angular part: D
 Number of added primitives: 6
-Primitive: (exponent) 0.23; (coefficient): 0.125728; (quantumNumbers) 0 0 2
-Primitive: (exponent) 0.23; (coefficient): 0.217768; (quantumNumbers) 0 1 1
-Primitive: (exponent) 0.23; (coefficient): 0.125728; (quantumNumbers) 0 2 0
-Primitive: (exponent) 0.23; (coefficient): 0.217768; (quantumNumbers) 1 0 1
-Primitive: (exponent) 0.23; (coefficient): 0.217768; (quantumNumbers) 1 1 0
-Primitive: (exponent) 0.23; (coefficient): 0.125728; (quantumNumbers) 2 0 0
+Primitive: (exponent) 0.23000; (coefficient): 0.12573; (quantumNumbers) 0 0 2
+Primitive: (exponent) 0.23000; (coefficient): 0.21777; (quantumNumbers) 0 1 1
+Primitive: (exponent) 0.23000; (coefficient): 0.12573; (quantumNumbers) 0 2 0
+Primitive: (exponent) 0.23000; (coefficient): 0.21777; (quantumNumbers) 1 0 1
+Primitive: (exponent) 0.23000; (coefficient): 0.21777; (quantumNumbers) 1 1 0
+Primitive: (exponent) 0.23000; (coefficient): 0.12573; (quantumNumbers) 2 0 0
+(BasisFunction) sum = 8.00000
 Element name: OXYGEN
 Angular part: S
 Number of added primitives: 9
-Primitive: (exponent) 11720; (coefficient): 0.569986; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1759; (coefficient): 1.05888; (quantumNumbers) 0 0 0
-Primitive: (exponent) 400.8; (coefficient): 1.77717; (quantumNumbers) 0 0 0
-Primitive: (exponent) 113.7; (coefficient): 2.60071; (quantumNumbers) 0 0 0
-Primitive: (exponent) 37.03; (coefficient): 3.02836; (quantumNumbers) 0 0 0
-Primitive: (exponent) 13.27; (coefficient): 2.2235; (quantumNumbers) 0 0 0
-Primitive: (exponent) 5.025; (coefficient): 0.648119; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1.013; (coefficient): 0.0111242; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.3023; (coefficient): -0.000751103; (quantumNumbers) 0 0 0
+Primitive: (exponent) 11720.00000; (coefficient): 0.56999; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1759.00000; (coefficient): 1.05888; (quantumNumbers) 0 0 0
+Primitive: (exponent) 400.80000; (coefficient): 1.77717; (quantumNumbers) 0 0 0
+Primitive: (exponent) 113.70000; (coefficient): 2.60071; (quantumNumbers) 0 0 0
+Primitive: (exponent) 37.03000; (coefficient): 3.02836; (quantumNumbers) 0 0 0
+Primitive: (exponent) 13.27000; (coefficient): 2.22350; (quantumNumbers) 0 0 0
+Primitive: (exponent) 5.02500; (coefficient): 0.64812; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1.01300; (coefficient): 0.01112; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.30230; (coefficient): -0.00075; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 9
-Primitive: (exponent) 11720; (coefficient): -0.128448; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1759; (coefficient): -0.244491; (quantumNumbers) 0 0 0
-Primitive: (exponent) 400.8; (coefficient): -0.400097; (quantumNumbers) 0 0 0
-Primitive: (exponent) 113.7; (coefficient): -0.638166; (quantumNumbers) 0 0 0
-Primitive: (exponent) 37.03; (coefficient): -0.758785; (quantumNumbers) 0 0 0
-Primitive: (exponent) 13.27; (coefficient): -0.819649; (quantumNumbers) 0 0 0
-Primitive: (exponent) 5.025; (coefficient): -0.279757; (quantumNumbers) 0 0 0
-Primitive: (exponent) 1.013; (coefficient): 0.401106; (quantumNumbers) 0 0 0
-Primitive: (exponent) 0.3023; (coefficient): 0.166422; (quantumNumbers) 0 0 0
+Primitive: (exponent) 11720.00000; (coefficient): -0.12845; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1759.00000; (coefficient): -0.24449; (quantumNumbers) 0 0 0
+Primitive: (exponent) 400.80000; (coefficient): -0.40010; (quantumNumbers) 0 0 0
+Primitive: (exponent) 113.70000; (coefficient): -0.63817; (quantumNumbers) 0 0 0
+Primitive: (exponent) 37.03000; (coefficient): -0.75878; (quantumNumbers) 0 0 0
+Primitive: (exponent) 13.27000; (coefficient): -0.81965; (quantumNumbers) 0 0 0
+Primitive: (exponent) 5.02500; (coefficient): -0.27976; (quantumNumbers) 0 0 0
+Primitive: (exponent) 1.01300; (coefficient): 0.40111; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.30230; (coefficient): 0.16642; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.3023; (coefficient): 0.290562; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.30230; (coefficient): 0.29056; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: S
 Number of added primitives: 1
-Primitive: (exponent) 0.07896; (coefficient): 0.106161; (quantumNumbers) 0 0 0
+Primitive: (exponent) 0.07896; (coefficient): 0.10616; (quantumNumbers) 0 0 0
+(BasisFunction) sum = 1.00000
 Angular part: P
 Number of added primitives: 12
-Primitive: (exponent) 17.7; (coefficient): 2.22616; (quantumNumbers) 0 0 1
-Primitive: (exponent) 17.7; (coefficient): 2.22616; (quantumNumbers) 0 1 0
-Primitive: (exponent) 17.7; (coefficient): 2.22616; (quantumNumbers) 1 0 0
-Primitive: (exponent) 3.854; (coefficient): 1.76198; (quantumNumbers) 0 0 1
-Primitive: (exponent) 3.854; (coefficient): 1.76198; (quantumNumbers) 0 1 0
-Primitive: (exponent) 3.854; (coefficient): 1.76198; (quantumNumbers) 1 0 0
-Primitive: (exponent) 1.046; (coefficient): 0.767079; (quantumNumbers) 0 0 1
-Primitive: (exponent) 1.046; (coefficient): 0.767079; (quantumNumbers) 0 1 0
-Primitive: (exponent) 1.046; (coefficient): 0.767079; (quantumNumbers) 1 0 0
-Primitive: (exponent) 0.2753; (coefficient): 0.130905; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.2753; (coefficient): 0.130905; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.2753; (coefficient): 0.130905; (quantumNumbers) 1 0 0
+Primitive: (exponent) 17.70000; (coefficient): 2.22616; (quantumNumbers) 0 0 1
+Primitive: (exponent) 17.70000; (coefficient): 2.22616; (quantumNumbers) 0 1 0
+Primitive: (exponent) 17.70000; (coefficient): 2.22616; (quantumNumbers) 1 0 0
+Primitive: (exponent) 3.85400; (coefficient): 1.76198; (quantumNumbers) 0 0 1
+Primitive: (exponent) 3.85400; (coefficient): 1.76198; (quantumNumbers) 0 1 0
+Primitive: (exponent) 3.85400; (coefficient): 1.76198; (quantumNumbers) 1 0 0
+Primitive: (exponent) 1.04600; (coefficient): 0.76708; (quantumNumbers) 0 0 1
+Primitive: (exponent) 1.04600; (coefficient): 0.76708; (quantumNumbers) 0 1 0
+Primitive: (exponent) 1.04600; (coefficient): 0.76708; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.27530; (coefficient): 0.13091; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.27530; (coefficient): 0.13091; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.27530; (coefficient): 0.13091; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.2753; (coefficient): 0.284248; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.2753; (coefficient): 0.284248; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.2753; (coefficient): 0.284248; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.27530; (coefficient): 0.28425; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.27530; (coefficient): 0.28425; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.27530; (coefficient): 0.28425; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: P
 Number of added primitives: 3
-Primitive: (exponent) 0.06856; (coefficient): 0.0500067; (quantumNumbers) 0 0 1
-Primitive: (exponent) 0.06856; (coefficient): 0.0500067; (quantumNumbers) 0 1 0
-Primitive: (exponent) 0.06856; (coefficient): 0.0500067; (quantumNumbers) 1 0 0
+Primitive: (exponent) 0.06856; (coefficient): 0.05001; (quantumNumbers) 0 0 1
+Primitive: (exponent) 0.06856; (coefficient): 0.05001; (quantumNumbers) 0 1 0
+Primitive: (exponent) 0.06856; (coefficient): 0.05001; (quantumNumbers) 1 0 0
+(BasisFunction) sum = 3.00000
 Angular part: D
 Number of added primitives: 6
-Primitive: (exponent) 1.185; (coefficient): 2.21522; (quantumNumbers) 0 0 2
-Primitive: (exponent) 1.185; (coefficient): 3.83687; (quantumNumbers) 0 1 1
-Primitive: (exponent) 1.185; (coefficient): 2.21522; (quantumNumbers) 0 2 0
-Primitive: (exponent) 1.185; (coefficient): 3.83687; (quantumNumbers) 1 0 1
-Primitive: (exponent) 1.185; (coefficient): 3.83687; (quantumNumbers) 1 1 0
-Primitive: (exponent) 1.185; (coefficient): 2.21522; (quantumNumbers) 2 0 0
+Primitive: (exponent) 1.18500; (coefficient): 2.21522; (quantumNumbers) 0 0 2
+Primitive: (exponent) 1.18500; (coefficient): 3.83687; (quantumNumbers) 0 1 1
+Primitive: (exponent) 1.18500; (coefficient): 2.21522; (quantumNumbers) 0 2 0
+Primitive: (exponent) 1.18500; (coefficient): 3.83687; (quantumNumbers) 1 0 1
+Primitive: (exponent) 1.18500; (coefficient): 3.83687; (quantumNumbers) 1 1 0
+Primitive: (exponent) 1.18500; (coefficient): 2.21522; (quantumNumbers) 2 0 0
+(BasisFunction) sum = 8.00000
 Angular part: D
 Number of added primitives: 6
-Primitive: (exponent) 0.332; (coefficient): 0.239002; (quantumNumbers) 0 0 2
-Primitive: (exponent) 0.332; (coefficient): 0.413963; (quantumNumbers) 0 1 1
-Primitive: (exponent) 0.332; (coefficient): 0.239002; (quantumNumbers) 0 2 0
-Primitive: (exponent) 0.332; (coefficient): 0.413963; (quantumNumbers) 1 0 1
-Primitive: (exponent) 0.332; (coefficient): 0.413963; (quantumNumbers) 1 1 0
-Primitive: (exponent) 0.332; (coefficient): 0.239002; (quantumNumbers) 2 0 0
+Primitive: (exponent) 0.33200; (coefficient): 0.23900; (quantumNumbers) 0 0 2
+Primitive: (exponent) 0.33200; (coefficient): 0.41396; (quantumNumbers) 0 1 1
+Primitive: (exponent) 0.33200; (coefficient): 0.23900; (quantumNumbers) 0 2 0
+Primitive: (exponent) 0.33200; (coefficient): 0.41396; (quantumNumbers) 1 0 1
+Primitive: (exponent) 0.33200; (coefficient): 0.41396; (quantumNumbers) 1 1 0
+Primitive: (exponent) 0.33200; (coefficient): 0.23900; (quantumNumbers) 2 0 0
+(BasisFunction) sum = 8.00000

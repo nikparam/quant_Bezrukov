@@ -72,13 +72,22 @@ public:
 					 (primitives[i].get_qNumbers().j + primitives[j].get_qNumbers().j) % 2 == 0 &&
 					 (primitives[i].get_qNumbers().k + primitives[j].get_qNumbers().k) % 2 == 0 )
 				{
-					//cout << "(first primitive) " <<  primitives[i].get_qNumbers().i << " " << primitives[i].get_qNumbers().j << " " << primitives[i].get_qNumbers().k << endl;
-					//cout << "(second primitive) " << primitives[j].get_qNumbers().i << " " << primitives[j].get_qNumbers().j << " " << primitives[j].get_qNumbers().k << endl;
+						//cout << "(first primitive " << i << ") " <<  primitives[i].get_qNumbers().i << " " << primitives[i].get_qNumbers().j << " " << primitives[i].get_qNumbers().k << endl;
+						//cout << "(second primitive " << j << ") " << primitives[j].get_qNumbers().i << " " << primitives[j].get_qNumbers().j << " " << primitives[j].get_qNumbers().k << endl;
 					double r = 0.5 * (primitives[i].get_qNumbers().getAngularMomentum() + primitives[j].get_qNumbers().getAngularMomentum());
-					double temp =  primitives[i].get_coefficient() * primitives[j].get_coefficient() * pow(M_PI, 1.5) / pow(2.0, r) / pow(primitives[i].get_exponent() + primitives[j].get_exponent(), r + 1.5); 
-				
+					double temp =  primitives[i].get_coefficient() * primitives[j].get_coefficient() * pow(M_PI, 1.5) / pow(2.0, r) / pow(primitives[i].get_exponent() + primitives[j].get_exponent(), r + 1.5);
+				   	double fact = MathUtils::doubleFactorial(primitives[i].get_qNumbers().i + primitives[j].get_qNumbers().i - 1) * 
+						 		  MathUtils::doubleFactorial(primitives[i].get_qNumbers().j + primitives[j].get_qNumbers().j - 1) *
+							  	  MathUtils::doubleFactorial(primitives[i].get_qNumbers().k + primitives[j].get_qNumbers().k - 1);	  
+					//cout << "overlap: " << pow(M_PI, 1.5) / pow(2.0, r) / pow(primitives[i].get_exponent() + primitives[j].get_exponent(), r + 1.5) << endl;
 					//cout << "temp: " << temp << endl;
-					sum += temp;
+
+					// диагональные члены учитываем один раз
+					// а внедиагональные нужно прибавить дважды
+					if ( i == j )
+						sum = sum + temp * fact;
+					else
+						sum = sum + 2 * temp * fact;
 				}
 			}
 		}
