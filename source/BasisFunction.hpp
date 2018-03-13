@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 using std::cout;
 using std::endl;
@@ -13,6 +14,7 @@ public:
 	BasisFunction( char angular_part )
 		: angular_part(angular_part)
 	{
+		fillQuantumNumbers();
 	}
 
 	~BasisFunction()
@@ -58,6 +60,33 @@ public:
 						quantumNumbers.emplace_back( i, j, k );
 	}
 
+	void normalize( )
+	{
+		double sum = 0;
+
+		for ( size_t i = 0; i < primitives.size(); i++ )
+		{
+			for ( size_t  j = i; j < primitives.size(); j++ )
+			{
+				if ( (primitives[i].get_qNumbers().i + primitives[j].get_qNumbers().i) % 2 == 0 &&
+					 (primitives[i].get_qNumbers().j + primitives[j].get_qNumbers().j) % 2 == 0 &&
+					 (primitives[i].get_qNumbers().k + primitives[j].get_qNumbers().k) % 2 == 0 )
+				{
+					//cout << "(first primitive) " <<  primitives[i].get_qNumbers().i << " " << primitives[i].get_qNumbers().j << " " << primitives[i].get_qNumbers().k << endl;
+					//cout << "(second primitive) " << primitives[j].get_qNumbers().i << " " << primitives[j].get_qNumbers().j << " " << primitives[j].get_qNumbers().k << endl;
+					double r = 0.5 * (primitives[i].get_qNumbers().getAngularMomentum() + primitives[j].get_qNumbers().getAngularMomentum());
+					double temp =  primitives[i].get_coefficient() * primitives[j].get_coefficient() * pow(M_PI, 1.5) / pow(2.0, r) / pow(primitives[i].get_exponent() + primitives[j].get_exponent(), r + 1.5); 
+				
+					//cout << "temp: " << temp << endl;
+					sum += temp;
+				}
+			}
+		}
+
+		cout << std::fixed << std::setprecision(5);
+		cout << "(BasisFunction) sum = " << sum << endl;
+	}
+
 	void showQuantumNumbers()
 	{
 		cout << "angular part: " << angular_part << endl;
@@ -66,21 +95,21 @@ public:
 		cout << endl << endl;
 	}
 
-	void add_primitive( int n, double exponent, double coefficient )
+	void add_primitive( double exponent, double coefficient )
 	{
-		primitives.emplace_back( n, exponent, coefficient );
-		primitives.end()[-1].renormalize();
+		// добавляется примитив, тут же перенормируется, т.к. для этого есть все необходимое 
+		for ( auto & qN : quantumNumbers )
+			primitives.emplace_back( exponent, coefficient, qN );
 	}
-
-	Primitive * last_primitive ( )
-	{
-		return &primitives.end()[-1];
-	}	
 
 	void show()
 	{
 		cout << "Angular part: " << angular_part << endl;
 		cout << "Number of added primitives: " << primitives.size() << endl;
+		for ( auto p : primitives )
+			p.show();
+
+		normalize();
 	}
 
 private:

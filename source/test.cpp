@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include "MathUtils.hpp"
+
 using namespace std;
 
 struct Foo
@@ -11,15 +13,13 @@ struct Foo
  
 int main()
 {
-	Foo * foo = new Foo;
-	vector<Foo*> foo_vector;
-	foo_vector.push_back( foo );
+	cout << "1!!: " << MathUtils::doubleFactorial( 1 ) << endl;
+	cout << "2!!: " << MathUtils::doubleFactorial( 2 ) << endl;
+	cout << "3!!: " << MathUtils::doubleFactorial( 3 ) << endl;
+	cout << "4!!: " << MathUtils::doubleFactorial( 4 ) << endl;
+	cout << "5!!: " << MathUtils::doubleFactorial( 5 ) << endl;
+	cout << "6!!: " << MathUtils::doubleFactorial( 6 ) << endl;
+	cout << "7!!: " << MathUtils::doubleFactorial( 7 ) << endl;
 	
-	foo = new Foo;
-	foo_vector.push_back( foo );
-
-	for ( Foo * obj : foo_vector )
-		delete obj;
-
 	return 0;
 }

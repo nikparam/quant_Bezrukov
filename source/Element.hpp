@@ -27,6 +27,8 @@ public:
 	void show()
 	{
 		cout << "Element name: " << name << endl;
+		for ( auto bf : basis_functions )
+			bf->show();
 	}
 
 private:

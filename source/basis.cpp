@@ -105,12 +105,15 @@ public:
 			
 			if ( !std::isdigit( first_symbol, loc) )
 			{
+				// создается базисная функция;
+				// внутри BasisFunction генерируется набор троек QuantumNumbers, с которыми будут генерироваться примитивы внутри этой базисной функции
 				bfp = new BasisFunction(first_symbol);
 				
 				// скармливаем функции stoi указатель на следующую за буквой позицию строки
 				// например в строке "S  4" даем указатель на пробел, stoi стрипит пробелы и возвращает (int) 4
 				primitives_counter = std::stoi(&current_string[1]);
 			}
+
 			// парсим строку вида "номер примитива, показатель экспоненты, коэффициент контрактации"
 			// добавляем примитив в базисную функцию
 			else
@@ -119,7 +122,7 @@ public:
 				int i;
 				double alpha, coeff;
 				ss >> i >> alpha >> coeff;
-				bfp->add_primitive( i, alpha, coeff );
+				bfp->add_primitive( alpha, coeff );
 
 				// как только номер примитива совпадает с заявленным количеством примитивов, добавляем функцию текущему элементу
 				if ( i == primitives_counter )
