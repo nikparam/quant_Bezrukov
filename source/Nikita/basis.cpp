@@ -65,24 +65,22 @@ private:
 class _Primitive{
 
 public:
-	_Primitive( int i, double alpha, double coeff, _Triple powers ): \
-			i(i),     alpha(alpha), coeff(coeff),  powers(powers) { // инициализируем
-		renormalize();
+	_Primitive( int num, double alpha, double coeff ): \
+			num(num), alpha(alpha), coeff(coeff) { // инициализируем
 	} 
 	~_Primitive() { }
 
 	// определим функции для вытаскивания свойств примитива (чтобы не делать их public переменными)
-	int get_i( ) { return i; }
+	int get_num( ) { return num; }
 	double get_alpha( ) { return alpha; }
 	double get_coeff( ) { return coeff; }
-	_Triple get_powers() { return powers; }
 
 	// определим функцию для пересчета коэффициентов контрактации с учетом нормировки примитивов
 
-	void renormalize( ){
-		int i = powers.get_i();
-		int j = powers.get_j();
-		int k = powers.get_k();
+	void renorm( _Triple triple ){
+		int i = triple.get_i();
+		int j = triple.get_j();
+		int k = triple.get_k();
 
 		double N_x = factor( i, 2.0 * alpha );
 		double N_y = factor( j, 2.0 * alpha );
@@ -93,23 +91,63 @@ public:
 	}
 
 private: // задаем внутренние переменные --- недоступны извне
-	int i;
+	int num;
 	double alpha, coeff;
-	_Triple powers;
 };
-
 
 class _Projection{
 
 public:
-	_Projection( _Triple triple ): triple(triple){}
+	_Projection( _Triple triple ): triple(triple) {}
 	~_Projection(){}
 
-	void add_primitives( int i, double alpha, double coeff ){
-		primitives.emplace_back( i, alpha, coeff, triple );
+	void add_primitive( int i, double alpha, double coeff ){
+		primitives.emplace_back( i, alpha, coeff );
+		primitives.end()[-1].renorm( triple );
 	}
 
-private:	
+	double integral( _Primitive p1, _Primitive p2 ){
+
+		int i = triple.get_i();
+		int j = triple.get_j();
+		int k = triple.get_k();
+
+		double coeff1 = p1.get_coeff();
+		double coeff2 = p2.get_coeff();
+
+		double alpha1 = p1.get_alpha();
+		double alpha2 = p2.get_alpha();
+
+		double N_x = factor( i, alpha1 + alpha2 );
+		double N_y = factor( j, alpha1 + alpha2 );
+		double N_z = factor( k, alpha1 + alpha2 );
+
+//		std::cout << "(" << i << j << k << ") " << \
+//				    coeff1 * coeff2 * N_x * N_y * N_z << std::endl;
+		return  coeff1 * coeff2 * N_x * N_y * N_z;
+	}
+
+	double count_norm(){
+		double sum = 0.0;
+		for ( int i = 0; i < primitives.size(); ++i ){
+			for ( int j = 0; j < primitives.size(); ++j ){
+				sum += integral ( primitives[i], primitives[j] ); 
+			}
+		}
+		return sum; 
+	}
+
+	void show(){
+		for( auto & primitive: primitives ){
+			std::cout << primitive.get_num() << ") alpha = " << primitive.get_alpha() \
+					               << " coeff = "  << primitive.get_coeff() << std::endl;
+		}
+	}
+
+	_Triple get_triple() { return triple; }
+	std::vector<_Primitive> get_primitives() { return primitives; }
+
+private:
 	_Triple triple;
 	std::vector<_Primitive> primitives;
 
@@ -124,12 +162,17 @@ public:
 	~_Basis_function(){ //деструктор
 	}
 
+	void add_projections( ){
+		for ( auto & triple: triples){
+			projections.emplace_back( triple );
+		}
+	}
 
 // Добавим метод, дописывающий в набор примитивов новую гауссову функцию
 // функция emplace_back записывает в конец вектора primitives объект класса примитив с параметрами i, alpha, coeff
-	void add_primitive( int i, double alpha, double coeff ){
-		for ( auto t: triples ){
-			primitives.emplace_back( i, alpha, coeff, t );
+	void add_primitive( int num, double alpha, double coeff ){
+		for ( int i = 0; i < triples.size(); ++i ){
+			projections[ i ].add_primitive( num, alpha, coeff );
 		}
 	}
 
@@ -177,72 +220,32 @@ public:
 			}
 		}
 
-	}
+		add_projections();
 
-	double int_two_p( _Primitive p1, _Primitive p2 ){
-
-		int i = p1.get_powers().get_i();
-		int j = p1.get_powers().get_j();
-		int k = p1.get_powers().get_k();
-
-		int i_prime = p2.get_powers().get_i();
-		int j_prime = p2.get_powers().get_j();
-		int k_prime = p2.get_powers().get_k();
-
-		int res1 = ( ( i + i_prime ) % 2 );
-		int res2 = ( ( j + j_prime ) % 2 );
-		int res3 = ( ( k + k_prime ) % 2 );
-
-		if ( res1 == 0 && res2 == 0 && res3 == 0 ){
-
-			double coeff1 = p1.get_coeff();
-			double coeff2 = p2.get_coeff();
-
-			double alpha1 = p1.get_alpha();
-			double alpha2 = p2.get_alpha();
-
-			double N_x = factor( 0.5 * ( i + i_prime ), alpha1 + alpha2 );
-			double N_y = factor( 0.5 * ( j + j_prime ), alpha1 + alpha2 );
-			double N_z = factor( 0.5 * ( k + k_prime ), alpha1 + alpha2 );
-
-			std::cout << "(" << i << j << k << ") " << \
-				     "(" << i_prime << j_prime << k_prime << ") "<< \
-					    coeff1 * coeff2 * N_x * N_y * N_z << std::endl;
-			return  coeff1 * coeff2 * N_x * N_y * N_z;
-			
-		} else { return 0; }
-	}
-
-	void count_norm(){
-		double sum = 0.0;
-		for ( int i = 0; i < primitives.size(); ++i ){
-			for ( int j = 0; j < primitives.size(); ++j ){
-				sum += int_two_p ( primitives[i], primitives[j] ); 
-			}
-		}
-		std::cout << " norm " << sum << std::endl; 
 	}
 
 	char get_ap(){ return angular_part; }
-	std::vector<_Primitive> get_primitives(){ return primitives; }
 	std::vector<_Triple> get_triples(){ return triples; }
+	std::vector<_Projection> get_projections(){ return projections; }
 
 	void show_bf(){
 		std::cout << "--> Successfully created new basis function  of " << angular_part \
-			  << " angular simmetry, contracted from: " << primitives.size() \
+			  << " angular simmetry, contracted from: " << projections.end()[-1].get_primitives().size() \
 			  << " primitive(s)." << std::endl;
 		std::cout << std::endl;
 
 	}
-	void show_p(){
-		for ( auto p: primitives){
-			std::cout << p.get_i() << ") Primitive " << p.get_powers().get_i() \
-								 << p.get_powers().get_j() \
-								 << p.get_powers().get_k() \
-				  << " with exp. mult. " << p.get_alpha() \
-				  << " contract. coeff. " << p.get_coeff() << std::endl;
+
+	void show_norm(){
+		for ( auto & projection: projections ){
+			std::cout << "(" << projection.get_triple().get_i() \
+					 << projection.get_triple().get_j() \
+					 << projection.get_triple().get_k() << "): N = "  << projection.get_primitives().size() << \
+								               " norm = " << projection.count_norm() << std::endl;
+			projection.show();
 		}
 	}
+
 	void show_t(){
 		for ( auto el : triples )
 			el.show();
@@ -251,8 +254,8 @@ public:
 
 private: // задаем параметры
 	char angular_part;
-	std::vector <_Primitive> primitives;
 	std::vector <_Triple> triples;
+	std::vector <_Projection> projections;
 };
 
 // Создадим класс хим. элементов
@@ -387,8 +390,8 @@ public:
 
 				if ( i == primitives_num ) {
 					element_pointer -> add_basis_function( bf_pointer );
-					bf_pointer -> show_p(); 
-					bf_pointer -> count_norm();
+					bf_pointer -> show_bf();
+					bf_pointer -> show_norm();
 //					bf_pointer -> show_t();
 					std::cout << std::endl;
 				}
@@ -416,7 +419,7 @@ private:
 int main(){
 	std::cout << std::fixed << std::setprecision(7);
 
-	std::string filename = "./tests/basis/cc-pvtz.gamess-us.dat";
+	std::string filename = "./tests/basis/cc-pvdz.gamess-us.dat";
 	_Basis bs;
 	bs.read( filename ); 
 	
