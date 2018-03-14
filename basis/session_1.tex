@@ -81,15 +81,15 @@ d-aug-cc-pvTZ водорода = 3s + 2s, 2p + 2p, 1d + 2d (дважды рас�
 (9s,4p,1d)/[3s,2p,1d] = cc-pvDZ --- 9 разных гауссовых примитивов собраны в 3 s--функций, 4 --- в 2 p, 1 --- в одну d.
 
 
-$$ \chi = \sum_{i = 1} ^ K\sum_{\substack { \{k,m,n\} \\ k+m+n = l} } N_i(k,m,n) x^ky^mz^n C_ie^{-\alpha_ir^2} = $$
-$$ =\sum_{i=1}^K C_i\sum_{\substack { \{k,m,n\} \\ k+m+n = l} } N_i(k,m,n)\phi_i(k,m,n) $$
+$$ \chi(k,m,n) = x^ky^mz^n\sum_{i = 1} ^ K N_i(k,m,n)  C_ie^{-\alpha_ir^2} = $$
+$$ =\sum_{i=1}^K C_i N_i(k,m,n)\phi_i(k,m,n) $$
 
 где $C_i$ --- коэффициенты контрактации при нормированных примитивах (из файла базиса)
 
 $$|\phi_i(k,m,n)|^2 = \int x^{2k}y^{2m}z^{2n} e^{-2\alpha_ir^2}\,dxdydz = $$
 $$ = \left( \int x^{2k} e^{-2\alpha_i x^2}\,dx \right)\left( \int y^{2m} e^{-2\alpha_i y^2}\,dy \right)\left( \int z^{2n} e^{-2\alpha_i z^2}\,dz \right)$$
 $$ \int x^{2k} e^{-2\alpha_i x^2}\,dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}\int e^{-2\alpha_i x^2}\, dx = \frac{(-1)^k}{2^k}\frac{\partial^k}{\partial\alpha_i^k}% 
-																	 \sqrt{\frac{\pi}{2\alpha_i}} =$$
+				 \sqrt{\frac{\pi}{2\alpha_i}} =$$
 $$ = \frac{(-1)^k}{2^k}\sqrt{\frac{\pi}{2}}\frac{(-1)^k(2k-1)!!}{2^k}\alpha_i^{-k-1/2} = \frac{(2k-1)!!}{2^{2k}}\sqrt{\frac{\pi}{2}}\alpha_i^{-k-1/2}$$
 $$N_i = \left( |\phi_i(k,m,n)|^2 \right)^{-1/2} = $$ 
 $$ = \left(%
@@ -102,18 +102,17 @@ $$ = \left( \left( \frac{\pi}{2\alpha_i}\right)^{3/2} \left(\frac{1}{4\alpha_i}\
 $$ = \left(\sqrt{ \frac{2\alpha_i}{\pi} } \right)^{3/4}\left(\frac{(4\alpha_i)^l}{(2k-1)!!(2m-1)!!(2n-1)!!}\right)^{1/2}$$
 
 
-$$\langle\chi|\chi\rangle = %
-	 \sum_{i,j}C_iC_j\sum_{\substack { \{k,m,n\},\\ \{k',m',n'\} }} N_i(k,m,n)N_j(k',m',n') I_{ij}(k,m,n,k',m',n')$$
-$$I_{ij}(k,m,n,k',m',n') = \int x^{k+k'}y^{m+m'}z^{n+n'}e^{-(\alpha_i+\alpha_j)r^2}\,dxdydz = $$
-$$ = I_{ij}(k,k')I_{ij}(m,m')I_{ij}(n,n')$$
-$$ I_{ij}(k,k') = \int x^{k+k'}e^{-(\alpha_i+\alpha_j)x^2}\,dx$$
-$$ I_{ij}(m,m') = \int y^{m+m'}e^{-(\alpha_i+\alpha_j)y^2}\,dy$$
-$$ I_{ij}(n,n') = \int z^{n+n'}e^{-(\alpha_i+\alpha_j)z^2}\,dz$$
+$$\langle\chi(k,m,n)|\chi(k,m,n)\rangle = %
+	 \sum_{i,j}C_iC_j N_i(k,m,n)N_j(k,m,n) I_{ij}(k,m,n)$$
+$$I_{ij}(k,m,n) = \int x^{2k}y^{2m}z^{2n}e^{-(\alpha_i+\alpha_j)r^2}\,dxdydz = $$
+$$ = I_{ij}(k)I_{ij}(m)I_{ij}(n)$$
+$$ I_{ij}(k) = \int x^{2k}e^{-(\alpha_i+\alpha_j)x^2}\,dx$$
+$$ I_{ij}(m) = \int y^{2m}e^{-(\alpha_i+\alpha_j)y^2}\,dy$$
+$$ I_{ij}(n) = \int z^{2n}e^{-(\alpha_i+\alpha_j)z^2}\,dz$$
 
-Если хотя бы одна из сумм: $(k + k')$, $(m + m')$, $(n + n')$ --- нечетна, то весь интеграл равен нулю. Иначе:
-$$ I_{ij}(k,k') = \frac{(k+k'-1)!!\sqrt{\pi}}{2^{(k+k')/2}(\alpha_i+\alpha_j)^{(k+k'+1)/2}}$$
-$$ I_{ij}(k,m,n,k',m',n') = \frac{(k+k'-1)!!(m+m'-1)!!(n+n'-1)!!\pi^{3/2}}{2^{(L+L')/2}(\alpha_i+\alpha_j)^{(L+L'+3)/2}}$$
-где $L = k+m+n,\ L' = k' + m' + n'$
+$$ I_{ij}(k) = \frac{(2k-1)!!\sqrt{\pi}}{2^{k}(\alpha_i+\alpha_j)^{(2k+1)/2}}$$
+$$ I_{ij}(k,m,n) = \frac{(2k-1)!!(2m-1)!!(2n-1)!!\pi^{3/2}}{2^{L}(\alpha_i+\alpha_j)^{(2L+3)/2}}$$
+где $L = k+m+n$
 %$$1 = N_i^2\int_{\infty}^{\infty} e^{-2\alpha_i r^2} dxdydz = N_i^2 \int_0^{2\pi}\int_0^{\pi}\int_0^{\infty} e^{-2\alpha_i r^2} r^2\sin\theta\,drd\theta d\varphi = $$
 %$$ = 4\pi N_i^2 \int_0^{\infty} e^{-2\alpha_i r^2} r^2\,dr = 2\pi N_i^2 \int_{\infty}^{\infty} e^{-2\alpha_i r^2} r^2\,dr = $$
 %$$ = -\pi N_i^2\frac{\partial}{\partial \alpha_i} \int_0^{\infty} e^{-2\alpha_i r^2} \,dr = %
