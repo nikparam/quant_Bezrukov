@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>  // библиотека стандартного ввода/вывода
 #include <fstream>   // библиотека ввода/вывода из файла
 #include <vector>    // библиотека для класса векторов
@@ -7,6 +8,9 @@
 #include <locale>    // нужно в isdigit (?)
 #include <sstream>   // для перевода данных из строки в переменные
 #include <cmath>     // библиотека математических функций
+
+#include "BasisFunctionClass.hpp"
+#include "ElementClass.hpp"
 
 //Создадим класс базисных функций
 //его объекты хранят базисные функции всех элементов, лежащих в файле filename
@@ -20,8 +24,8 @@ public:
 		}
 	}
 
-// Проверяем, что файл существует
-// если существуем, вызываем функцию для его чтения
+	// Проверяем, что файл существует
+	// если существует, вызываем функцию для его чтения
 	void read( std::string filename ){
 
 		std::ifstream fin( filename );
@@ -35,8 +39,8 @@ public:
 		fin.close();
 	}
 
-//Функция для чтения файла
-// раскидывает информацию по соответствующим классам
+	//Функция для чтения файла
+	// раскидывает информацию по соответствующим классам
 	void parse_file( std::ifstream & fin ){
 
 		const int MAX_SIZE = 256;
@@ -60,7 +64,7 @@ public:
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
 				if ( element_pointer != NULL ) { // если указатель не пуст, то мы ранее проинициализировали элемент --- пора добавить его в базис
 					elements.push_back( element_pointer ); // Добавляем в массив элементов новый элемент
-					show();
+					show(); // выводим имя нового элемента
 					element_pointer = NULL; // занулим, чтобы показать, что элемент добавлен
 				} 
 				continue;
@@ -71,13 +75,13 @@ public:
 			first_ws = current_string.find_first_of(' ');
 			last_not_ws = current_string.find_last_not_of(' ');
 
-		// Проверяем, что в строке первый пробел встречается только после всех слов
+		// Проверяем, что в строке первый пробел встречается только после всех слов --> мы нашли название элемента
 
 			if ( ( first_ws == std::string::npos ) || ( first_ws > last_not_ws ) ) { 
 				current_element = current_string.substr(current_string.find_first_not_of(' '), \
 								        current_string.find_last_not_of(' ') + 1 ); // вытаскиваем имя
 				element_pointer = new _Element( current_element ); // создаем указатель типа _Element
-				element_pointer -> show();
+				element_pointer -> show(); // выводим имя найденного элемента
 				continue;
 			}
 
@@ -106,14 +110,13 @@ public:
 
 				if ( i == primitives_num ) {
 					element_pointer -> add_basis_function( bf_pointer );
-					bf_pointer -> show_p(); 
-					bf_pointer -> count_norm();
-//					bf_pointer -> show_t();
+					bf_pointer -> show_bf(); // выводим добавленную функцию
+					bf_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
 					std::cout << std::endl;
 				}
 			}
 		}
-		show_end();
+		show_end(); // выводим сообщение о конце файла
 	}
 
 	void show(){
@@ -130,4 +133,5 @@ public:
 private:
 	std::vector<_Element*> elements;
 };
+
 
