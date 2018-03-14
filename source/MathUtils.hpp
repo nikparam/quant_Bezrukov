@@ -2,7 +2,7 @@
 
 namespace MathUtils
 {
-	unsigned int doubleFactorial( unsigned int n )
+	inline unsigned int doubleFactorial( unsigned int n )
 	{
 		if ( n <=  1 ) return 1;
 

@@ -17,7 +17,7 @@ public:
 	{
 	}
 
-	int getAngularMomentum()
+	int getAngularMomentum() const
 	{
 		return i + j + k;
 	}

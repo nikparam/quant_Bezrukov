@@ -2,37 +2,31 @@
 
 #include <vector>
 #include <string>
-
-using std::vector;
-using std::string;
+#include "BasisFunctionBuilder.hpp"
 
 class Element
 {
 public:
-	Element( string name ) : name(name)
+	Element( std::string name ) : name(name)
 	{
 	}
 
 	~Element()
 	{
-		for ( BasisFunction * bf : basis_functions )
+		for ( BasisFunction * bf : basisFunctions )
 			delete bf;
 	}
 
-	void add_basis_function( BasisFunction * bf )
-	{
-		basis_functions.push_back( bf );
-	}
+	void add_basis_functions( BasisFunctionBuilder * bfb );
 
-	void show()
-	{
-		cout << "Element name: " << name << endl;
-		for ( auto bf : basis_functions )
-			bf->show();
-	}
+	void show();
+
+	BasisFunction * getBasisFunction( const int n ) { return basisFunctions.at( n ); }
+
+	size_t getBasisFunctionsCount() { return basisFunctions.size(); }
 
 private:
-	string name;
-	vector<BasisFunction*> basis_functions;
+	std::string name;
+	std::vector<BasisFunction*> basisFunctions;
 };
 

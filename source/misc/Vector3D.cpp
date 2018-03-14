@@ -1,19 +1,11 @@
-#include <iostream>
-#include <vector>
+#include "Vector3D.hpp"
 
-class Vector3D
+Vector3D::Vector3D( double x, double y, double z )
 {
-public:
-	Vector3D( double x, double y, double z )
-	{
-		coords.push_back( x );
-		coords.push_back( y );
-		coords.push_back( z );
-	}
-
-private:
-	vector<double> coords;
-};
+	coords.push_back( x );
+	coords.push_back( y );
+	coords.push_back( z );
+}
 
 Vector3D & Vector3D::operator=( const Vector3D & other)
 {
