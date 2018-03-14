@@ -1,19 +1,28 @@
 C = g++
 CFLAGS = -g --std=c++11
 
-basis: ./source/Nikita/basis.cpp
+cc-pvDZ = './tests/basis/cc-pvdz.gamess-us.dat'
+cc-pvTZ = './tests/basis/cc-pvtz.gamess-us.dat'
 
-	$(C) $(CFLAGS) $^ -o basis
+CODE = ./source/Nikita/basis.cpp
+EXECUTABLE = basis
+FILES = *.log
 
-test1: ./tests/basis/cc-pvdz.gamess-us.dat
+test1: $(EXECUTABLE)
 
-	echo '$^' > basis.log
-	echo '$^' | ./basis >> basis.log
+	echo $(cc-pvDZ) > basis.log
+	echo $(cc-pvDZ) | $(EXECUTABLE) >> basis.log
 
-test2: ./tests/basis/cc-pvtz.gamess-us.dat
+test2: $(EXECUTABLE)
 
-	echo '$^' > basis.log
-	echo '$^' | ./basis >> basis.log
+	echo $(cc-pvTZ) > basis.log
+	echo $(cc-pvTZ) | $(EXECUTABLE) >> basis.log
+
+
+basis: $(CODE)
+
+	$(C) $(CFLAGS) $(CODE) -o $(EXECUTABLE)
 
 clean:
-	rm -rf basis *.log
+
+	rm -rf $(EXECUTABLE) $(FILES)
