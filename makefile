@@ -1,28 +1,44 @@
 C = g++
 CFLAGS = -g --std=c++11
 
-cc-pvDZ = './tests/basis/cc-pvdz.gamess-us.dat'
-cc-pvTZ = './tests/basis/cc-pvtz.gamess-us.dat'
+INPUT = input.dat
+OUTPUT = basis.log
+DIR = result
+
+cc-pvDZ = ./tests/basis/cc-pvdz.gamess-us.dat
+cc-pvTZ = ./tests/basis/cc-pvtz.gamess-us.dat
 
 CODE = ./source/Nikita/basis.cpp
-EXECUTABLE = basis
-FILES = *.log
+EXECUTABLE = ./basis
+FILES = *.log *.dat
 
-test1: $(EXECUTABLE)
+all: clean test
 
-	echo $(cc-pvDZ) > basis.log
-	echo $(cc-pvDZ) | $(EXECUTABLE) >> basis.log
+test: basis test1 test2 MKDIR
 
-test2: $(EXECUTABLE)
+	@$(EXECUTABLE) < $(INPUT) > $(OUTPUT)
+	@mv $(FILES) $(EXECUTABLE) $(DIR)
 
-	echo $(cc-pvTZ) > basis.log
-	echo $(cc-pvTZ) | $(EXECUTABLE) >> basis.log
+MKDIR:
 
+	@mkdir $(DIR)
+
+test1: 
+
+	@echo $(cc-pvDZ) >> $(INPUT)
+
+test2: 
+
+	@echo $(cc-pvTZ) >> $(INPUT)
+
+.PHONY: basis
 
 basis: $(CODE)
 
-	$(C) $(CFLAGS) $(CODE) -o $(EXECUTABLE)
+	@$(C) $(CFLAGS) $(CODE) -o $(EXECUTABLE)
+
+.PHONY: clean
 
 clean:
 
-	rm -rf $(EXECUTABLE) $(FILES)
+	@rm -rf $(DIR)

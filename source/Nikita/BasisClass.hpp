@@ -32,7 +32,7 @@ public:
 
 		if ( !fin ) throw std::invalid_argument( " Can't open a file " ); // если не существует, выдай ошибку
 		else {
-			std::cout << "File is opened" << std::endl; 
+			std::cout << "File " << filename << " is opened" << std::endl; 
 			parse_file( fin ); // иначе --- читай его
 		}
 
@@ -128,6 +128,7 @@ public:
 	void show_end(){
 		std::cout << "Basis file is scanned successfully" << std::endl;
 		std::cout << "Proceed with the analisys" << std::endl;
+		std::cout << std::endl;
 	}
 
 private:

@@ -21,10 +21,12 @@
 int main(){
 	std::cout << std::fixed << std::setprecision(7);
 
+//	std::ifstream fin( "input.dat" );
 	std::string filename;
-	std::cin >> filename;
-	_Basis bs;
-	bs.read( filename ); 
+	while ( std::cin >> filename ) {
+		_Basis bs;
+		bs.read( filename );
+	}
 	
 	return 0;
 
