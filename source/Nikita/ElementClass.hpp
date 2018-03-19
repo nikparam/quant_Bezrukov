@@ -24,6 +24,17 @@ public:
 		basis_functions.push_back( bf );
 	}
 
+	void add_coords( _Coords * c ){
+		geom.push_back( c );
+	}
+
+	void show_geom(){
+		std::cout << name << ": " \
+			  << ( geom.end()[-1] -> get_x() ) << " " \
+			  << ( geom.end()[-1] -> get_y() ) << " " \
+			  << ( geom.end()[-1] -> get_z() ) << std::endl;
+	}
+
 	void show(){
 		std::cout << "_______________________________________________________" << std::endl;
 		std::cout << "!!! Successfully created new element: " << name << " !!!" << std::endl;
@@ -31,13 +42,13 @@ public:
 		std::cout << std::endl;
 	}
 
-	std::string get_name(){
-		return name;
-	}
+	std::string get_name(){	return name; }
+
+	std::vector<_Basis_function*> get_bf(){ return basis_functions; }
 
 private:
 	std::string name;
 	std::vector<_Basis_function*> basis_functions; // вектор указателей на элементы класса _Basis_function
-
+	std::vector<_Coords*> geom;
 };
 

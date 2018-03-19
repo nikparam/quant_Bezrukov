@@ -11,6 +11,7 @@
 
 #include "BasisFunctionClass.hpp"
 #include "ElementClass.hpp"
+#include "CoordsClass.hpp"
 
 //Создадим класс базисных функций
 //его объекты хранят базисные функции всех элементов, лежащих в файле filename
@@ -24,16 +25,16 @@ public:
 		}
 	}
 
-	// Проверяем, что файл существует
+	// Проверяем, что файл базиса существует
 	// если существует, вызываем функцию для его чтения
-	void read( std::string filename ){
+	void read_basis( std::string filename ){
 
 		std::ifstream fin( filename );
 
 		if ( !fin ) throw std::invalid_argument( " Can't open a file " ); // если не существует, выдай ошибку
 		else {
 			std::cout << "File " << filename << " is opened" << std::endl; 
-			parse_file( fin ); // иначе --- читай его
+			parse_basis_file( fin ); // иначе --- читай его
 		}
 
 		fin.close();
@@ -41,7 +42,7 @@ public:
 
 	//Функция для чтения файла
 	// раскидывает информацию по соответствующим классам
-	void parse_file( std::ifstream & fin ){
+	void parse_basis_file( std::ifstream & fin ){
 
 		const int MAX_SIZE = 256;
 		int primitives_num = 0;
@@ -117,6 +118,49 @@ public:
 			}
 		}
 		show_end(); // выводим сообщение о конце файла
+	}
+
+	// Проверяем, что файл геометрии существует
+	// если существует, вызываем функцию для его чтения
+	void read_geom( std::string filename ){
+
+		std::ifstream fin( filename );
+
+		if ( !fin ) throw std::invalid_argument( " Can't open a file " ); // если не существует, выдай ошибку
+		else {
+			std::cout << "File " << filename << " is opened" << std::endl; 
+			parse_geom_file( fin ); // иначе --- читай его
+		}
+
+		fin.close();
+	}
+
+
+	// Читаем файл с геометрией
+	void parse_geom_file( std::ifstream & fin ){
+
+		const int MAX_SIZE = 256;
+		char line[ MAX_SIZE ];
+		std::string current_string;
+		_Coords * geom = NULL;
+		while( fin.getline( line, MAX_SIZE ) ){
+			current_string = line;
+
+			std::stringstream ss( current_string );
+
+			std::string name;
+			double x, y, z;
+
+			ss >> name >> x >> y >> z;
+
+			for ( auto e: elements ){
+				if ( name == ( e -> get_name() ) ){
+					geom = new _Coords( x, y, z );
+					e -> add_coords( geom );
+					e -> show_geom();
+				}
+			}
+		}
 	}
 
 	void show(){

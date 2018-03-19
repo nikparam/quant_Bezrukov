@@ -15,17 +15,19 @@
 #include "BasisFunctionClass.hpp"
 #include "ElementClass.hpp"
 #include "BasisClass.hpp"
-
+#include "CoordsClass.hpp"
 
 int main(){
 	std::cout << std::fixed << std::setprecision(7);
 
-//	std::ifstream fin( "input.dat" );
-	std::string filename;
-	while ( std::cin >> filename ) {
-		_Basis bs;
-		bs.read( filename );
-	}
+	std::string basis_name;
+	std::cin >> basis_name;
+	_Basis bs;
+	bs.read_basis( basis_name );
+
+	std::string geom_name;
+	std::cin >> geom_name;
+	bs.read_geom( geom_name );
 	
 	return 0;
 

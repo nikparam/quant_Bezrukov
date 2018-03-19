@@ -8,16 +8,19 @@ DIR = result
 cc-pvDZ = ./tests/basis/cc-pvdz.gamess-us.dat
 cc-pvTZ = ./tests/basis/cc-pvtz.gamess-us.dat
 
-CODE = ./source/Nikita/basis.cpp
-EXECUTABLE = ./basis
+BASIS = ./source/Nikita/basis.cpp
+GEOM = ./source/Nikita/geom.cpp
+
+basis_EXE = ./basis
+geom_EXE = ./geom
 FILES = *.log *.dat
 
 all: clean test
 
 test: basis test1 test2 MKDIR
 
-	@$(EXECUTABLE) < $(INPUT) > $(OUTPUT)
-	@mv $(FILES) $(EXECUTABLE) $(DIR)
+	@$(basis_EXE) < $(INPUT) > $(OUTPUT)
+	@mv $(FILES) $(basis_EXE) $(DIR)
 
 MKDIR:
 
@@ -33,12 +36,16 @@ test2:
 
 .PHONY: basis
 
-basis: $(CODE)
+basis: $(BASIS)
 
-	@$(C) $(CFLAGS) $(CODE) -o $(EXECUTABLE)
+	@$(C) $(CFLAGS) $(BASIS) -o $(basis_EXE)
+
+geom: $(GEOM)
+
+	@$(C) $(CFLAGS) $(GEOM) -o $(geom_EXE)
 
 .PHONY: clean
 
 clean:
 
-	@rm -rf $(DIR)
+	@rm -rf $(DIR) $(FILES) $(basis_EXE) $(geom_EXE)
