@@ -1,15 +1,15 @@
-#include "BasisFunctionBuilder.hpp"
+#include "CGOBuilder.hpp" // ContractedGaussianOrbitalBuilder
 
-BasisFunctionBuilder::BasisFunctionBuilder( const char angularPart ) : angularPart(angularPart)	
+CGOBuilder::CGOBuilder( const char angularPart ) : angularPart(angularPart)
 {
 	std::vector<QuantumNumbers> qNumbers = generateQuantumNumbers( angularPart );
 	for ( auto & triple : qNumbers )
 	{
-		BasisFunction * bf = new BasisFunction( triple );
-		basisFunctions.push_back( bf );
+        ContractedGaussianOrbital * bf = new ContractedGaussianOrbital( triple );
+        CGOs.push_back( bf );
 	}	
 }
-std::vector<QuantumNumbers> BasisFunctionBuilder::generateQuantumNumbers( const char angularPart )
+std::vector<QuantumNumbers> CGOBuilder::generateQuantumNumbers( const char angularPart )
 {
 	std::vector<QuantumNumbers> qNumbers;
 
@@ -52,8 +52,8 @@ std::vector<QuantumNumbers> BasisFunctionBuilder::generateQuantumNumbers( const 
 	return qNumbers;
 }	
 
-void BasisFunctionBuilder::add_primitive( double alpha, double coeff )
+void CGOBuilder::add_primitive( double alpha, double coeff )
 {
-	for ( auto * bf : basisFunctions )
+    for ( auto * bf : CGOs )
 		bf->add_primitive( alpha, coeff );
 }

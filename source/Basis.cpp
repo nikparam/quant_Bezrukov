@@ -2,15 +2,16 @@
 
 void Basis::read( std::string filename )
 {
-	std::ifstream infile( filename );
+    std::ifstream infile( filename );
 	
-	if ( !infile )
+    if ( !infile )
 		throw std::invalid_argument("Can't open the file");
 	else
 		parse_file( infile );
 
 	infile.close();	
 }
+
 void Basis::parse_file( std::ifstream & infile )
 {
 	std::locale loc;
@@ -20,12 +21,10 @@ void Basis::parse_file( std::ifstream & infile )
 
 	char buf[ MAXLINE ];
 	
-	std::string current_group = "";
-
 	// указатель на элемент, который мы заполняем
 	Element * elp = NULL;
-	// указатель на текущий строитель базисных функций
-	BasisFunctionBuilder * bfb = NULL;
+    // указатель на текущий строитель CGO (контрактированных гауссовых орбиталей)
+    CGOBuilder * CGObuilder = NULL;
 
 	// число примитивов в этой базисной функции
 	int primitives_counter = 0; 
@@ -59,12 +58,12 @@ void Basis::parse_file( std::ifstream & infile )
 		// то значит у нас только одно слово, значит это название элемента
 		if ( first_ws == std::string::npos || (first_ws > last_not_ws) )
 		{
-				// обдираем строку от пробелов 
-				current_element = current_string.substr(current_string.find_first_not_of(" "), current_string.find_last_not_of(" ") + 1);
-				// создали новый элемент
-				elp = new Element( current_element );
+            // обдираем строку от пробелов
+            current_element = current_string.substr(current_string.find_first_not_of(" "), current_string.find_last_not_of(" ") + 1);
+                    // создали новый элемент
+            elp = new Element( current_element );
 
-				continue;
+            continue;
 		}
 
 		// если первый элемент в строчке это не число
@@ -73,44 +72,56 @@ void Basis::parse_file( std::ifstream & infile )
 
 		if ( !std::isdigit( first_symbol, loc) )
 		{
-			// создаем строителя базисных функций типа AngularPart (S, P, D и т.д.)
-			bfb = new BasisFunctionBuilder( first_symbol );
+            // создаем строителя базисных функций типа AngularPart (S, P, D и т.д.)
+            CGObuilder = new CGOBuilder( first_symbol );
 
-			// скармливаем функции stoi указатель на следующую за буквой позицию строки
-			// например в строке "S  4" даем указатель на пробел, stoi стрипит пробелы и возвращает (int) 4
-			primitives_counter = std::stoi(&current_string[1]);
+             // скармливаем функции stoi указатель на следующую за буквой позицию строки
+             // например в строке "S  4" даем указатель на пробел, stoi убирает пробелы и возвращает (int) 4
+             primitives_counter = std::stoi(&current_string[1]);
 		}
 
 		// парсим строку вида "номер примитива, показатель экспоненты, коэффициент контрактации"
 		// добавляем примитив в базисную функцию
 		else
 		{
-			std::stringstream ss(current_string);
+            std::stringstream ss(current_string);
 			int i;
 			double alpha, coeff;
 			ss >> i >> alpha >> coeff;
-			// билдер добавляет примитив ко всем базисным функциям, которые он строит
-			bfb->add_primitive( alpha, coeff );
+
+            // билдер добавляет примитив ко всем базисным функциям, которые он строит
+            CGObuilder->add_primitive( alpha, coeff );
 
 			// как только номер примитива совпадает с заявленным количеством примитивов, добавляем функцию текущему элементу
 			if ( i == primitives_counter )
 			{
-				//bfp->showQuantumNumbers();
+                //bfp->showQuantumNumbers();
 				// добавляем все построенные билдером базисные функции элементу
-				elp->add_basis_functions( bfb ); 
+                elp->add_CGOs( CGObuilder );
 
-				// разрушаем объект Builder
-				delete bfb;
+                // разрушаем строителя контрактированных орбиталей
+                delete CGObuilder;
 			}
 		}
 	}
 }	
 
-void Basis::show()
+void Basis::show( const std::string type )
 {
-	std::cout << "no of elements: " << elements.size() << std::endl;
-	for ( Element * el : elements )
-	{
-		el->show();	
-	}
+    if ( type == "short" )
+    {
+        std::cout << "No of elements: " << elements.size() << std::endl;
+        for ( Element * el : elements )
+            std::cout << "Element: " << el->getName() << "; charge = " << el->getCharge() <<
+                         "; number of CGOs: " << el->getCGOCount() << std::endl;
+    }
+
+    if ( type == "full" )
+    {
+        std::cout << "No of elements: " << elements.size() << std::endl;
+        for ( Element * el : elements )
+        {
+            el->show();
+        }
+    }
 }

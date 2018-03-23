@@ -7,7 +7,6 @@ using std::vector;
 class QuantumNumbers
 {
 public:
-	// пустой конструктор
 	explicit QuantumNumbers()
 	{
 	}

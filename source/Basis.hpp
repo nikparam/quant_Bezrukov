@@ -10,7 +10,7 @@
 
 #include "QuantumNumbers.hpp"
 #include "Primitive.hpp"
-#include "BasisFunction.hpp"
+#include "ContractedGaussianOrbital.hpp"
 #include "Element.hpp"
 
 #define MAXLINE 100
@@ -28,7 +28,7 @@ public:
 	void read( std::string filename );
 	void parse_file( std::ifstream & infile );
 
-	void show();
+    void show( const std::string type );
 
 	// at -- проверяет, что элемент с таким номером находится в векторе
 	Element * getElement( const int n ) { return elements.at(n); }

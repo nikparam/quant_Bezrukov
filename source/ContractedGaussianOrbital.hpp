@@ -6,14 +6,14 @@
 #include "Primitive.hpp"
 #include "QuantumNumbers.hpp"
 
-class BasisFunction
+class ContractedGaussianOrbital
 {
 public:
-	BasisFunction( QuantumNumbers qNumbers ) : qNumbers(qNumbers)
+    ContractedGaussianOrbital( QuantumNumbers qNumbers ) : qNumbers(qNumbers)
 	{
 	}
 
-	~BasisFunction()
+    ~ContractedGaussianOrbital()
 	{
 	}
 

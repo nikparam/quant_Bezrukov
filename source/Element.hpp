@@ -2,31 +2,37 @@
 
 #include <vector>
 #include <string>
-#include "BasisFunctionBuilder.hpp"
+#include "CGOBuilder.hpp"
+#include "chemutils.hpp"
 
 class Element
 {
 public:
-	Element( std::string name ) : name(name)
-	{
+    Element( std::string name ) : name(name)
+    {
+        charge = ChemUtils::GetZForAtom(name);
 	}
 
 	~Element()
 	{
-		for ( BasisFunction * bf : basisFunctions )
-			delete bf;
+        for ( ContractedGaussianOrbital * cgo : CGOs )
+            delete cgo;
 	}
 
-	void add_basis_functions( BasisFunctionBuilder * bfb );
+    void add_CGOs( CGOBuilder * CGObuilder );
 
 	void show();
 
-	BasisFunction * getBasisFunction( const int n ) { return basisFunctions.at( n ); }
+    ContractedGaussianOrbital * getCGO( const int n ) { return CGOs.at( n ); }
 
-	size_t getBasisFunctionsCount() { return basisFunctions.size(); }
+    size_t getCGOCount() { return CGOs.size(); }
+
+    std::string getName() const { return name; }
+    unsigned int getCharge() const { return charge; }
 
 private:
+    unsigned int charge;
 	std::string name;
-	std::vector<BasisFunction*> basisFunctions;
+    std::vector<ContractedGaussianOrbital*> CGOs;
 };
 

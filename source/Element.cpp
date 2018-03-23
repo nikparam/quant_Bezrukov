@@ -1,16 +1,16 @@
 #include "Element.hpp"
 
-void Element::add_basis_functions( BasisFunctionBuilder * bfb )
+void Element::add_CGOs( CGOBuilder * CGObuilder )
 {
-	for ( auto * bf : bfb->getBasisFunctions() )
-		basisFunctions.push_back( bf );
+    for ( ContractedGaussianOrbital * CGO : CGObuilder->getCGOs() )
+        CGOs.push_back( CGO );
 }
 
 
 void Element::show()
 {
-	std::cout << "Element name: " << name << std::endl;
-	for ( auto bf : basisFunctions )
-		bf->show();
+    std::cout << "Element name: " << name << "; charge = " << charge << std::endl;
+    for ( ContractedGaussianOrbital * CGO : CGOs )
+        CGO->show();
 }
 

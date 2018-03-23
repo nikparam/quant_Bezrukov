@@ -1,12 +1,8 @@
-#include "../QuantumNumbers.hpp"
-#include "../Primitive.hpp"
-#include "../BasisFunction.hpp"
-#include "../Element.hpp"
-#include "../Basis.hpp"
+#include "basisFunctionNorm.hpp"
 
-void checkNorm( BasisFunction * bf )
+double checkNorm( BasisFunction * bf )
 {
-	double sum = 0;
+	double res = 0;
 
 	unsigned int i = bf->getQuantumNumbers().i;
 	unsigned int j = bf->getQuantumNumbers().j;
@@ -25,32 +21,13 @@ void checkNorm( BasisFunction * bf )
 				// диагональные члены учитываем один раз
 				// а внедиагональные нужно прибавить дважды
 				if ( alpha == beta )
-					sum = sum + temp * fact;
+					res += (temp * fact);
 				else
-					sum = sum + 2 * temp * fact;
+					res += (2 * temp * fact);
 			}
 		}
 	}
 
-	cout << "(checkNorm) scalar product = " << sum << endl;
-}
-
-
-int main()
-{
-	Basis basis;
-	basis.read("../basis/cc-pvdz.gamess-us.dat");
-
-	std::cout << std::fixed << std::setprecision(8);
-
-	for ( size_t i = 0; i < basis.getElementsCount(); i++ )
-	{
-		for ( size_t j = 0; j < basis.getElement(i)->getBasisFunctionsCount(); j++ )
-		{
-			checkNorm( basis.getElement(i)->getBasisFunction(j) );
-		}
-	}
-
-	return 0;
+	return res;
 }
 
