@@ -24,15 +24,12 @@ public:
 		basis_functions.push_back( bf );
 	}
 
-	void add_coords( _Coords * c ){
-		geom.push_back( c );
-	}
-
-	void show_geom(){
-		std::cout << name << ": " \
-			  << ( geom.end()[-1] -> get_x() ) << " " \
-			  << ( geom.end()[-1] -> get_y() ) << " " \
-			  << ( geom.end()[-1] -> get_z() ) << std::endl;
+	int num_func(){
+		int sum = 0;
+		for ( auto bf: basis_functions ){
+			sum += ( bf -> get_num_projections() );
+		}
+		return sum;
 	}
 
 	void show(){
@@ -42,6 +39,10 @@ public:
 		std::cout << std::endl;
 	}
 
+	void show_basis(){
+		std::cout << "--> Basis consists of " << num_func() << " basis functions." << std::endl;
+	}
+
 	std::string get_name(){	return name; }
 
 	std::vector<_Basis_function*> get_bf(){ return basis_functions; }
@@ -49,6 +50,5 @@ public:
 private:
 	std::string name;
 	std::vector<_Basis_function*> basis_functions; // вектор указателей на элементы класса _Basis_function
-	std::vector<_Coords*> geom;
 };
 

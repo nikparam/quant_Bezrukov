@@ -85,6 +85,7 @@ public:
 	char get_ap(){ return angular_part; }
 	std::vector<_Triple> get_triples(){ return triples; }
 	std::vector<_Projection> get_projections(){ return projections; }
+	int get_num_projections(){ return projections.size(); }
 
 	void show_bf(){
 		std::cout << "--> Successfully created new basis function  of " << angular_part \

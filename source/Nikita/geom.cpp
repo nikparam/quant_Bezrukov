@@ -16,6 +16,7 @@
 #include "ElementClass.hpp"
 #include "BasisClass.hpp"
 #include "CoordsClass.hpp"
+#include "MolecClass.hpp"
 
 int main(){
 	std::cout << std::fixed << std::setprecision(7);
@@ -27,7 +28,8 @@ int main(){
 
 	std::string geom_name;
 	std::cin >> geom_name;
-	bs.read_geom( geom_name );
+	_Molecule m;
+	m.read_geom( geom_name, & bs );
 	
 	return 0;
 

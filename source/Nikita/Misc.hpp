@@ -9,3 +9,4 @@ int d_factorial( int n ){
 double factor( int i, double alpha ){
 	return  d_factorial( 2 * i - 1 ) * std::sqrt( M_PI ) / std::pow( 2, i ) / std::pow( alpha, i + 0.5 ) ;
 }
+

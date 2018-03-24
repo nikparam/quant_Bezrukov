@@ -1,5 +1,7 @@
 C = g++
 CFLAGS = -g --std=c++11
+EIGEN = -I /usr/local/include/eigen3
+
 
 INPUT = input.dat
 OUTPUT = basis.log
@@ -42,7 +44,7 @@ basis: $(BASIS)
 
 geom: $(GEOM)
 
-	@$(C) $(CFLAGS) $(GEOM) -o $(geom_EXE)
+	@$(C) $(CFLAGS) $(EIGEN) $(GEOM) -o $(geom_EXE)
 
 .PHONY: clean
 
