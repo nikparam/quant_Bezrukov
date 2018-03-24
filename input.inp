@@ -1,2 +1,3 @@
-tests/basis/cc-pvdz.gamess-us.dat
-tests/geom/H2.dat
+tests/basis/sto-3g.gamess-us.dat
+tests/geom/H2O.dat
+

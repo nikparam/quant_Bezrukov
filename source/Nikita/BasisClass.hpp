@@ -51,7 +51,8 @@ public:
 		std::string current_string, current_element;
 		char first_char;
 		_Element * element_pointer = NULL;
-		_Basis_function * bf_pointer = NULL;
+		_Basis_function * bf_pointer = NULL, * bf1_pointer = NULL;
+		bool L_func = false;
 		std::locale loc;
 
 		// Будем читать файлик построчно
@@ -94,26 +95,51 @@ public:
 		// Если он не переводится в цифру, то это угловая часть
 
 			if ( ! ( std::isdigit( first_char, loc ) ) ){
-				bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
-				primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
-				continue;
+				if ( first_char != 'L' ){
+					bf_pointer = new _Basis_function( first_char ); // создаем указатель типа _Basis_function
+					primitives_num = std::stoi( &current_string[1] ); // определяем число примитивов
+					continue;
+				} else {
+					L_func = true;
+					bf_pointer = new _Basis_function( 'S' );
+					bf1_pointer = new _Basis_function( 'P' );
+					primitives_num = std::stoi( &current_string[1] );
+					continue;
+				}
 
 			}else{ // иначе --- тройки параметров примитивов
 
-				std::stringstream ss( current_string ); // задаем вывод строки в переменные
-				int i;
-				double alpha, coeff;
+				if ( !( L_func ) ){
 
-				ss >> i >> alpha >> coeff; // выводим значения в переменные
-				bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляем новый примитив
+					std::stringstream ss( current_string ); // задаем вывод строки в переменные
+					int i;
+					double alpha, coeff;
 
-				// если примитивы кончились, по указателю добавляем функцию
+					ss >> i >> alpha >> coeff; // выводим значения в переменные
+					bf_pointer -> add_primitive( i, alpha, coeff ); // по указателю добавляем новый примитив
 
-				if ( i == primitives_num ) {
-					element_pointer -> add_basis_function( bf_pointer );
-//					bf_pointer -> show_bf(); // выводим добавленную функцию
-//					bf_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
-//					std::cout << std::endl;
+					// если примитивы кончились, по указателю добавляем функцию
+
+					if ( i == primitives_num ) {
+						element_pointer -> add_basis_function( bf_pointer );
+//						bf_pointer -> show_bf(); // выводим добавленную функцию
+//						bf_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
+//						std::cout << std::endl;
+					}
+				} else {
+					std::stringstream ss( current_string ); // задаем вывод строки в переменные
+					int i;
+					double alpha, coeff_s, coeff_p;
+
+					ss >> i >> alpha >> coeff_s >> coeff_p; // выводим значения в переменные
+					bf_pointer -> add_primitive( i, alpha, coeff_s ); // по указателю добавляем новый примитив
+					bf1_pointer -> add_primitive( i, alpha, coeff_p ); // по указателю добавляем новый примитив
+
+					if ( i == primitives_num ) {
+						element_pointer -> add_basis_function( bf_pointer );
+						element_pointer -> add_basis_function( bf1_pointer );
+						L_func = false;
+					}
 				}
 			}
 		}
