@@ -13,8 +13,6 @@
 #include "ContractedGaussianOrbital.hpp"
 #include "Element.hpp"
 
-#define MAXLINE 100
-
 class Basis
 {
 public:
@@ -35,6 +33,7 @@ public:
 	size_t getElementsCount() { return elements.size(); }
 
 private:
-	vector<Element*> elements;
+    const int MAXLINE = 100;
+    vector<Element*> elements;
 };
 

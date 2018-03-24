@@ -1,5 +1,4 @@
-#ifndef CHEMUTILS_HPP
-#define CHEMUTILS_HPP
+#pragma once
 
 #include <string>
 #include <stdexcept>
@@ -10,6 +9,3 @@ namespace ChemUtils
 {   	
     unsigned int GetZForAtom( std::string & name );
 }
-
-#endif // CHEMUTILS_HPP
-

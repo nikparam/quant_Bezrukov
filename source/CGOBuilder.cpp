@@ -36,7 +36,12 @@ std::vector<QuantumNumbers> CGOBuilder::generateQuantumNumbers( const char angul
 		{
 			l = 3;
 			break;
-		}
+        }
+        case 'L':
+        {
+            l = 3;
+            break;
+        }
 		default:
 		{
 			throw std::invalid_argument( "Angular part is not implemented" );
@@ -52,8 +57,8 @@ std::vector<QuantumNumbers> CGOBuilder::generateQuantumNumbers( const char angul
 	return qNumbers;
 }	
 
-void CGOBuilder::add_primitive( double alpha, double coeff )
+void CGOBuilder::add_primitive( double alpha, double coeff, double coeff2 )
 {
-    for ( auto * bf : CGOs )
-		bf->add_primitive( alpha, coeff );
+    for ( auto * CGO : CGOs )
+        CGO->add_primitive( alpha, coeff );
 }

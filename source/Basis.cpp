@@ -85,12 +85,25 @@ void Basis::parse_file( std::ifstream & infile )
 		else
 		{
             std::stringstream ss(current_string);
-			int i;
-			double alpha, coeff;
-			ss >> i >> alpha >> coeff;
 
-            // билдер добавляет примитив ко всем базисным функциям, которые он строит
-            CGObuilder->add_primitive( alpha, coeff );
+            int i; // номер примитива
+
+            if ( first_symbol == 'L' )
+            {
+                double alpha, coeff1, coeff2;
+                // показатель экспоненты, коэффициент перед S функцией, коэффициент перед P функцией
+                ss >> alpha >> coeff1 >> coeff2;
+
+                CGObuilder->add_primitive( alpha, coeff1, coeff2 );
+            }
+            else
+            {
+                double alpha, coeff;
+                ss >> i >> alpha >> coeff;
+
+                // билдер добавляет примитив ко всем базисным функциям, которые он строит
+                CGObuilder->add_primitive( alpha, coeff );
+            }
 
 			// как только номер примитива совпадает с заявленным количеством примитивов, добавляем функцию текущему элементу
 			if ( i == primitives_counter )

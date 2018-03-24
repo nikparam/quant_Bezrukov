@@ -19,3 +19,9 @@ Primitive.hpp
 QuantumNumbers.hpp
 chemutils.hpp
 chemutils.cpp
+molecule.h
+molecule.cpp
+atom.h
+atom.cpp
+h2o_geometry.dat
+basis/h2_sto3g_gamess-us.dat
