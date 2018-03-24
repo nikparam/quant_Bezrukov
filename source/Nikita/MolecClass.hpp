@@ -76,7 +76,7 @@ public:
 		double p = a + b;
 		double q = a * b / p;
 		if ( ( t < 0 ) || ( t > (i + j) ) ) { return 0.0; }
-		else if ( i == j == t == 0 ) { return exp( -q * Qx * Qx ); }
+		else if ( ( i == 0 ) && ( j == 0 ) && ( t == 0 ) ) { return exp( -q * Qx * Qx ); }
 		else if ( j == 0 ){
 			return ( 1.0 / (2.0 * p) ) * E_coeff (i-1, j, t-1, Qx, a, b) - \
 			       ( q * Qx / a ) * E_coeff ( i-1, j, t, Qx, a, b) + \
@@ -84,7 +84,7 @@ public:
 		}
 		else{
 			return ( 1.0 / (2.0 * p) ) * E_coeff (i, j-1, t-1, Qx, a, b) + \
-			       ( q * Qx / a ) * E_coeff ( i, j-1, t, Qx, a, b) + \
+			       ( q * Qx / b ) * E_coeff ( i, j-1, t, Qx, a, b) + \
 			       ( t + 1 ) * E_coeff ( i, j-1, t+1, Qx, a, b );
 		}
 	}
