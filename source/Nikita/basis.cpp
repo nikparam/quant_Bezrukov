@@ -24,7 +24,7 @@ int main(){
 	std::string filename;
 	while ( std::cin >> filename ) {
 		_Basis bs;
-		bs.read( filename );
+		bs.read_basis( filename );
 	}
 	
 	return 0;

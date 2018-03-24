@@ -151,8 +151,23 @@ public:
 		return m;
 	}
 
+	int dimensions(){
+		int sum = 0;
+		for ( auto a: atoms ){
+			sum += ( a -> get_e() ) ->  num_func();
+		}
+		return sum;
+	}
+
 	void show_overlap_matrix(){
-		std::cout << element_overlap( atoms[0], atoms[0] ) << std::endl;
+		for ( int i = 0; i < atoms.size(); ++i ){
+			for ( int j = 0; j < atoms.size(); ++j ){
+				std::cout << "Overlap: " << atoms[i] -> get_e() -> get_name() << "_" << i+1 << " " \
+							 << atoms[j] -> get_e() -> get_name() << "_" << j+1 <<  std::endl;
+				std::cout << element_overlap( atoms[i], atoms[j] ) << std::endl;
+				std::cout << std::endl;
+			}
+		}
 	}
 
 private:
