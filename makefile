@@ -17,7 +17,7 @@ basis_EXE = ./basis
 geom_EXE = ./geom
 FILES = *.log *.dat
 
-all: clean test
+all: clean geom
 
 test: basis test1 test2 MKDIR
 

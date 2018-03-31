@@ -7,7 +7,7 @@
 class _Atom{
 
 public:
-	_Atom( double x, double y, double z, _Element * e): coords(x,y,z), e(e) { }
+	_Atom( double x, double y, double z, _Element * e): coords(x,y,z), e(e) { add_charge(); }
 	~_Atom(){}
 
 	void show_atom(){
@@ -21,7 +21,27 @@ public:
 	_Coords get_c(){ return coords; }
 	_Element * get_e(){ return e; }
 
+	void add_charge(){
+		std::string name = e -> get_name();
+		std::vector<std::string> names = { "HYDROGEN",\
+						   "HELIUM",\
+						   "LITHIUM",\
+						   "BERYLLIUM",\
+						   "BORON",\
+						   "CARBON",\
+						   "NITROGEN",\
+						   "OXYGEN" };
+		for ( int i = 0; i < names.size(); ++i ){
+			if ( name == names[i] ){
+				charge = i + 1;
+			}
+		}
+	}
+
+	int get_charge(){ return charge; }
+
 private:
+	int charge;
 	_Coords coords;
 	_Element * e;
 

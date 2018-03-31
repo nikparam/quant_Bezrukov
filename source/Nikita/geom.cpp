@@ -19,7 +19,7 @@
 #include "MolecClass.hpp"
 
 int main(){
-	std::cout << std::fixed << std::setprecision(7);
+	std::cout << std::fixed << std::setprecision(8);
 
 	std::string basis_name;
 	std::cin >> basis_name;

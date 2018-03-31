@@ -73,7 +73,7 @@ public:
 		for( int i = 0; i <= l; ++i ){
 			for( int j = 0; j <= l - i; ++j ){
 				for( int k = 0; k <= l - i - j; ++k ){
-					if ( i + j + k == l ) triples.emplace_back( i, j, k );
+					if ( i + j + k == l ) triples.emplace_back( k, j, i );
 				}
 			}
 		}

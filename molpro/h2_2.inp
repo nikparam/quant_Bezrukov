@@ -1,0 +1,30 @@
+basis={
+!
+! HYDROGEN       (4s,1p) -> [2s,1p]
+! HYDROGEN       (4s,1p) -> [2s,1p]
+s, H , 13.0100000, 1.9620000, 0.4446000, 0.1220000
+c, 1.4, 0.0196850, 0.1379770, 0.4781480, 0.5012400
+c, 4.4, 1.0000000
+p, H , 0.7270000
+c, 1.1, 1.0000000
+}
+
+symmetry, nosym
+geometry = {
+H1;
+H2, H1, 1.0
+}
+
+hf
+
+{matrop;
+	load,s;
+	print,s;
+	load,H0;
+	print,H0;
+	load,EKIN;
+	print,EKIN;
+	load,EPOT;
+	print,EPOT;
+}
+

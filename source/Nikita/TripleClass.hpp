@@ -19,6 +19,10 @@ public:
 	int get_j(){ return powers[1]; }
 	int get_k(){ return powers[2]; }
 
+	_Triple change_i( int d ){ return _Triple( powers[0]+d, powers[1], powers[2]); }
+	_Triple change_j( int d ){ return _Triple( powers[0], powers[1]+d, powers[2]); }
+	_Triple change_k( int d ){ return _Triple( powers[0], powers[1], powers[2]+d); }
+
 	void show(){
 		std::cout << get_i() << " " \
 			  << get_j() << " " \

@@ -1,0 +1,24 @@
+basis={
+s, H , 3.42525091, 0.62391373, 0.16885540
+c, 1.3, 0.15432897, 0.53532814, 0.44463454
+}
+
+symmetry, nosym
+geometry = {
+H1;
+H2, H1, 1.0
+}
+
+hf
+
+{matrop;
+	load,s;
+	print,s;
+	load,H0;
+	print,H0;
+	load,EKIN;
+	print,EKIN;
+	load,EPOT;
+	print,EPOT;
+}
+
