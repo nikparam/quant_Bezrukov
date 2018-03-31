@@ -59,6 +59,7 @@ public:
 			for ( auto e: b -> get_elements() ){
 				if ( name == ( e -> get_name() ) ){
 					atom = new _Atom(x,y,z,e);
+					atom -> norm_atom();
 					atoms.push_back( atom );
 				}
 			}

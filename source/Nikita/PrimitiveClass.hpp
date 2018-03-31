@@ -41,6 +41,10 @@ public:
 		coeff /= N;
 	}
 
+	void total_renorm( double bf_N ){
+		coeff /= std::sqrt( bf_N );
+	}
+
 private: // задаем внутренние переменные --- недоступны извне
 	int num;
 	double alpha, coeff;

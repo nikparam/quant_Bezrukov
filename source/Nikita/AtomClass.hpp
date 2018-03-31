@@ -38,6 +38,12 @@ public:
 		}
 	}
 
+	void norm_atom(){
+		for ( auto bf: e -> get_bf() ){
+			bf -> renorm_bf();
+		}
+	}
+
 	int get_charge(){ return charge; }
 
 private:

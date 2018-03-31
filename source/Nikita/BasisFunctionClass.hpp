@@ -82,6 +82,14 @@ public:
 
 	}
 
+	void renorm_bf(){
+		for ( auto pr: projections ){
+			std::cout << pr.count_norm();
+			pr.renorm_projection();
+			std::cout << " " << pr.count_norm() << std::endl;
+		}
+	}
+
 	char get_ap(){ return angular_part; }
 	std::vector<_Triple> get_triples(){ return triples; }
 	std::vector<_Projection> get_projections(){ return projections; }

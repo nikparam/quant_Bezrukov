@@ -55,6 +55,13 @@ public:
 		return sum; 
 	}
 
+	void renorm_projection(){
+		double N = count_norm();
+		for ( auto p : primitives ){
+			p.total_renorm( N );
+		}
+	}
+
 	void show(){
 		for( auto & primitive: primitives ){
 			std::cout << primitive.get_num() << ") alpha = " << primitive.get_alpha() \
