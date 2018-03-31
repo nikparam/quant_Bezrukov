@@ -52,12 +52,12 @@ std::vector<QuantumNumbers> CGOBuilder::generateQuantumNumbers( const char angul
 		for ( int j = 0; j <= l - i; j++ )
 			for ( int k = 0; i + j + k <= l; k++ )
 				if ( i + j + k == l )
-					qNumbers.emplace_back( i, j, k );
+                    qNumbers.emplace_back( k, j, i );
 
 	return qNumbers;
 }	
 
-void CGOBuilder::add_primitive( double alpha, double coeff, double coeff2 )
+void CGOBuilder::add_primitive( double alpha, double coeff )
 {
     for ( auto * CGO : CGOs )
         CGO->add_primitive( alpha, coeff );

@@ -26,6 +26,12 @@ void Basis::parse_file( std::ifstream & infile )
     // указатель на текущий строитель CGO (контрактированных гауссовых орбиталей)
     CGOBuilder * CGObuilder = NULL;
 
+    // для L функций
+    CGOBuilder * CGObuilder_s = NULL;
+    CGOBuilder * CGObuilder_p = NULL;
+
+    bool isLfunction = false;
+
 	// число примитивов в этой базисной функции
 	int primitives_counter = 0; 
 
@@ -70,15 +76,29 @@ void Basis::parse_file( std::ifstream & infile )
 		// то это строка вида "S  4"
 		char first_symbol = current_string[current_string.find_first_not_of(' ')];
 
-		if ( !std::isdigit( first_symbol, loc) )
-		{
-            // создаем строителя базисных функций типа AngularPart (S, P, D и т.д.)
-            CGObuilder = new CGOBuilder( first_symbol );
+		if ( !std::isdigit( first_symbol, loc) )	
+        {
+            if ( first_symbol == 'L' )
+            {
+                isLfunction = true;
 
-             // скармливаем функции stoi указатель на следующую за буквой позицию строки
-             // например в строке "S  4" даем указатель на пробел, stoi убирает пробелы и возвращает (int) 4
-             primitives_counter = std::stoi(&current_string[1]);
-		}
+                // создаем S и P базисные функции
+                CGObuilder_s = new CGOBuilder( 'S' );
+                CGObuilder_p = new CGOBuilder( 'P' );
+            }
+
+            else
+            {
+                isLfunction = false;
+
+                // создаем строителя базисных функций типа AngularPart (S, P, D и т.д.)
+                CGObuilder = new CGOBuilder( first_symbol );
+
+                // скармливаем функции stoi указатель на следующую за буквой позицию строки
+                // например в строке "S  4" даем указатель на пробел, stoi убирает пробелы и возвращает (int) 4
+                primitives_counter = std::stoi(&current_string[1]);
+            }
+        }
 
 		// парсим строку вида "номер примитива, показатель экспоненты, коэффициент контрактации"
 		// добавляем примитив в базисную функцию
@@ -88,13 +108,14 @@ void Basis::parse_file( std::ifstream & infile )
 
             int i; // номер примитива
 
-            if ( first_symbol == 'L' )
+            if ( isLfunction )
             {
                 double alpha, coeff1, coeff2;
                 // показатель экспоненты, коэффициент перед S функцией, коэффициент перед P функцией
-                ss >> alpha >> coeff1 >> coeff2;
+                ss >> i >> alpha >> coeff1 >> coeff2;
 
-                CGObuilder->add_primitive( alpha, coeff1, coeff2 );
+                CGObuilder_s->add_primitive( alpha, coeff1 );
+                CGObuilder_p->add_primitive( alpha, coeff2 );
             }
             else
             {
@@ -107,13 +128,24 @@ void Basis::parse_file( std::ifstream & infile )
 
 			// как только номер примитива совпадает с заявленным количеством примитивов, добавляем функцию текущему элементу
 			if ( i == primitives_counter )
-			{
-                //bfp->showQuantumNumbers();
-				// добавляем все построенные билдером базисные функции элементу
-                elp->add_CGOs( CGObuilder );
+            {
+                if ( isLfunction )
+                {
+                    elp->add_CGOs( CGObuilder_s );
+                    elp->add_CGOs( CGObuilder_p );
 
-                // разрушаем строителя контрактированных орбиталей
-                delete CGObuilder;
+                    delete CGObuilder_s;
+                    delete CGObuilder_p;
+                }
+                else
+                {
+                    //bfp->showQuantumNumbers();
+                    // добавляем все построенные билдером базисные функции элементу
+                    elp->add_CGOs( CGObuilder );
+
+                    // разрушаем строителя контрактированных орбиталей
+                    delete CGObuilder;
+                }
 			}
 		}
 	}
@@ -123,18 +155,24 @@ void Basis::show( const std::string type )
 {
     if ( type == "short" )
     {
-        std::cout << "No of elements: " << elements.size() << std::endl;
+        std::cout << "-----------------------------------------------" << std::endl;
+        std::cout << "-------------- SHORT BASIS INFO ---------------" << std::endl;
+        std::cout << "(Basis) No of elements: " << elements.size() << std::endl;
         for ( Element * el : elements )
-            std::cout << "Element: " << el->getName() << "; charge = " << el->getCharge() <<
+            std::cout << "(Basis) Element: " << el->getName() << "; charge = " << el->getCharge() <<
                          "; number of CGOs: " << el->getCGOCount() << std::endl;
+        std::cout << "-----------------------------------------------" << std::endl;
     }
 
     if ( type == "full" )
     {
+        std::cout << "-----------------------------------------------" << std::endl;
+        std::cout << "-------------- FULL BASIS INFO ----------------" << std::endl;
         std::cout << "No of elements: " << elements.size() << std::endl;
         for ( Element * el : elements )
         {
             el->show();
         }
+        std::cout << "-----------------------------------------------" << std::endl;
     }
 }

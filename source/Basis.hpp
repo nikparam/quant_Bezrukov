@@ -33,7 +33,7 @@ public:
 	size_t getElementsCount() { return elements.size(); }
 
 private:
-    const int MAXLINE = 100;
+    const int MAXLINE = 200;
     vector<Element*> elements;
 };
 

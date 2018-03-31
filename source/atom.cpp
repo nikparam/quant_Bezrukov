@@ -1,4 +1,4 @@
-#include "atom.h"
+#include "atom.hpp"
 
 Atom::Atom( std::string name, double x, double y, double z)
     : name(name), x(x), y(y), z(z)
