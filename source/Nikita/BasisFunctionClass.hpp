@@ -83,7 +83,7 @@ public:
 	}
 
 	void renorm_bf(){
-		for ( auto pr: projections ){
+		for ( auto & pr: projections ){
 			std::cout << pr.count_norm();
 			pr.renorm_projection();
 			std::cout << " " << pr.count_norm() << std::endl;

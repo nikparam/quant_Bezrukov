@@ -57,7 +57,7 @@ public:
 
 	void renorm_projection(){
 		double N = count_norm();
-		for ( auto p : primitives ){
+		for ( auto & p : primitives ){
 			p.total_renorm( N );
 		}
 	}
