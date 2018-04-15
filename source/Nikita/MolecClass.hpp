@@ -5,6 +5,7 @@
 #include <cmath>
 #include <sstream>
 #include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 #include "CoordsClass.hpp"
@@ -66,6 +67,7 @@ public:
 		}
 		show_geom();
 		show();
+		SCF();
 	}
 
 	void show_geom(){
@@ -400,7 +402,7 @@ public:
 		return sum;
 	}
 
-	Eigen::Tensor<double,4> electron_repulsion(){
+	Eigen::Tensor<double,4> electron_repulsion( int pp = 0 ){
 		int N = dimensions();
 		Eigen::Tensor<double,4> e( N, N, N, N );
 
@@ -440,7 +442,7 @@ public:
 															         p2, c2, \
 															         p3, c3, \
 															         p4, c4 );
-												if ( e(k,l,m,n) != 0.0 ) 
+												if ( e(k,l,m,n) != 0.0 && pp != 0 ) 
 												std::cout << "E[" << k+1 << "," << \
 														     l+1 << "," << \
 														     m+1 << "," << \
@@ -466,6 +468,95 @@ public:
 		return e;
 	}
 
+	Eigen::MatrixXd Xmatrix(){
+		Eigen::MatrixXd S = overlap();
+		Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> lambda(S);
+		Eigen::MatrixXd D = lambda.eigenvalues().asDiagonal();
+		Eigen::MatrixXd U = lambda.eigenvectors();
+		for ( int i = 0; i < D.cols(); ++i ){
+			D(i,i) = 1 / sqrt( D(i,i) );
+		}
+		return U *  D * U.transpose();
+	}
+
+	Eigen::MatrixXd Pmatrix(){
+		int N = dimensions();
+		Eigen::MatrixXd P = Eigen::MatrixXd::Zero( N, N );
+
+		for( int i = 0; i < N; ++i ){
+			for( int j = 0; j < N; ++j ){
+				for ( int a = 0; a < 0.5 * N; ++a ){
+					P(i,j) += C(i,a) * C(a,j);
+				}
+				P(i,j) *= 2;
+			}
+		}
+
+		return P;	
+	}
+
+	Eigen::MatrixXd Gmatrix(){
+
+		Eigen::MatrixXd G = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
+		Eigen::MatrixXd P = Pmatrix();
+		Eigen::Tensor<double,4> E = electron_repulsion();
+
+		for ( int i = 0; i < dimensions(); ++i ){
+			for ( int j = 0; j < dimensions(); ++j ){
+				for ( int k = 0; k < dimensions(); ++k ){
+					for ( int l = 0; l < dimensions(); ++l ){
+						G(i,j) += P(k,l) * ( E(i,j,l,k) - \
+							       0.5 * E(i,k,l,j) );
+					}
+				}
+			}
+		}
+		return G;
+	}
+
+	Eigen::MatrixXd Fmatrix(){
+		Eigen::MatrixXd G = Gmatrix();
+		std::cout << "G:" << std::endl;
+		std::cout << G << std::endl;
+		return kinetic() + nuclear_attraction() + G;
+	}
+
+	void iteration( Eigen::MatrixXd X ){
+
+		Eigen::MatrixXd F = Fmatrix();
+		Eigen::MatrixXd F_prime = X.transpose() * F * X;
+
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "F\': " << std::endl;
+		std::cout << F_prime << std::endl; 
+		
+		Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> lambda( F_prime );
+		Eigen::MatrixXd U = lambda.eigenvectors();
+
+		energy = lambda.eigenvalues();
+		C = X * U;
+
+		std::cout << "Energies: " << std::endl;
+		std::cout << energy << std::endl; 
+		std::cout << "Vectors: " << std::endl;
+		std::cout << C << std::endl; 
+		std::cout << "Density: " << std::endl;
+		std::cout << Pmatrix() << std::endl; 
+		std::cout << "-----------------------------------" << std::endl;
+	}
+
+	double Pconvergence( Eigen::MatrixXd P1, Eigen::MatrixXd P2 ){
+		int N = dimensions();
+		double sum = 0.0;
+		for ( int i = 0; i < N; ++i ){
+			for ( int j = 0; j < N; ++j ){
+				sum += ( P1(i,j) - P2(i,j) ) * ( P1(i,j) - P2(i,j) );
+			}
+		}
+		sum = std::sqrt( sum ) / N;
+		return sum;
+	}
+
 	void show(){
 		std::cout << "-----------------------------------" << std::endl;
 		std::cout << "Overlap matrix: " << std::endl;
@@ -478,10 +569,44 @@ public:
 		std::cout << nuclear_attraction() << std::endl;
 		std::cout << "-----------------------------------" << std::endl;
 		std::cout << "Electron repulsion matrix: " << std::endl;
-		electron_repulsion();
-//		std::cout << electron_repulsion() << std::endl;
+		electron_repulsion(1);
+
+	}
+
+	void SCF(){
+
+		std::cout << "-----------------------------------" << std::endl;
+		C = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
+
+		Eigen::MatrixXd X = Xmatrix();
+
+		for ( int i = 0; i < 50; ++i){
+			std::cout << "iteration: " << i << std::endl;
+			iteration( X );
+			std::cout << "-----------------------------------" << std::endl;
+		}
+
+/*		Eigen::VectorXd energy_tmp;
+		Eigen::MatrixXd P_tmp, P;
+		do{
+			energy_tmp = energy;
+			P_tmp = Pmatrix();
+
+			iteration();
+
+			P = Pmatrix( );
+
+			std::cout << "-----------------------------------" << std::endl;
+			std::cout << "Pconv: " << std::endl;
+			std::cout << Pconvergence( P, P_tmp ) << std::endl;
+
+		}while( std::abs( energy_tmp[0] - energy[0] ) >= 1e-4 );
+*/		
+
 	}
 
 private:
 	std::vector<_Atom*> atoms;
+	Eigen::MatrixXd C;
+	Eigen::VectorXd energy;
 };

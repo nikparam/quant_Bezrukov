@@ -42,7 +42,7 @@ basis: $(BASIS)
 
 	@$(C) $(CFLAGS) $(BASIS) -o $(basis_EXE)
 
-geom: $(GEOM)
+geom: clean $(GEOM)
 
 	@$(C) $(CFLAGS) $(EIGEN) $(GEOM) -o $(geom_EXE)
 
