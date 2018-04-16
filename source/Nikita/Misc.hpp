@@ -33,3 +33,11 @@ bool unequal( _Coords c1, _Coords c2 ){
 		return true;
 	}
 }
+
+double distance( _Coords c1, _Coords c2 ){
+	double sum = 0.0;
+	sum = std::pow( ( c1.get_x() - c2.get_x() ), 2 ) + \
+	      std::pow( ( c1.get_y() - c2.get_y() ), 2 ) + \
+	      std::pow( ( c1.get_z() - c2.get_z() ), 2 );
+	return std::sqrt( sum );
+}

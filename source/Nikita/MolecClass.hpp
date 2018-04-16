@@ -67,7 +67,7 @@ public:
 		}
 		show_geom();
 		show();
-		SCF();
+		total_energy();
 	}
 
 	void show_geom(){
@@ -167,6 +167,14 @@ public:
 			sum += ( a -> get_e() ) ->  num_func();
 		}
 		return sum;
+	}
+
+	int num_e(){
+		int N = 0;
+		for( auto a: atoms ){
+			N += a -> get_charge();
+		}
+		return N;
 	}
 
 	double kinetic_primitive( _Primitive p1, _Triple t1, _Coords c1,
@@ -486,7 +494,7 @@ public:
 		for( int i = 0; i < N; ++i ){
 			for( int j = 0; j < N; ++j ){
 				for ( int a = 0; a < 0.5 * N; ++a ){
-					P(i,j) += C(i,a) * C(a,j);
+					P(i,j) += C(i,a) * C(j,a);
 				}
 				P(i,j) *= 2;
 			}
@@ -514,11 +522,16 @@ public:
 		return G;
 	}
 
+	Eigen::MatrixXd Hcore(){
+		return kinetic() + nuclear_attraction();
+	}
+
+
 	Eigen::MatrixXd Fmatrix(){
 		Eigen::MatrixXd G = Gmatrix();
-		std::cout << "G:" << std::endl;
-		std::cout << G << std::endl;
-		return kinetic() + nuclear_attraction() + G;
+//		std::cout << "G:" << std::endl;
+//		std::cout << G << std::endl;
+		return Hcore() + G;
 	}
 
 	void iteration( Eigen::MatrixXd X ){
@@ -575,34 +588,77 @@ public:
 
 	void SCF(){
 
-		std::cout << "-----------------------------------" << std::endl;
 		C = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
 
 		Eigen::MatrixXd X = Xmatrix();
 
-		for ( int i = 0; i < 50; ++i){
+
+/*		Eigen::VectorXd energy_tmp( dimensions() );
+		for ( int i = 0; i < 5; ++i){
+			energy_tmp = energy;
 			std::cout << "iteration: " << i << std::endl;
 			iteration( X );
+			std::cout << "dE = " << energy_tmp(0) - energy(0) << std::endl;
 			std::cout << "-----------------------------------" << std::endl;
-		}
+		}*/
 
-/*		Eigen::VectorXd energy_tmp;
-		Eigen::MatrixXd P_tmp, P;
+		Eigen::VectorXd energy_tmp = energy;
+		Eigen::MatrixXd P_tmp = Pmatrix(), P;
+		double dP;
+		int i = 0;
+		iteration( X );
 		do{
 			energy_tmp = energy;
+			P = Pmatrix();
+
+			dP = Pconvergence( P, P_tmp );
+
+			iteration( X );
+
 			P_tmp = Pmatrix();
+			++i;
 
-			iteration();
+//		}while( std::abs( energy_tmp(0) - energy(0) ) >= 1e-6 && std::abs( dP ) >= 1e-6 );
+		}while( i < 5 );
+	}
 
-			P = Pmatrix( );
+	double nuclear_repulsion(){
+		double sum = 0.0;
+		for ( int i = 0; i < atoms.size(); ++i ){
+			for( int j = i + 1; j < atoms.size(); ++j ){
+				sum += atoms[i] -> get_charge() * \
+				       atoms[j] -> get_charge() / distance( atoms[i] -> get_c(), \
+									    atoms[j] -> get_c() );
+			}
+		}
+		return sum;
+	}
 
-			std::cout << "-----------------------------------" << std::endl;
-			std::cout << "Pconv: " << std::endl;
-			std::cout << Pconvergence( P, P_tmp ) << std::endl;
+	void total_energy(){
+		SCF();
+		int N = dimensions();
+		Eigen::MatrixXd H = Hcore();
+		Eigen::MatrixXd F = Fmatrix();
+		Eigen::MatrixXd P = Pmatrix();
 
-		}while( std::abs( energy_tmp[0] - energy[0] ) >= 1e-4 );
-*/		
+		double E1 = 0.0;
+		double E2 = 0.0;
+		double E3 = nuclear_repulsion(); 
+		for ( int i = 0; i < N; ++i ){
+			for ( int j = 0; j < N; ++j ){
+				E1 += P(i,j) * H(i,j);
+				E2 += P(i,j) * F(i,j);
+			}
+		}
 
+		E1 *= 0.5;
+		E2 *= 0.5;
+
+		std::cout << "one electron energy: " << E1 << std::endl;
+		std::cout << "orbital energy: " << E2 << std::endl;
+		std::cout << "nuclear repulsion energy: " << E3 << std::endl;
+		std::cout << "total energy: " << E1 + E2 + E3 << std::endl;
+		
 	}
 
 private:
