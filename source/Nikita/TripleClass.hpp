@@ -29,6 +29,7 @@ public:
 			  << get_k() << std::endl;
 	}
 
+
 private:
 	std::vector<int> powers;
 

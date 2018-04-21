@@ -66,7 +66,7 @@ public:
 			if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' ) {
 				if ( element_pointer != NULL ) { // если указатель не пуст, то мы ранее проинициализировали элемент --- пора добавить его в базис
 					elements.push_back( element_pointer ); // Добавляем в массив элементов новый элемент
-//					show(); // выводим имя нового элемента
+					show(); // выводим имя нового элемента
 					element_pointer = NULL; // занулим, чтобы показать, что элемент добавлен
 				} 
 				continue;
@@ -83,7 +83,7 @@ public:
 				current_element = current_string.substr(current_string.find_first_not_of(' '), \
 								        current_string.find_last_not_of(' ') + 1 ); // вытаскиваем имя
 				element_pointer = new _Element( current_element ); // создаем указатель типа _Element
-//				element_pointer -> show(); // выводим имя найденного элемента
+				element_pointer -> show(); // выводим имя найденного элемента
 				continue;
 			}
 
@@ -122,9 +122,9 @@ public:
 
 					if ( i == primitives_num ) {
 						element_pointer -> add_basis_function( bf_pointer );
-//						bf_pointer -> show_bf(); // выводим добавленную функцию
-//						bf_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
-//						std::cout << std::endl;
+						bf_pointer -> show_bf(); // выводим добавленную функцию
+						bf_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
+						std::cout << std::endl;
 					}
 				} else {
 					std::stringstream ss( current_string ); // задаем вывод строки в переменные
@@ -138,12 +138,16 @@ public:
 					if ( i == primitives_num ) {
 						element_pointer -> add_basis_function( bf_pointer );
 						element_pointer -> add_basis_function( bf1_pointer );
+						bf_pointer -> show_bf(); // выводим добавленную функцию
+						bf_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
+						bf1_pointer -> show_bf(); // выводим добавленную функцию
+						bf1_pointer -> show_norm(); // выводим значение ее нормы ( если все хорошо, она равна 1 )
 						L_func = false;
 					}
 				}
 			}
 		}
-//		show_end(); // выводим сообщение о конце файла
+		show_end(); // выводим сообщение о конце файла
 	}
 
 	std::vector<_Element*> get_elements() { return elements; }

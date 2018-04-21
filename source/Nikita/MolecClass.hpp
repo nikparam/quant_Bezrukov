@@ -66,8 +66,18 @@ public:
 			}
 		}
 		show_geom();
+
+		overlap();
+		nuclear_attraction();
+		kinetic();
+		Hcore();
 		show();
-		total_energy();
+
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "Electron repulsion matrix: " << std::endl;
+		electron_repulsion(1);
+
+		SCF();
 	}
 
 	void show_geom(){
@@ -93,45 +103,45 @@ public:
 		}
 	}
 
-	double primitive_overlap( _Primitive p1, _Triple t1, _Coords c1, \
-				  _Primitive p2, _Triple t2, _Coords c2 ){
+	double primitive_overlap( _Primitive * p1, _Triple t1, _Coords c1, \
+				  _Primitive * p2, _Triple t2, _Coords c2 ){
 		double S1 = E_coeff ( t1.get_i(), \
 				      t2.get_i(), \
 				      0, \
 				      c1.get_x() - c2.get_x(), \
-				      p1.get_alpha(), \
-				      p2.get_alpha() );
+				      p1 -> get_alpha(), \
+				      p2 -> get_alpha() );
 
 		double S2 = E_coeff ( t1.get_j(), \
 				      t2.get_j(), \
 				      0, \
 				      c1.get_y() - c2.get_y(), \
-				      p1.get_alpha(), \
-				      p2.get_alpha() );
+				      p1 -> get_alpha(), \
+				      p2 -> get_alpha() );
 
 		double S3 = E_coeff ( t1.get_k(), \
 				      t2.get_k(), \
 				      0, \
 				      c1.get_z() - c2.get_z(), \
-				      p1.get_alpha(), \
-				      p2.get_alpha() );
+				      p1 -> get_alpha(), \
+				      p2 -> get_alpha() );
 
-		return S1 * S2 * S3 * pow( M_PI / ( p1.get_alpha() + p2.get_alpha() ), 1.5 );
+		return S1 * S2 * S3 * pow( M_PI / ( p1 -> get_alpha() + p2 -> get_alpha() ), 1.5 );
 	}
 
-	double projection_overlap( _Projection p1, _Coords c1, _Projection p2, _Coords c2 ){
+	double projection_overlap( _Projection * p1, _Coords c1, _Projection * p2, _Coords c2 ){
 		double sum = 0.0;
-		for ( auto i: p1.get_primitives() ){
-			for ( auto j: p2.get_primitives() ){
-				sum += i.get_coeff() * \
-				       j.get_coeff() * \
-				       primitive_overlap( i, p1.get_triple(), c1, j, p2.get_triple(), c2 );
+		for ( auto i: p1 -> get_primitives() ){
+			for ( auto j: p2 -> get_primitives() ){
+				sum += i -> get_coeff() * \
+				       j -> get_coeff() * \
+				       primitive_overlap( i, p1 -> get_triple(), c1, j, p2 -> get_triple(), c2 );
 			}
 		}
 		return sum;
 	}
 	
-	Eigen::MatrixXd overlap(){
+	void overlap(){
 		Eigen::MatrixXd s( dimensions(), dimensions() );
 
 		int k = 0;
@@ -158,7 +168,7 @@ public:
 				}
 			}
 		}
-		return s;
+		S = s;
 	}
 
 	int dimensions(){
@@ -177,33 +187,33 @@ public:
 		return N;
 	}
 
-	double kinetic_primitive( _Primitive p1, _Triple t1, _Coords c1,
-				  _Primitive p2, _Triple t2, _Coords c2 ){
+	double kinetic_primitive( _Primitive * p1, _Triple t1, _Coords c1,
+				  _Primitive * p2, _Triple t2, _Coords c2 ){
 		
-		double term0 = p2.get_alpha()*( 2.0 *( t2.get_i() + t2.get_j() + t2.get_k() ) + 3.0 ) * \
-					      primitive_overlap(p1,t1,c1,p2,t2,c2);
-		double term1 = -2.0 * std::pow(p2.get_alpha(),2)*( primitive_overlap(p1,t1,c1,p2,t2.change_i(2),c2)+\
-							           primitive_overlap(p1,t1,c1,p2,t2.change_j(2),c2)+\
-							           primitive_overlap(p1,t1,c1,p2,t2.change_k(2),c2) );
+		double term0 = p2 -> get_alpha()*( 2.0 *( t2.get_i() + t2.get_j() + t2.get_k() ) + 3.0 ) * \
+					           primitive_overlap(p1,t1,c1,p2,t2,c2);
+		double term1 = -2.0 * std::pow(p2 -> get_alpha(),2)*( primitive_overlap(p1,t1,c1,p2,t2.change_i(2),c2)+\
+							              primitive_overlap(p1,t1,c1,p2,t2.change_j(2),c2)+\
+							              primitive_overlap(p1,t1,c1,p2,t2.change_k(2),c2) );
 		double term2 = -0.5 * ( t2.get_i() * ( t2.get_i() - 1 ) * primitive_overlap(p1,t1,c1,p2,t2.change_i(-2),c2)+\
 					t2.get_j() * ( t2.get_j() - 1 ) * primitive_overlap(p1,t1,c1,p2,t2.change_j(-2),c2)+\
 					t2.get_k() * ( t2.get_k() - 1 ) * primitive_overlap(p1,t1,c1,p2,t2.change_k(-2),c2) );
 		return term0 + term1 + term2;
 	}
 	
-	double projection_kinetic( _Projection p1, _Coords c1, _Projection p2, _Coords c2 ){
+	double projection_kinetic( _Projection * p1, _Coords c1, _Projection * p2, _Coords c2 ){
 		double sum = 0.0;
-		for ( auto i: p1.get_primitives() ){
-			for ( auto j: p2.get_primitives() ){
-				sum += i.get_coeff() * \
-				       j.get_coeff() * \
-				       kinetic_primitive( i, p1.get_triple(), c1, j, p2.get_triple(), c2 );
+		for ( auto i: p1 -> get_primitives() ){
+			for ( auto j: p2 -> get_primitives() ){
+				sum += i -> get_coeff() * \
+				       j -> get_coeff() * \
+				       kinetic_primitive( i, p1 -> get_triple(), c1, j, p2 -> get_triple(), c2 );
 			}
 		}
 		return sum;
 	}
 
-	Eigen::MatrixXd kinetic(){
+	void kinetic(){
 		Eigen::MatrixXd t( dimensions(), dimensions() );
 
 		int k = 0;
@@ -230,7 +240,7 @@ public:
 				}
 			}
 		}
-		return t;
+		T = t;
 	}
 
 	double R_int( int t, int u, int v, int n, double p, double PCx, double PCy, double PCz, double RPC ){
@@ -258,11 +268,11 @@ public:
 		return sum;
 	}
 
-	double nucl_attr_primitive( _Primitive p1, _Triple t1, _Coords c1,\
-				    _Primitive p2, _Triple t2, _Coords c2, _Coords c3 ){
+	double nucl_attr_primitive( _Primitive * p1, _Triple t1, _Coords c1,\
+				    _Primitive * p2, _Triple t2, _Coords c2, _Coords c3 ){
 
-		double p = p1.get_alpha() + p2.get_alpha();
-		_Coords P = gauss_prod_center( p1.get_alpha(), c1, p2.get_alpha(), c2 );
+		double p = p1 -> get_alpha() + p2 -> get_alpha();
+		_Coords P = gauss_prod_center( p1 -> get_alpha(), c1, p2 -> get_alpha(), c2 );
 		double RPC = std::pow( ( std::pow( P.get_x() - c3.get_x(), 2 ) + \
 				         std::pow( P.get_y() - c3.get_y(), 2 ) + \
 				         std::pow( P.get_z() - c3.get_z(), 2 ) ), 0.5 );
@@ -272,11 +282,11 @@ public:
 			for ( int u = 0; u < ( t1.get_j() + t2.get_j() + 1 ); ++u ){
 				for ( int v = 0; v < ( t1.get_k() + t2.get_k() + 1 ); ++v ){
 					sum += E_coeff ( t1.get_i(), t2.get_i(), t, \
-							 c1.get_x() - c2.get_x(), p1.get_alpha(), p2.get_alpha() ) * \
+							 c1.get_x() - c2.get_x(), p1 -> get_alpha(), p2 -> get_alpha() ) * \
 					       E_coeff ( t1.get_j(), t2.get_j(), u, \
-							 c1.get_y() - c2.get_y(), p1.get_alpha(), p2.get_alpha() ) * \
+							 c1.get_y() - c2.get_y(), p1 -> get_alpha(), p2 -> get_alpha() ) * \
 					       E_coeff ( t1.get_k(), t2.get_k(), v, \
-							 c1.get_z() - c2.get_z(), p1.get_alpha(), p2.get_alpha() ) * \
+							 c1.get_z() - c2.get_z(), p1 -> get_alpha(), p2 -> get_alpha() ) * \
 					       R_int ( t, u, v, 0, p, P.get_x() - c3.get_x(), \
 								      P.get_y() - c3.get_y(), \
 								      P.get_z() - c3.get_z(), RPC );
@@ -287,23 +297,23 @@ public:
 		return sum;
 	}
 
-	double projection_attraction( _Projection p1, _Coords c1, _Projection p2, _Coords c2 ){
+	double projection_attraction( _Projection * p1, _Coords c1, _Projection * p2, _Coords c2 ){
 
 		double sum = 0.0;
 		for ( auto a: atoms ){
-			for ( auto i: p1.get_primitives() ){
-				for ( auto j: p2.get_primitives() ){
+			for ( auto i: p1 -> get_primitives() ){
+				for ( auto j: p2 -> get_primitives() ){
 					sum -= a -> get_charge() * \
-					       i.get_coeff() * \
-					       j.get_coeff() * \
-					       nucl_attr_primitive( i, p1.get_triple(), c1, j, p2.get_triple(), c2, a -> get_c() );
+					       i -> get_coeff() * \
+					       j -> get_coeff() * \
+					       nucl_attr_primitive( i, p1 -> get_triple(), c1, j, p2 -> get_triple(), c2, a -> get_c() );
 				}
 			}
 		}
 		return sum;
 	}
 
-	Eigen::MatrixXd nuclear_attraction(){
+	void nuclear_attraction(){
 		Eigen::MatrixXd n( dimensions(), dimensions() );
 
 		int k = 0;
@@ -330,7 +340,7 @@ public:
 				}
 			}
 		}
-		return n;
+		V = n;
 	}
 
 
@@ -351,29 +361,43 @@ public:
 
 
 		for ( int t = 0; t < ( t1.get_i() + t2.get_i() + 1 ); ++t ){
+
 			for ( int u = 0; u < ( t1.get_j() + t2.get_j() + 1 ); ++u ){
+
 				for ( int v = 0; v < ( t1.get_k() + t2.get_k() + 1 ); ++v ){
+
 					for ( int tau = 0; tau < ( t3.get_i() + t4.get_i() + 1 ); ++tau ){
+
 						for ( int nu = 0; nu < ( t3.get_j() + t4.get_j() + 1 ); ++nu ){
+
 							for ( int phi = 0; phi < ( t3.get_k() + t4.get_k() + 1 ); ++phi ){
-								sum += E_coeff ( t1.get_i(), t2.get_i(), t, \
+
+								sum += std::pow(-1, tau + nu + phi ) * \
+
+								       E_coeff ( t1.get_i(), t2.get_i(), t, \
 										 c1.get_x() - c2.get_x(), \
 										 p1.get_alpha(), p2.get_alpha() ) * \
+
 								       E_coeff ( t1.get_j(), t2.get_j(), u, \
 										 c1.get_y() - c2.get_y(), \
 										 p1.get_alpha(), p2.get_alpha() ) * \
+
 								       E_coeff ( t1.get_k(), t2.get_k(), v, \
 										 c1.get_z() - c2.get_z(), \
 										 p1.get_alpha(), p2.get_alpha() ) * \
+
 								       E_coeff ( t3.get_i(), t4.get_i(), tau, \
 										 c3.get_x() - c4.get_x(), \
-										 p3.get_alpha(), p3.get_alpha() ) * \
+										 p3.get_alpha(), p4.get_alpha() ) * \
+
 								       E_coeff ( t3.get_j(), t4.get_j(), nu, \
 										 c3.get_y() - c4.get_y(), \
 										 p3.get_alpha(), p4.get_alpha() ) * \
+
 								       E_coeff ( t3.get_k(), t4.get_k(), phi, \
 										 c3.get_z() - c4.get_z(), \
 										 p3.get_alpha(), p4.get_alpha() ) * \
+
 								       R_int ( t+tau, u+nu, v+phi, 0, alpha, P.get_x() - Q.get_x(), \
 											      		     P.get_y() - Q.get_y(), \
 												      	     P.get_z() - Q.get_z(), RPQ );
@@ -387,8 +411,8 @@ public:
 		return sum;
 	}
 
-	double projection_repulsion( _Projection p1, _Coords c1, _Projection p2, _Coords c2, \
-				     _Projection p3, _Coords c3, _Projection p4, _Coords c4){
+	double projection_repulsion( _Projection * p1, _Coords c1, _Projection * p2, _Coords c2, \
+				     _Projection * p3, _Coords c3, _Projection * p4, _Coords c4){
 
 		double sum = 0.0;
 		for ( auto i: p1.get_primitives() ){
@@ -410,7 +434,7 @@ public:
 		return sum;
 	}
 
-	Eigen::Tensor<double,4> electron_repulsion( int pp = 0 ){
+	void electron_repulsion( int pp = 0 ){
 		int N = dimensions();
 		Eigen::Tensor<double,4> e( N, N, N, N );
 
@@ -450,11 +474,12 @@ public:
 															         p2, c2, \
 															         p3, c3, \
 															         p4, c4 );
-												if ( e(k,l,m,n) != 0.0 && pp != 0 ) 
-												std::cout << "E[" << k+1 << "," << \
-														     l+1 << "," << \
-														     m+1 << "," << \
-														     n+1 << "] = " << \
+												if ( std::abs( e(k,l,m,n) ) > 1.0e-10 \
+												     && pp != 0 ) 
+												std::cout << "E[" << k << "," << \
+														     l << "," << \
+														     m << "," << \
+														     n << "] = " << \
 														     e(k,l,m,n) << \
 												std::endl;
 														++n;
@@ -473,80 +498,83 @@ public:
 				}
 			}
 		}
-		return e;
+		Ee = e;
 	}
 
-	Eigen::MatrixXd Xmatrix(){
-		Eigen::MatrixXd S = overlap();
+	void Xmatrix(){
+		overlap();
 		Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> lambda(S);
 		Eigen::MatrixXd D = lambda.eigenvalues().asDiagonal();
 		Eigen::MatrixXd U = lambda.eigenvectors();
 		for ( int i = 0; i < D.cols(); ++i ){
 			D(i,i) = 1 / sqrt( D(i,i) );
 		}
-		return U *  D * U.transpose();
+		X = U * D;
 	}
 
-	Eigen::MatrixXd Pmatrix(){
+	void Pmatrix(){
 		int N = dimensions();
-		Eigen::MatrixXd P = Eigen::MatrixXd::Zero( N, N );
-
 		for( int i = 0; i < N; ++i ){
 			for( int j = 0; j < N; ++j ){
+				double res = 0.0;
 				for ( int a = 0; a < 0.5 * N; ++a ){
-					P(i,j) += C(i,a) * C(j,a);
+					res += C(i,a) * C(j,a);
 				}
-				P(i,j) *= 2;
+				P(i,j) = 2 * res;
 			}
 		}
-
-		return P;	
 	}
 
-	Eigen::MatrixXd Gmatrix(){
+	void Gmatrix(){
 
-		Eigen::MatrixXd G = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
-		Eigen::MatrixXd P = Pmatrix();
-		Eigen::Tensor<double,4> E = electron_repulsion();
+		Pmatrix();
+		int N = dimensions();
 
-		for ( int i = 0; i < dimensions(); ++i ){
-			for ( int j = 0; j < dimensions(); ++j ){
-				for ( int k = 0; k < dimensions(); ++k ){
-					for ( int l = 0; l < dimensions(); ++l ){
-						G(i,j) += P(k,l) * ( E(i,j,l,k) - \
-							       0.5 * E(i,k,l,j) );
+		for ( int i = 0; i < N; ++i ){
+			for ( int j = 0; j < N; ++j ){
+				double res = 0.0;
+				for ( int k = 0; k < N; ++k ){
+					for ( int l = 0; l < N; ++l ){
+						res += P(k,l) * ( Ee(i,j,k,l) - \
+							       0.5 * Ee(i,l,k,j) );
 					}
 				}
+				G(i,j) = res;
 			}
 		}
-		return G;
 	}
 
-	Eigen::MatrixXd Hcore(){
-		return kinetic() + nuclear_attraction();
+	void Hcore(){
+		H = T + V;
 	}
 
 
-	Eigen::MatrixXd Fmatrix(){
-		Eigen::MatrixXd G = Gmatrix();
-//		std::cout << "G:" << std::endl;
-//		std::cout << G << std::endl;
-		return Hcore() + G;
+	void Fmatrix(){
+		Gmatrix();
+		F = H + G;
 	}
 
-	void iteration( Eigen::MatrixXd X ){
+	void iteration( int i ){
 
-		Eigen::MatrixXd F = Fmatrix();
-		Eigen::MatrixXd F_prime = X.transpose() * F * X;
-
+		Fmatrix();
 		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "F: " << std::endl;
+		std::cout << F << std::endl; 
+
+		Eigen::MatrixXd F_prime;
+		if ( i == 0 ){
+			F_prime = F;
+		} else {
+			F_prime = X.transpose() * F * X;
+		}
+
 		std::cout << "F\': " << std::endl;
 		std::cout << F_prime << std::endl; 
 		
 		Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> lambda( F_prime );
 		Eigen::MatrixXd U = lambda.eigenvectors();
-
-		energy = lambda.eigenvalues();
+	
+		Eigen::VectorXd energy = lambda.eigenvalues();
 		C = X * U;
 
 		std::cout << "Energies: " << std::endl;
@@ -554,75 +582,76 @@ public:
 		std::cout << "Vectors: " << std::endl;
 		std::cout << C << std::endl; 
 		std::cout << "Density: " << std::endl;
-		std::cout << Pmatrix() << std::endl; 
+		Pmatrix();
+		std::cout << P << std::endl; 
+		std::cout << "Gmatrix: " << std::endl;
+		Gmatrix();
+		std::cout << G << std::endl;
 		std::cout << "-----------------------------------" << std::endl;
-	}
-
-	double Pconvergence( Eigen::MatrixXd P1, Eigen::MatrixXd P2 ){
-		int N = dimensions();
-		double sum = 0.0;
-		for ( int i = 0; i < N; ++i ){
-			for ( int j = 0; j < N; ++j ){
-				sum += ( P1(i,j) - P2(i,j) ) * ( P1(i,j) - P2(i,j) );
-			}
-		}
-		sum = std::sqrt( sum ) / N;
-		return sum;
 	}
 
 	void show(){
 		std::cout << "-----------------------------------" << std::endl;
 		std::cout << "Overlap matrix: " << std::endl;
-		std::cout << overlap() << std::endl;
+		std::cout << S << std::endl;
 		std::cout << "-----------------------------------" << std::endl;
 		std::cout << "Ekin matrix: " << std::endl;
-		std::cout << kinetic() << std::endl;
+		std::cout << T << std::endl;
 		std::cout << "-----------------------------------" << std::endl;
 		std::cout << "Epot matrix: " << std::endl;
-		std::cout << nuclear_attraction() << std::endl;
+		std::cout << V  << std::endl;
 		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "Electron repulsion matrix: " << std::endl;
-		electron_repulsion(1);
-
+		std::cout << "Hcore: " << std::endl;
+		std::cout << H << std::endl;
 	}
 
 	void SCF(){
 
 		C = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
+		G = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
+		P = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
 
-		Eigen::MatrixXd X = Xmatrix();
+		nuclear_repulsion(); 
+		Xmatrix();
 
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "X: " << std::endl;
+		std::cout << X << std::endl;
 
-/*		Eigen::VectorXd energy_tmp( dimensions() );
-		for ( int i = 0; i < 5; ++i){
-			energy_tmp = energy;
-			std::cout << "iteration: " << i << std::endl;
-			iteration( X );
-			std::cout << "dE = " << energy_tmp(0) - energy(0) << std::endl;
-			std::cout << "-----------------------------------" << std::endl;
-		}*/
-
-		Eigen::VectorXd energy_tmp = energy;
-		Eigen::MatrixXd P_tmp = Pmatrix(), P;
-		double dP;
 		int i = 0;
-		iteration( X );
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "Iteration = " << i << std::endl;
+		iteration( i );
+		energy_components();
+		double energy_tmp = E1 + E2;
 		do{
-			energy_tmp = energy;
-			P = Pmatrix();
-
-			dP = Pconvergence( P, P_tmp );
-
-			iteration( X );
-
-			P_tmp = Pmatrix();
 			++i;
-
-//		}while( std::abs( energy_tmp(0) - energy(0) ) >= 1e-6 && std::abs( dP ) >= 1e-6 );
-		}while( i < 5 );
+			energy_tmp = E1 + E2;
+			std::cout << "Iteration = " << i << std::endl;
+			iteration( i );
+			energy_components();
+		}while( std::abs( energy_tmp - E1 - E2 ) > 1e-6 ); 
 	}
 
-	double nuclear_repulsion(){
+	void energy_components(){
+		int N = dimensions();
+		double sum1 = 0.0, sum2 = 0.0;
+		for ( int i = 0; i < N; ++i ){
+			for ( int j = 0; j < N; ++j ){
+				sum1 += P(i,j) * H(i,j);
+				sum2 += P(i,j) * F(i,j);
+			}
+		}
+		E1 = 0.5 * sum1;
+		E2 = 0.5 * sum2;
+		std::cout << "one electron energy: " << E1 << std::endl;
+		std::cout << "orbital energy: " << E2 << std::endl;
+		std::cout << "nuclear repulsion energy: " << E3 << std::endl;
+		std::cout << "total energy: " << E1 + E2 + E3 << std::endl;
+
+	}
+
+	void nuclear_repulsion(){
 		double sum = 0.0;
 		for ( int i = 0; i < atoms.size(); ++i ){
 			for( int j = i + 1; j < atoms.size(); ++j ){
@@ -631,38 +660,22 @@ public:
 									    atoms[j] -> get_c() );
 			}
 		}
-		return sum;
-	}
-
-	void total_energy(){
-		SCF();
-		int N = dimensions();
-		Eigen::MatrixXd H = Hcore();
-		Eigen::MatrixXd F = Fmatrix();
-		Eigen::MatrixXd P = Pmatrix();
-
-		double E1 = 0.0;
-		double E2 = 0.0;
-		double E3 = nuclear_repulsion(); 
-		for ( int i = 0; i < N; ++i ){
-			for ( int j = 0; j < N; ++j ){
-				E1 += P(i,j) * H(i,j);
-				E2 += P(i,j) * F(i,j);
-			}
-		}
-
-		E1 *= 0.5;
-		E2 *= 0.5;
-
-		std::cout << "one electron energy: " << E1 << std::endl;
-		std::cout << "orbital energy: " << E2 << std::endl;
-		std::cout << "nuclear repulsion energy: " << E3 << std::endl;
-		std::cout << "total energy: " << E1 + E2 + E3 << std::endl;
-		
+		E3 = sum;
 	}
 
 private:
 	std::vector<_Atom*> atoms;
 	Eigen::MatrixXd C;
-	Eigen::VectorXd energy;
+	Eigen::MatrixXd X;
+	Eigen::MatrixXd F;
+	Eigen::MatrixXd H;
+	Eigen::MatrixXd S;
+	Eigen::MatrixXd V;
+	Eigen::MatrixXd T;
+	Eigen::MatrixXd G;
+	Eigen::MatrixXd P;
+	Eigen::Tensor<double,4> Ee;
+	double E1;
+	double E2;
+	double E3;
 };

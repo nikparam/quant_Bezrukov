@@ -1,8 +1,0 @@
-! Test for class basis
-! Open file, read gaussians, create basis function
-
-HYDROGEN
-P   1
-  1      0.7270000              1.0000000        
-
-

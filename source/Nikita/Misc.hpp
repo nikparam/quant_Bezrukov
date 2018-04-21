@@ -3,6 +3,7 @@
 #include <cmath>     // библиотека математических функций
 #include <boost/math/special_functions/gamma.hpp>
 #include "CoordsClass.hpp"
+#include "TripleClass.hpp"
 
 int d_factorial( int n ){
 	return ( n <= 1 ) ? 1 : n * d_factorial( n - 2 );
@@ -41,3 +42,13 @@ double distance( _Coords c1, _Coords c2 ){
 	      std::pow( ( c1.get_z() - c2.get_z() ), 2 );
 	return std::sqrt( sum );
 }
+
+bool equal( _Triple t1, _Triple t2 ){
+	if ( t1.get_i() == t2.get_i() && \
+	     t1.get_j() == t2.get_j() && \
+	     t1.get_k() == t2.get_k() ){
+		return true;
+	} else { return false; }
+}
+
+

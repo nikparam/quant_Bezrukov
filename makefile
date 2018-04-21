@@ -1,5 +1,5 @@
 C = g++
-CFLAGS = -g --std=c++11
+CFLAGS = -g --std=c++11 -O2
 EIGEN = -I /usr/local/include/eigen3
 
 
@@ -38,7 +38,7 @@ test2:
 
 .PHONY: basis
 
-basis: $(BASIS)
+basis: clean $(BASIS)
 
 	@$(C) $(CFLAGS) $(BASIS) -o $(basis_EXE)
 

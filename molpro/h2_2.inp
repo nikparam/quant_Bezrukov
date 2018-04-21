@@ -26,5 +26,7 @@ hf
 	print,EKIN;
 	load,EPOT;
 	print,EPOT;
+	load,f,fock;
+	print,f;
 }
 

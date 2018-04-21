@@ -19,22 +19,23 @@ public:
 	// Создадим функцию для заполнения массива примитивов
 	// в ходе заполнения новый примитив сразу нормируется
 	void add_primitive( int i, double alpha, double coeff ){
-		primitives.emplace_back( i, alpha, coeff );
-		primitives.end()[-1].renorm( triple );
+		_Primitive * p = new _Primitive( i, alpha, coeff );
+		p -> renorm( triple );
+		primitives.push_back( p );
 	}
 
 	// Создадим функцию для расчета интеграла двух примитивов
-	double integral( _Primitive p1, _Primitive p2 ){
+	double integral( _Primitive * p1, _Primitive * p2 ){
 
 		int i = triple.get_i();
 		int j = triple.get_j();
 		int k = triple.get_k();
 
-		double coeff1 = p1.get_coeff();
-		double coeff2 = p2.get_coeff();
+		double coeff1 = p1 -> get_coeff();
+		double coeff2 = p2 -> get_coeff();
 
-		double alpha1 = p1.get_alpha();
-		double alpha2 = p2.get_alpha();
+		double alpha1 = p1 -> get_alpha();
+		double alpha2 = p2 -> get_alpha();
 
 		// функция factor ( int i, double alpha ) лежит в Misc.hpp
 		double N_x = factor( i, alpha1 + alpha2 );
@@ -57,24 +58,24 @@ public:
 
 	void renorm_projection(){
 		double N = count_norm();
-		for ( auto & p : primitives ){
-			p.total_renorm( N );
+		for ( auto p : primitives ){
+			p -> total_renorm( N );
 		}
 	}
 
 	void show(){
 		for( auto & primitive: primitives ){
-			std::cout << primitive.get_num() << ") alpha = " << primitive.get_alpha() \
-					               << " coeff = "  << primitive.get_coeff() << std::endl;
+			std::cout << primitive -> get_num() << ") alpha = " << primitive -> get_alpha() \
+							    << " coeff = "  << primitive -> get_coeff() << std::endl;
 		}
 	}
 
 	_Triple get_triple() { return triple; }
-	std::vector<_Primitive> get_primitives() { return primitives; }
+	std::vector<_Primitive*> get_primitives() { return primitives; }
 
 private:
 	_Triple triple;
-	std::vector<_Primitive> primitives;
+	std::vector<_Primitive*> primitives;
 
 };
 
