@@ -16,7 +16,7 @@
 class _Molecule{
 
 public:
-	_Molecule(){}
+	_Molecule( int nprint ): nprint(nprint){}
 	~_Molecule(){}
 
 	// Проверяем, что файл геометрии существует
@@ -34,7 +34,6 @@ public:
 		fin.close();
 	}
 
-
 	// Читаем файл с геометрией
 	void parse_geom_file( std::ifstream & fin, _Basis * b ){
 
@@ -43,9 +42,9 @@ public:
 		std::string current_string;
 		_Atom * atom = NULL;
 
-		for ( int i = 0; i < 2; ++i){
-			fin.getline( line, MAX_SIZE );
-		}
+		fin.getline( line, MAX_SIZE );
+		fin >> charge;
+		fin.getline( line, MAX_SIZE );
 
 		while( fin.getline( line, MAX_SIZE ) ){
 			current_string = line;
@@ -65,17 +64,20 @@ public:
 				}
 			}
 		}
-		show_geom();
+		if ( nprint > 0 ) show_geom();
 
 		overlap();
 		nuclear_attraction();
 		kinetic();
 		Hcore();
-		show();
+		if ( nprint > 1 ){
 
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "Electron repulsion matrix: " << std::endl;
-		electron_repulsion(1);
+			show();
+
+			std::cout << "-----------------------------------" << std::endl;
+			std::cout << "Electron repulsion matrix: " << std::endl;
+		}
+		electron_repulsion( nprint );
 
 		SCF();
 	}
@@ -184,7 +186,7 @@ public:
 		for( auto a: atoms ){
 			N += a -> get_charge();
 		}
-		return N;
+		return N - charge;
 	}
 
 	double kinetic_primitive( _Primitive * p1, _Triple t1, _Coords c1,
@@ -344,16 +346,16 @@ public:
 	}
 
 
-	double primitive_repulsion( _Primitive p1, _Triple t1, _Coords c1,\
-				   _Primitive p2, _Triple t2, _Coords c2,\
-				   _Primitive p3, _Triple t3, _Coords c3,\
-				   _Primitive p4, _Triple t4, _Coords c4 ){
+	double primitive_repulsion( _Primitive * p1, _Triple t1, _Coords c1,\
+				    _Primitive * p2, _Triple t2, _Coords c2,\
+				    _Primitive * p3, _Triple t3, _Coords c3,\
+				    _Primitive * p4, _Triple t4, _Coords c4 ){
 
-		double p = p1.get_alpha() + p2.get_alpha();
-		double q = p3.get_alpha() + p4.get_alpha();
+		double p = p1 -> get_alpha() + p2 -> get_alpha();
+		double q = p3 -> get_alpha() + p4 -> get_alpha();
 		double alpha = p * q / ( p + q );
-		_Coords P = gauss_prod_center( p1.get_alpha(), c1, p2.get_alpha(), c2 );
-		_Coords Q = gauss_prod_center( p3.get_alpha(), c3, p4.get_alpha(), c4 );
+		_Coords P = gauss_prod_center( p1 -> get_alpha(), c1, p2 -> get_alpha(), c2 );
+		_Coords Q = gauss_prod_center( p3 -> get_alpha(), c3, p4 -> get_alpha(), c4 );
 		double RPQ = std::pow( ( std::pow( P.get_x() - Q.get_x(), 2 ) + \
 				         std::pow( P.get_y() - Q.get_y(), 2 ) + \
 				         std::pow( P.get_z() - Q.get_z(), 2 ) ), 0.5 );
@@ -376,27 +378,27 @@ public:
 
 								       E_coeff ( t1.get_i(), t2.get_i(), t, \
 										 c1.get_x() - c2.get_x(), \
-										 p1.get_alpha(), p2.get_alpha() ) * \
+										 p1 -> get_alpha(), p2 -> get_alpha() ) * \
 
 								       E_coeff ( t1.get_j(), t2.get_j(), u, \
 										 c1.get_y() - c2.get_y(), \
-										 p1.get_alpha(), p2.get_alpha() ) * \
+										 p1 -> get_alpha(), p2 -> get_alpha() ) * \
 
 								       E_coeff ( t1.get_k(), t2.get_k(), v, \
 										 c1.get_z() - c2.get_z(), \
-										 p1.get_alpha(), p2.get_alpha() ) * \
+										 p1 -> get_alpha(), p2 -> get_alpha() ) * \
 
 								       E_coeff ( t3.get_i(), t4.get_i(), tau, \
 										 c3.get_x() - c4.get_x(), \
-										 p3.get_alpha(), p4.get_alpha() ) * \
+										 p3 -> get_alpha(), p4 -> get_alpha() ) * \
 
 								       E_coeff ( t3.get_j(), t4.get_j(), nu, \
 										 c3.get_y() - c4.get_y(), \
-										 p3.get_alpha(), p4.get_alpha() ) * \
+										 p3 -> get_alpha(), p4 -> get_alpha() ) * \
 
 								       E_coeff ( t3.get_k(), t4.get_k(), phi, \
 										 c3.get_z() - c4.get_z(), \
-										 p3.get_alpha(), p4.get_alpha() ) * \
+										 p3 -> get_alpha(), p4 -> get_alpha() ) * \
 
 								       R_int ( t+tau, u+nu, v+phi, 0, alpha, P.get_x() - Q.get_x(), \
 											      		     P.get_y() - Q.get_y(), \
@@ -415,18 +417,18 @@ public:
 				     _Projection * p3, _Coords c3, _Projection * p4, _Coords c4){
 
 		double sum = 0.0;
-		for ( auto i: p1.get_primitives() ){
-			for ( auto j: p2.get_primitives() ){
-				for ( auto k: p3.get_primitives() ){
-					for ( auto l: p4.get_primitives() ){
-						sum += i.get_coeff() * \
-						       j.get_coeff() * \
-						       k.get_coeff() * \
-						       l.get_coeff() * \
-						       primitive_repulsion( i, p1.get_triple(), c1, \
-									    j, p2.get_triple(), c2, \
-									    k, p3.get_triple(), c3, \
-									    l, p4.get_triple(), c4 );
+		for ( auto i: p1 -> get_primitives() ){
+			for ( auto j: p2 -> get_primitives() ){
+				for ( auto k: p3 -> get_primitives() ){
+					for ( auto l: p4 -> get_primitives() ){
+						sum += i -> get_coeff() * \
+						       j -> get_coeff() * \
+						       k -> get_coeff() * \
+						       l -> get_coeff() * \
+						       primitive_repulsion( i, p1 -> get_triple(), c1, \
+									    j, p2 -> get_triple(), c2, \
+									    k, p3 -> get_triple(), c3, \
+									    l, p4 -> get_triple(), c4 );
 					}
 				}
 			}
@@ -475,7 +477,7 @@ public:
 															         p3, c3, \
 															         p4, c4 );
 												if ( std::abs( e(k,l,m,n) ) > 1.0e-10 \
-												     && pp != 0 ) 
+												     && pp > 0 ) 
 												std::cout << "E[" << k << "," << \
 														     l << "," << \
 														     m << "," << \
@@ -507,17 +509,18 @@ public:
 		Eigen::MatrixXd D = lambda.eigenvalues().asDiagonal();
 		Eigen::MatrixXd U = lambda.eigenvectors();
 		for ( int i = 0; i < D.cols(); ++i ){
-			D(i,i) = 1 / sqrt( D(i,i) );
+			D(i,i) = std::pow( D(i,i), -0.5 );
 		}
 		X = U * D;
 	}
 
 	void Pmatrix(){
 		int N = dimensions();
+		int M = num_e();
 		for( int i = 0; i < N; ++i ){
 			for( int j = 0; j < N; ++j ){
 				double res = 0.0;
-				for ( int a = 0; a < 0.5 * N; ++a ){
+				for ( int a = 0; a < 0.5 * M; ++a ){
 					res += C(i,a) * C(j,a);
 				}
 				P(i,j) = 2 * res;
@@ -535,7 +538,7 @@ public:
 				double res = 0.0;
 				for ( int k = 0; k < N; ++k ){
 					for ( int l = 0; l < N; ++l ){
-						res += P(k,l) * ( Ee(i,j,k,l) - \
+						res += P(k,l) * ( Ee(i,j,l,k) - \
 							       0.5 * Ee(i,l,k,j) );
 					}
 				}
@@ -561,21 +564,10 @@ public:
 		std::cout << "F: " << std::endl;
 		std::cout << F << std::endl; 
 
-		Eigen::MatrixXd F_prime;
-		if ( i == 0 ){
-			F_prime = F;
-		} else {
-			F_prime = X.transpose() * F * X;
-		}
-
-		std::cout << "F\': " << std::endl;
-		std::cout << F_prime << std::endl; 
-		
-		Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> lambda( F_prime );
-		Eigen::MatrixXd U = lambda.eigenvectors();
+		Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::MatrixXd> lambda(F,S);
 	
 		Eigen::VectorXd energy = lambda.eigenvalues();
-		C = X * U;
+		C = lambda.eigenvectors();
 
 		std::cout << "Energies: " << std::endl;
 		std::cout << energy << std::endl; 
@@ -590,21 +582,6 @@ public:
 		std::cout << "-----------------------------------" << std::endl;
 	}
 
-	void show(){
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "Overlap matrix: " << std::endl;
-		std::cout << S << std::endl;
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "Ekin matrix: " << std::endl;
-		std::cout << T << std::endl;
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "Epot matrix: " << std::endl;
-		std::cout << V  << std::endl;
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "Hcore: " << std::endl;
-		std::cout << H << std::endl;
-	}
-
 	void SCF(){
 
 		C = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
@@ -612,11 +589,10 @@ public:
 		P = Eigen::MatrixXd::Zero( dimensions(), dimensions() );
 
 		nuclear_repulsion(); 
-		Xmatrix();
 
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "X: " << std::endl;
-		std::cout << X << std::endl;
+//		std::cout << "-----------------------------------" << std::endl;
+//		std::cout << "X: " << std::endl;
+//		std::cout << X << std::endl;
 
 		int i = 0;
 		std::cout << "-----------------------------------" << std::endl;
@@ -663,7 +639,24 @@ public:
 		E3 = sum;
 	}
 
+	void show(){
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "Overlap matrix: " << std::endl;
+		std::cout << S << std::endl;
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "Ekin matrix: " << std::endl;
+		std::cout << T << std::endl;
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "Epot matrix: " << std::endl;
+		std::cout << V  << std::endl;
+		std::cout << "-----------------------------------" << std::endl;
+		std::cout << "Hcore: " << std::endl;
+		std::cout << H << std::endl;
+	}
+
 private:
+	int nprint;
+	int charge;
 	std::vector<_Atom*> atoms;
 	Eigen::MatrixXd C;
 	Eigen::MatrixXd X;

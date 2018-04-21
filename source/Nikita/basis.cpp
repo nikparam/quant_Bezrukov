@@ -23,7 +23,7 @@ int main(){
 //	std::ifstream fin( "input.dat" );
 	std::string filename;
 	while ( std::cin >> filename ) {
-		_Basis bs;
+		_Basis bs(0);
 		bs.read_basis( filename );
 	}
 	

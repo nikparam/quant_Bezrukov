@@ -21,14 +21,15 @@
 int main(){
 	std::cout << std::fixed << std::setprecision(8);
 
+	int nprint = 0;
 	std::string basis_name;
 	std::cin >> basis_name;
-	_Basis bs;
+	_Basis bs( nprint );
 	bs.read_basis( basis_name );
 
 	std::string geom_name;
 	std::cin >> geom_name;
-	_Molecule m;
+	_Molecule m(0);
 	m.read_geom( geom_name, & bs );
 	
 	return 0;
