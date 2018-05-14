@@ -64,13 +64,18 @@ public:
 				}
 			}
 		}
-		if ( nprint > 0 ) show_geom();
+		if ( nprint > 2 ) {
+			show_geom();
+			std::cout << "-----------------------------------" << std::endl;
+		}
+		shift_molecule();
+		if ( nprint > 2 ) show_geom();
 
 		overlap();
 		nuclear_attraction();
 		kinetic();
 		Hcore();
-		if ( nprint > 1 ){
+		if ( nprint > 0 ){
 
 			show();
 
@@ -80,6 +85,28 @@ public:
 		electron_repulsion( nprint );
 
 		SCF();
+	}
+
+	_Coords center_of_mass(){
+		double x = 0.0, y = 0.0, z = 0.0, M = 0.0;
+		for ( auto a: atoms ){
+			x += a -> get_c().get_x() * a -> get_charge();
+			y += a -> get_c().get_y() * a -> get_charge();
+			z += a -> get_c().get_z() * a -> get_charge();
+			M += a -> get_charge();
+		}
+		return _Coords( x / M, y / M, z / M );
+	}
+
+	void shift_molecule(){
+		_Coords R = center_of_mass();
+		double x, y, z;
+		for ( auto a: atoms ){
+			x = a -> get_c().get_x() - R.get_x();
+			y = a -> get_c().get_y() - R.get_y();
+			z = a -> get_c().get_z() - R.get_z();
+			a -> new_coords(  x, y, z );
+		}
 	}
 
 	void show_geom(){
@@ -560,26 +587,29 @@ public:
 	void iteration( int i ){
 
 		Fmatrix();
-		std::cout << "-----------------------------------" << std::endl;
-		std::cout << "F: " << std::endl;
-		std::cout << F << std::endl; 
+		if ( nprint > 0 ){
+			std::cout << "-----------------------------------" << std::endl;
+			std::cout << "F: " << std::endl;
+			std::cout << F << std::endl; 
+		}
 
 		Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::MatrixXd> lambda(F,S);
 	
 		Eigen::VectorXd energy = lambda.eigenvalues();
 		C = lambda.eigenvectors();
 
-		std::cout << "Energies: " << std::endl;
-		std::cout << energy << std::endl; 
-		std::cout << "Vectors: " << std::endl;
-		std::cout << C << std::endl; 
-		std::cout << "Density: " << std::endl;
-		Pmatrix();
-		std::cout << P << std::endl; 
-		std::cout << "Gmatrix: " << std::endl;
-		Gmatrix();
-		std::cout << G << std::endl;
-		std::cout << "-----------------------------------" << std::endl;
+		if ( nprint > 0 ){
+			std::cout << "Energies: " << std::endl;
+			std::cout << energy << std::endl; 
+			std::cout << "Vectors: " << std::endl;
+			std::cout << C << std::endl; 
+			std::cout << "Density: " << std::endl;
+			Pmatrix();
+			std::cout << P << std::endl; 
+			std::cout << "Gmatrix: " << std::endl;
+			Gmatrix();
+			std::cout << G << std::endl;
+		}
 	}
 
 	void SCF(){
@@ -603,6 +633,7 @@ public:
 		do{
 			++i;
 			energy_tmp = E1 + E2;
+			std::cout << "-----------------------------------" << std::endl;
 			std::cout << "Iteration = " << i << std::endl;
 			iteration( i );
 			energy_components();

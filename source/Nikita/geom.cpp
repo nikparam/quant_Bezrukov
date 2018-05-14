@@ -23,13 +23,15 @@ int main(){
 
 	int nprint = 0;
 	std::string basis_name;
+	std::cin >> nprint;
 	std::cin >> basis_name;
 	_Basis bs( nprint );
 	bs.read_basis( basis_name );
 
 	std::string geom_name;
+	std::cin >> nprint;
 	std::cin >> geom_name;
-	_Molecule m(0);
+	_Molecule m( nprint );
 	m.read_geom( geom_name, & bs );
 	
 	return 0;

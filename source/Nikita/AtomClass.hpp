@@ -44,6 +44,10 @@ public:
 		}
 	}
 
+	void new_coords( double x, double y, double z ){
+		coords = _Coords(x,y,z);
+	}
+
 	int get_charge(){ return charge; }
 
 private:
