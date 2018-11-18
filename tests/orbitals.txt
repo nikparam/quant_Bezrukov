@@ -1,0 +1,257 @@
+Total number of orbitals: 25
+Orbital # 1
+quantum numbers: 0  0  0
+alpha[0] = 13.010000   a[0] = 0.019685   anorm[0] = 0.096107  norm[0] = 0.204825
+alpha[1] = 1.962000   a[1] = 0.137977   anorm[1] = 0.163020  norm[1] = 0.846381
+alpha[2] = 0.444600   a[2] = 0.478148   anorm[2] = 0.185545  norm[2] = 2.576990
+alpha[3] = 0.122000   a[3] = 0.501240   anorm[3] = 0.073744  norm[3] = 6.797043
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = 0.952959
+Full norm: 1.000000
+
+Orbital # 2
+quantum numbers: 0  0  0
+alpha[0] = 13.010000   a[0] = 0.019685   anorm[0] = 0.096107  norm[0] = 0.204825
+alpha[1] = 1.962000   a[1] = 0.137977   anorm[1] = 0.163020  norm[1] = 0.846381
+alpha[2] = 0.444600   a[2] = 0.478148   anorm[2] = 0.185545  norm[2] = 2.576990
+alpha[3] = 0.122000   a[3] = 0.501240   anorm[3] = 0.073744  norm[3] = 6.797043
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = -0.952959
+Full norm: 1.000000
+
+Orbital # 3
+quantum numbers: 0  0  0
+alpha[0] = 0.122000   a[0] = 1.000000   anorm[0] = 0.147123  norm[0] = 6.797043
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = 0.952959
+Full norm: 1.000000
+
+Orbital # 4
+quantum numbers: 0  0  0
+alpha[0] = 0.122000   a[0] = 1.000000   anorm[0] = 0.147123  norm[0] = 6.797043
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = -0.952959
+Full norm: 1.000000
+
+Orbital # 5
+quantum numbers: 0  0  1
+alpha[0] = 0.727000   a[0] = 1.000000   anorm[0] = 0.956881  norm[0] = 1.045062
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = 0.952959
+Full norm: 1.000000
+
+Orbital # 6
+quantum numbers: 0  1  0
+alpha[0] = 0.727000   a[0] = 1.000000   anorm[0] = 0.956881  norm[0] = 1.045062
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = 0.952959
+Full norm: 1.000000
+
+Orbital # 7
+quantum numbers: 1  0  0
+alpha[0] = 0.727000   a[0] = 1.000000   anorm[0] = 0.956881  norm[0] = 1.045062
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = 0.952959
+Full norm: 1.000000
+
+Orbital # 8
+quantum numbers: 0  0  1
+alpha[0] = 0.727000   a[0] = 1.000000   anorm[0] = 0.956881  norm[0] = 1.045062
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = -0.952959
+Full norm: 1.000000
+
+Orbital # 9
+quantum numbers: 0  1  0
+alpha[0] = 0.727000   a[0] = 1.000000   anorm[0] = 0.956881  norm[0] = 1.045062
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = -0.952959
+Full norm: 1.000000
+
+Orbital # 10
+quantum numbers: 1  0  0
+alpha[0] = 0.727000   a[0] = 1.000000   anorm[0] = 0.956881  norm[0] = 1.045062
+Coordinates:
+x = 1.433550
+y = 0.000000
+z = -0.952959
+Full norm: 1.000000
+
+Orbital # 11
+quantum numbers: 0  0  0
+alpha[0] = 11720.000000   a[0] = 0.000710   anorm[0] = 0.569986  norm[0] = 0.001246
+alpha[1] = 1759.000000   a[1] = 0.005470   anorm[1] = 1.058881  norm[1] = 0.005166
+alpha[2] = 400.800000   a[2] = 0.027837   anorm[2] = 1.777168  norm[2] = 0.015664
+alpha[3] = 113.700000   a[3] = 0.104800   anorm[3] = 2.600710  norm[3] = 0.040297
+alpha[4] = 37.030000   a[4] = 0.283062   anorm[4] = 3.028357  norm[4] = 0.093471
+alpha[5] = 13.270000   a[5] = 0.448719   anorm[5] = 2.223504  norm[5] = 0.201807
+alpha[6] = 5.025000   a[6] = 0.270952   anorm[6] = 0.648119  norm[6] = 0.418059
+alpha[7] = 1.013000   a[7] = 0.015458   anorm[7] = 0.011124  norm[7] = 1.389578
+alpha[8] = 0.302300   a[8] = -0.002585   anorm[8] = -0.000751  norm[8] = 3.441607
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 12
+quantum numbers: 0  0  0
+alpha[0] = 11720.000000   a[0] = -0.000160   anorm[0] = -0.128448  norm[0] = 0.001246
+alpha[1] = 1759.000000   a[1] = -0.001263   anorm[1] = -0.244491  norm[1] = 0.005166
+alpha[2] = 400.800000   a[2] = -0.006267   anorm[2] = -0.400097  norm[2] = 0.015664
+alpha[3] = 113.700000   a[3] = -0.025716   anorm[3] = -0.638166  norm[3] = 0.040297
+alpha[4] = 37.030000   a[4] = -0.070924   anorm[4] = -0.758785  norm[4] = 0.093471
+alpha[5] = 13.270000   a[5] = -0.165411   anorm[5] = -0.819649  norm[5] = 0.201807
+alpha[6] = 5.025000   a[6] = -0.116955   anorm[6] = -0.279757  norm[6] = 0.418059
+alpha[7] = 1.013000   a[7] = 0.557368   anorm[7] = 0.401106  norm[7] = 1.389578
+alpha[8] = 0.302300   a[8] = 0.572759   anorm[8] = 0.166422  norm[8] = 3.441607
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 13
+quantum numbers: 0  0  0
+alpha[0] = 0.302300   a[0] = 1.000000   anorm[0] = 0.290562  norm[0] = 3.441607
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 14
+quantum numbers: 0  0  1
+alpha[0] = 17.700000   a[0] = 0.043018   anorm[0] = 2.226162  norm[0] = 0.019324
+alpha[1] = 3.854000   a[1] = 0.228913   anorm[1] = 1.761976  norm[1] = 0.129918
+alpha[2] = 1.046000   a[2] = 0.508728   anorm[2] = 0.767079  norm[2] = 0.663201
+alpha[3] = 0.275300   a[3] = 0.460531   anorm[3] = 0.130905  norm[3] = 3.518051
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 15
+quantum numbers: 0  1  0
+alpha[0] = 17.700000   a[0] = 0.043018   anorm[0] = 2.226162  norm[0] = 0.019324
+alpha[1] = 3.854000   a[1] = 0.228913   anorm[1] = 1.761976  norm[1] = 0.129918
+alpha[2] = 1.046000   a[2] = 0.508728   anorm[2] = 0.767079  norm[2] = 0.663201
+alpha[3] = 0.275300   a[3] = 0.460531   anorm[3] = 0.130905  norm[3] = 3.518051
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 16
+quantum numbers: 1  0  0
+alpha[0] = 17.700000   a[0] = 0.043018   anorm[0] = 2.226162  norm[0] = 0.019324
+alpha[1] = 3.854000   a[1] = 0.228913   anorm[1] = 1.761976  norm[1] = 0.129918
+alpha[2] = 1.046000   a[2] = 0.508728   anorm[2] = 0.767079  norm[2] = 0.663201
+alpha[3] = 0.275300   a[3] = 0.460531   anorm[3] = 0.130905  norm[3] = 3.518051
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 17
+quantum numbers: 0  0  1
+alpha[0] = 0.275300   a[0] = 1.000000   anorm[0] = 0.284248  norm[0] = 3.518051
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 18
+quantum numbers: 0  1  0
+alpha[0] = 0.275300   a[0] = 1.000000   anorm[0] = 0.284248  norm[0] = 3.518051
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 19
+quantum numbers: 1  0  0
+alpha[0] = 0.275300   a[0] = 1.000000   anorm[0] = 0.284248  norm[0] = 3.518051
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 20
+quantum numbers: 0  0  2
+alpha[0] = 1.185000   a[0] = 1.000000   anorm[0] = 2.215218  norm[0] = 0.451423
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 21
+quantum numbers: 0  1  1
+alpha[0] = 1.185000   a[0] = 1.000000   anorm[0] = 3.836871  norm[0] = 0.260629
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 22
+quantum numbers: 0  2  0
+alpha[0] = 1.185000   a[0] = 1.000000   anorm[0] = 2.215218  norm[0] = 0.451423
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 23
+quantum numbers: 1  0  1
+alpha[0] = 1.185000   a[0] = 1.000000   anorm[0] = 3.836871  norm[0] = 0.260629
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 24
+quantum numbers: 1  1  0
+alpha[0] = 1.185000   a[0] = 1.000000   anorm[0] = 3.836871  norm[0] = 0.260629
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+
+Orbital # 25
+quantum numbers: 2  0  0
+alpha[0] = 1.185000   a[0] = 1.000000   anorm[0] = 2.215218  norm[0] = 0.451423
+Coordinates:
+x = 0.000000
+y = 0.000000
+z = 0.000000
+Full norm: 1.000000
+

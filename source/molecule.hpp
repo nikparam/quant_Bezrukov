@@ -6,6 +6,7 @@
 #include <iomanip>
 
 #include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 #include <iostream>
@@ -70,18 +71,69 @@ public:
     void fillNuclearAttractionMatrix( );
     void fillElectronRepulsionMatrix( );
 
+    void fillGMatrix( );
+    void fillFMatrix( );
+
+    void SCF_initialize( );
+    void SCF( );
+
+    // MP2
+    void fillTwoElectronMOIntegrals();
+    double computeMP2_correction( );
+
+    // CCSD
+    void fillAS_MO_TwoElectronIntegrals();
+    void fillSOHcoreMatrix();
+    void fillSOFockMatrix();
+
+    void fill_initial_tia();
+    void fill_initial_tijab();
+    double testCCSD_MP2_Energy();
+
+    void fill_tau_ijab();
+    void fill_tau_tilda_ijab();
+
+    // intermediates
+    void fill_F();
+    void fill_W();
+
+    void fill_D1();
+    void fill_D2();
+
+    void update_t1();
+    void update_t2();
+
+    double computeCCSD_correction();
+
     void saveOverlapMatrix( std::string filename = "" );
     void saveKineticEnergyMatrix( std::string filename = "" );
     void saveNuclearAttractionMatrix( std::string filename = "" );
+    void saveXMatrix( std::string filename = "" );
+    void saveGMatrix( std::string filename = "" );
+    void saveFMatrix( std::string filename = "" );
+
+    void setCharge( const int icharge = 0 );
+    void setOutput( std::string const & filename = "" );
 
     void showElectronAttractionMatrix();
+
+    void makeInitialGuess( );
 
     Atom * getAtom( int n ) { return &atoms.at(n); }
 
     void setBasis( Basis * basis ) { this->basis = basis; }
     void showAtoms();
 
+    int size( ) const;
+    int delta(int i, int j) { return (i == j); }
+
+    Eigen::MatrixXd intermF;
+    Eigen::MatrixXd SOFockMatrix;
+
 private:
+    int charge;
+    bool set_charge = false;
+
     std::string scratch = "scratch/";
 
     const int MAXLINE = 100;
@@ -93,4 +145,34 @@ private:
     Eigen::MatrixXd kineticEnergyMatrix;
     Eigen::MatrixXd nuclearAttractionMatrix;
     Eigen::Tensor<double, 4> electronRepulsionTensor;
+
+    Eigen::MatrixXd matrixP;
+    Eigen::MatrixXd matrixP_new; // получаемая на текущей итерации
+    Eigen::MatrixXd matrixG;
+    Eigen::MatrixXd matrixF;
+    Eigen::MatrixXd matrixFprime;
+    Eigen::MatrixXd matrixC;
+    Eigen::MatrixXd matrixHcore;
+
+    std::ofstream outFile;
+
+    // MP2
+    Eigen::Tensor<double, 4> twoElectronMOIntegrals;
+    Eigen::VectorXd HF_OrbitalEnergies;
+
+    // CCSD
+    Eigen::Tensor<double, 4> ASTwoElectronMOIntegrals;
+    Eigen::MatrixXd SOHcoreMatrix;
+    Eigen::Tensor<double, 4> tijab;
+    Eigen::MatrixXd tia;
+
+    Eigen::Tensor<double, 4> tau_ijab;
+    Eigen::Tensor<double, 4> tau_tilda_ijab;
+    Eigen::Tensor<double, 4> intermW;
+
+    Eigen::MatrixXd D1;
+    Eigen::Tensor<double, 4> D2;
+
+    Eigen::MatrixXd t1_updated;
+    Eigen::Tensor<double, 4> t2_updated;
 };

@@ -25,3 +25,4 @@ atom.hpp
 atom.cpp
 h2o_geometry.dat
 basis/h2_sto3g_gamess-us.dat
+geometry/h2o_crawford.dat

@@ -1,0 +1,9 @@
+ $CONTRL SCFTYP=RHF RUNTYP=energy mult=1 units=bohr NPRINT=3 $END
+ $BASIS GBASIS=cc-pvdz $END
+
+ $DATA
+ H2 scf test
+C1
+H 1.0 0.0 0.0 0.7 
+H 1.0 0.0 0.0 -0.7
+ $END
