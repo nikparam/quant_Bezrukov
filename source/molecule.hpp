@@ -75,20 +75,13 @@ public:
     void fillFMatrix( );
 
     void SCF_initialize( );
-    void SCF( );
+    double SCF( );
 
     // MP2
     void fillTwoElectronMOIntegrals();
     double computeMP2_correction( );
 
     // CCSD
-    void fillAS_MO_TwoElectronIntegrals();
-    void fillSOHcoreMatrix();
-    void fillSOFockMatrix();
-
-    void fill_initial_tia();
-    void fill_initial_tijab();
-    double testCCSD_MP2_Energy();
 
     void fill_tau_ijab();
     void fill_tau_tilda_ijab();
@@ -126,9 +119,12 @@ public:
 
     int size( ) const;
     int delta(int i, int j) { return (i == j); }
+    int get_charge() const { return charge; }
 
-    Eigen::MatrixXd intermF;
-    Eigen::MatrixXd SOFockMatrix;
+    Eigen::Tensor<double, 4> const & get_two_electron_MO_integrals() const { return twoElectronMOIntegrals; }
+    Eigen::MatrixXd const & get_C() const { return matrixC; }
+    Eigen::MatrixXd const & get_Hcore() const { return matrixHcore; }
+    Eigen::VectorXd const & get_HF_OrbitalEnergies() const { return HF_OrbitalEnergies; }
 
 private:
     int charge;
@@ -161,17 +157,9 @@ private:
     Eigen::VectorXd HF_OrbitalEnergies;
 
     // CCSD
-    Eigen::Tensor<double, 4> ASTwoElectronMOIntegrals;
-    Eigen::MatrixXd SOHcoreMatrix;
-    Eigen::Tensor<double, 4> tijab;
-    Eigen::MatrixXd tia;
-
     Eigen::Tensor<double, 4> tau_ijab;
     Eigen::Tensor<double, 4> tau_tilda_ijab;
     Eigen::Tensor<double, 4> intermW;
-
-    Eigen::MatrixXd D1;
-    Eigen::Tensor<double, 4> D2;
 
     Eigen::MatrixXd t1_updated;
     Eigen::Tensor<double, 4> t2_updated;

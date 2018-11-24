@@ -26,3 +26,8 @@ atom.cpp
 h2o_geometry.dat
 basis/h2_sto3g_gamess-us.dat
 geometry/h2o_crawford.dat
+ccsd.hpp
+ccsd.cpp
+geometry/ch4_crawford.dat
+basis/sto3g-second-period-gamess-us.dat
+basis/dzp-second-period-gamess-us.dat

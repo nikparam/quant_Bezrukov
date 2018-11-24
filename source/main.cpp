@@ -5,20 +5,24 @@
 #include "Basis.hpp"
 #include "molecule.hpp"
 
+#include "ccsd.hpp"
+
 int main()
 {
     std::cout << std::fixed << std::setprecision(12);
     std::clock_t start = std::clock();
 
 	Basis basis;
-    // basis.read("./basis/h2o_cc_pvdz.gamess-us.dat");
-    basis.read("./basis/h2o_sto3g_gamess-us.dat");
-    basis.show("full");
+    //basis.read("./basis/h2o_cc_pvdz.gamess-us.dat");
+    //basis.read("./basis/h2o_sto3g_gamess-us.dat");
+    basis.read("./basis/sto3g-second-period-gamess-us.dat");
+    basis.show("short");
 
     Molecule molecule;
     molecule.setBasis( &basis );
 
     molecule.readGeometryFile("geometry/h2o_crawford.dat");
+    //molecule.readGeometryFile("geometry/ch4_crawford.dat");
     molecule.showAtoms();
 
     molecule.setCharge();
@@ -34,7 +38,8 @@ int main()
     molecule.makeInitialGuess();
 
     molecule.SCF_initialize();
-    molecule.SCF();
+    double SCF_energy = molecule.SCF();
+    std::cout << "SCF Energy (total): " << SCF_energy << std::endl;
 
     // MP2
     molecule.fillTwoElectronMOIntegrals();
@@ -42,37 +47,22 @@ int main()
     std::cout << "(main) MP2_correction: " << MP2_correction << std::endl;
 
     // CCSD
-    molecule.fillAS_MO_TwoElectronIntegrals();
-    molecule.fillSOHcoreMatrix();
-    molecule.fillSOFockMatrix();
+    int size_ = 2 * molecule.size(); // количество спинорбиталей
+    int nocc = molecule.get_charge(); // количество занятых спинорбиталей
+    int nvirt = size_ - nocc; // количество свободных (виртуальных) спинорбиталей
+    CCSD ccsd( size_, nocc, nvirt );
 
-    std::cout << "(main) SO F: " << std::endl << molecule.SOFockMatrix << std::endl;
+    ccsd.initialize();
+    ccsd.preparation( molecule );
 
-    // initial guess for tia and tijab cluster amplitudes
-    molecule.fill_initial_tia();
-    molecule.fill_initial_tijab();
-    double test_MP2_correction = molecule.testCCSD_MP2_Energy();
-    std::cout << "(main) testing MP2 correcion: " << test_MP2_correction << std::endl;
+    ccsd.run_diis();
 
-    molecule.fill_tau_ijab();
-    molecule.fill_tau_tilda_ijab();
-    molecule.fill_D1();
-    molecule.fill_D2();
-
-    molecule.fill_F();
-    std::cout << "(main) F: " << std::endl << molecule.intermF << std::endl;
-
-    molecule.fill_W();
-
-    molecule.update_t1();
-    molecule.update_t2();
-
-    double CCSD_correction = molecule.computeCCSD_correction();
-    std::cout << "(main) CCSD_correction: " << CCSD_correction << std::endl;
+    //double CCSD_correction = ccsd.run();
+    //std::cout << "Total CCSD correction: " << CCSD_correction << std::endl;
 
     std::cout << "Total time elapsed: " << (std::clock() - start) / (double) CLOCKS_PER_SEC << " s" << std::endl;
 
-	return 0;
+    return 0;
 }
 
 
