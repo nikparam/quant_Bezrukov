@@ -31,3 +31,7 @@ ccsd.cpp
 geometry/ch4_crawford.dat
 basis/sto3g-second-period-gamess-us.dat
 basis/dzp-second-period-gamess-us.dat
+ccsd_t.hpp
+ccsd_t.cpp
+ccsd_utilities.hpp
+ccsd_utilities.cpp

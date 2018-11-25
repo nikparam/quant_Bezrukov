@@ -8,21 +8,19 @@
 #include <Eigen/Eigenvalues>
 #include <unsupported/Eigen/CXX11/Tensor>
 
+#include "ccsd_utilities.hpp"
 #include "./molecule.hpp"
 
 class CCSD
 {
 public:
-    CCSD( int size_, int nocc, int nvirt ) : size_(size_), nocc(nocc), nvirt(nvirt)
+    CCSD( int size_, int nocc, int nvirt, CCSD_Utilities& utilities) : size_(size_), nocc(nocc), nvirt(nvirt), utilities(utilities)
     {
         std::cout << "(CCSD) size_: " << size_ << "; nocc: " << nocc << "; nvirt: " << nvirt << std::endl;
     }
 
     void initialize();
 
-    void fillAS_MO_TwoElectronIntegrals( Eigen::Tensor<double, 4> const & twoElectronMOIntegrals );
-    void fillSOHcore( Eigen::MatrixXd const & matrixC, Eigen::MatrixXd const & matrixHcore );
-    void fillSOFock();
     void fill_Dia();
     void fill_Dijab();
 
@@ -53,8 +51,6 @@ public:
 
     double find_max( Eigen::MatrixXd const & B );
 
-    Eigen::MatrixXd const & get_Hcore() { return SOHcoreMatrix; }
-    Eigen::MatrixXd const & get_SOF() { return SOFockMatrix; }
     Eigen::MatrixXd const & get_Dia() { return Dia; }
     Eigen::Tensor<double, 4> const & get_Dijab() { return Dijab; }
 
@@ -79,17 +75,16 @@ private:
     int nocc;
     int nvirt;
 
+    CCSD_Utilities& utilities;
+
     // максимальное количество итераций CCSD
-    const int maxiter = 20;
+    const int maxiter = 40;
     // сходимость по энергии для CCSDcorr_E
-    const double E_conv = 1.0e-6;
+    const double E_conv = 1.0e-12;
+    // сходимость по энергии для CCSDcorr_E с DIIS
+    const double E_conv_diis = 1.0e-12;
     // максимальное количество последних итераций, учитываемых в DIIS
     const int max_diis = 8;
-
-    Eigen::Tensor<double, 4> ASTwoElectronMOIntegrals;
-
-    Eigen::MatrixXd SOHcoreMatrix;
-    Eigen::MatrixXd SOFockMatrix;
 
     Eigen::MatrixXd Dia;
     Eigen::Tensor<double, 4> Dijab;

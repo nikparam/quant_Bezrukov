@@ -2,11 +2,6 @@
 
 void CCSD::initialize()
 {
-    // количество спинорбиталей вдвое больше количества дважды занятых орбиталей
-    ASTwoElectronMOIntegrals.resize( size_, size_, size_, size_ );
-    SOHcoreMatrix.resize( size_, size_ );
-    SOFockMatrix.resize( size_, size_ );
-
     Dia.resize( nocc, nvirt );
     Dijab.resize( nocc, nocc, nvirt, nvirt );
 
@@ -28,59 +23,6 @@ void CCSD::initialize()
     Wmbej.resize( nocc, nvirt, nvirt, nocc );
 }
 
-void CCSD::fillAS_MO_TwoElectronIntegrals( Eigen::Tensor<double, 4> const & twoElectronMOIntegrals )
-// Antisymmetrized integrals over spin-orbitals
-{
-    double int1, int2;
-
-    for ( int p = 0; p < size_; ++p )
-    {
-        for ( int q = 0; q < size_; ++q )
-        {
-            for ( int r = 0; r < size_; ++r )
-            {
-                for ( int s = 0; s < size_; ++s )
-                {
-                    int1 = twoElectronMOIntegrals(p/2, r/2, q/2, s/2) * (r%2 == p%2) * (s%2 == q%2);
-                    int2 = twoElectronMOIntegrals(p/2, s/2, q/2, r/2) * (p%2 == s%2) * (q%2 == r%2);
-                    ASTwoElectronMOIntegrals(p, q, r, s) = int1 - int2;
-                }
-            }
-        }
-    }
-}
-
-void CCSD::fillSOHcore( Eigen::MatrixXd const & matrixC, Eigen::MatrixXd const & matrixHcore )
-{
-    Eigen::MatrixXd tmp = matrixC.transpose() * matrixHcore * matrixC;
-
-    for ( int p = 0; p < size_; ++p )
-    {
-        for ( int q = 0; q < size_; ++q )
-        {
-            SOHcoreMatrix(p, q) = tmp(p/2, q/2) * (p%2 == q%2);
-        }
-    }
-}
-
-void CCSD::fillSOFock()
-// fill spin-orbital Fock matrix
-{
-    double res = 0;
-
-    for ( int p = 0; p < size_; ++p )
-    {
-        for ( int q = 0; q < size_; ++q )
-        {
-            res = SOHcoreMatrix(p, q);
-            for ( int m = 0; m < nocc; ++m )
-                res += ASTwoElectronMOIntegrals(p, m, q, m);
-
-            SOFockMatrix(p, q) = res;
-        }
-    }
-}
-
 void CCSD::fill_Dia()
 {
     // a -- unoccupied, i -- occupied
@@ -88,7 +30,7 @@ void CCSD::fill_Dia()
     {
         for ( int a = nocc; a < size_; ++a )
         {
-            Dia(i, a - nocc) = SOFockMatrix(i, i) - SOFockMatrix(a, a);
+            Dia(i, a - nocc) = utilities.SOFockMatrix(i, i) - utilities.SOFockMatrix(a, a);
         }
     }
 }
@@ -105,8 +47,8 @@ void CCSD::fill_Dijab()
             {
                 for ( int b = nocc; b < size_; ++b )
                 {
-                    Dijab(i, j, a - nocc, b - nocc) = SOFockMatrix(i, i) + SOFockMatrix(j, j) - \
-                                                      SOFockMatrix(a, a) - SOFockMatrix(b, b);
+                    Dijab(i, j, a - nocc, b - nocc) = utilities.SOFockMatrix(i, i) + utilities.SOFockMatrix(j, j) - \
+                                                      utilities.SOFockMatrix(a, a) - utilities.SOFockMatrix(b, b);
                 }
             }
         }
@@ -139,7 +81,7 @@ void CCSD::fill_initial_t2( Eigen::VectorXd const & HF_OrbitalEnergies )
                 for ( int b = nocc; b < size_; ++b )
                 {
                     // HF_OrbitalEnergies(i/2) -- потому что дважды занятые орбитали перешли в две спин-орбитали
-                    t2(i, j, a - nocc, b - nocc) = ASTwoElectronMOIntegrals(i, j, a, b) / \
+                    t2(i, j, a - nocc, b - nocc) = utilities.ASTwoElectronMOIntegrals(i, j, a, b) / \
                             (HF_OrbitalEnergies(i/2) + HF_OrbitalEnergies(j/2) - HF_OrbitalEnergies(a/2) - HF_OrbitalEnergies(b/2));
                 }
             }
@@ -159,7 +101,7 @@ double CCSD::test_MP2_Energy()
             {
                 for ( int b = nocc; b < size_; ++b )
                 {
-                    res += ASTwoElectronMOIntegrals(i, j, a, b) * t2(i, j, a - nocc, b - nocc);
+                    res += utilities.ASTwoElectronMOIntegrals(i, j, a, b) * t2(i, j, a - nocc, b - nocc);
                     //std::cout << "twoelectronMOIN: " << ASTwoElectronMOIntegrals(i, j, a, b) << std::endl;
                     //std::cout << "t2: " << t2(i, j, a, b) << std::endl;
                 }
@@ -217,7 +159,7 @@ void CCSD::fill_Fae()
             // m -- occupied
             for ( int m = 0; m < nocc; ++m )
             {
-                sum1 += SOFockMatrix(m, e) * t1(m, a - nocc);
+                sum1 += utilities.SOFockMatrix(m, e) * t1(m, a - nocc);
             }
             sum1 *= 0.5;
 
@@ -228,7 +170,7 @@ void CCSD::fill_Fae()
             {
                 for ( int f = nocc; f < size_; ++f )
                 {
-                    sum2 += t1(m, f-nocc) * ASTwoElectronMOIntegrals(m, a, f, e);
+                    sum2 += t1(m, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, a, f, e);
                 }
             }
 
@@ -241,13 +183,13 @@ void CCSD::fill_Fae()
                 {
                     for ( int f = nocc; f < size_; ++f )
                     {
-                        sum3 += tilda_tau(m, n, a-nocc, f-nocc) * ASTwoElectronMOIntegrals(m, n, e, f);
+                        sum3 += tilda_tau(m, n, a-nocc, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, e, f);
                     }
                 }
             }
             sum3 *= 0.5;
 
-            Fae(a-nocc, e-nocc) = (1-delta(a, e)) * SOFockMatrix(a, e) - sum1 + sum2 - sum3;
+            Fae(a-nocc, e-nocc) = (1-delta(a, e)) * utilities.SOFockMatrix(a, e) - sum1 + sum2 - sum3;
         }
     }
 }
@@ -267,11 +209,11 @@ void CCSD::fill_Fme()
             {
                 for ( int f = nocc; f < size_; ++f )
                 {
-                    sum1 += t1(n, f-nocc) * ASTwoElectronMOIntegrals(m, n, e, f);
+                    sum1 += t1(n, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, e, f);
                 }
             }
 
-            Fme(m, e-nocc) = SOFockMatrix(m, e) + sum1;
+            Fme(m, e-nocc) = utilities.SOFockMatrix(m, e) + sum1;
         }
     }
 }
@@ -287,7 +229,7 @@ void CCSD::fill_Fmi()
             // e -- unoccupied
             for ( int e = nocc; e < size_; ++e )
             {
-                sum1 += t1(i, e-nocc) * SOFockMatrix(m, e);
+                sum1 += t1(i, e-nocc) * utilities.SOFockMatrix(m, e);
             }
             sum1 *= 0.5;
 
@@ -298,7 +240,7 @@ void CCSD::fill_Fmi()
             {
                 for ( int n = 0; n < nocc; ++n )
                 {
-                    sum2 += t1(n, e-nocc) * ASTwoElectronMOIntegrals(m, n, i, e);
+                    sum2 += t1(n, e-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, i, e);
                 }
             }
 
@@ -311,13 +253,13 @@ void CCSD::fill_Fmi()
                 {
                     for ( int n = 0; n < nocc; ++n )
                     {
-                        sum3 += tilda_tau(i, n, e-nocc, f-nocc) * ASTwoElectronMOIntegrals(m, n, e, f);
+                        sum3 += tilda_tau(i, n, e-nocc, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, e, f);
                     }
                 }
             }
             sum3 *= 0.5;
 
-            Fmi(m, i) = (1-delta(m, i)) * SOFockMatrix(m, i) + sum1 + sum2 + sum3;
+            Fmi(m, i) = (1-delta(m, i)) * utilities.SOFockMatrix(m, i) + sum1 + sum2 + sum3;
         }
     }
 }
@@ -337,14 +279,14 @@ void CCSD::fill_Wmnij()
                     // e -- unoccupied
                     for ( int e = nocc; e < size_; ++e )
                     {
-                        sum1 += t1(j, e-nocc) * ASTwoElectronMOIntegrals(m, n, i, e);
+                        sum1 += t1(j, e-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, i, e);
                     }
 
                     double sum2 = 0.0;
                     // e -- unoccupied
                     for ( int e = nocc; e < size_; ++e )
                     {
-                        sum2 += t1(i, e-nocc) * ASTwoElectronMOIntegrals(m, n, j, e);
+                        sum2 += t1(i, e-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, j, e);
                     }
 
                     double sum3 = 0.0;
@@ -353,12 +295,12 @@ void CCSD::fill_Wmnij()
                     {
                         for ( int f = nocc; f < size_; ++f )
                         {
-                            sum3 += tau(i, j, e-nocc, f-nocc) * ASTwoElectronMOIntegrals(m, n, e, f);
+                            sum3 += tau(i, j, e-nocc, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, e, f);
                         }
                     }
                     sum3 *= 0.25;
 
-                    Wmnij(m, n, i, j) = ASTwoElectronMOIntegrals(m, n, i, j) + sum1 - sum2 + sum3;
+                    Wmnij(m, n, i, j) = utilities.ASTwoElectronMOIntegrals(m, n, i, j) + sum1 - sum2 + sum3;
                 }
             }
         }
@@ -380,14 +322,14 @@ void CCSD::fill_Wabef()
                     // m -- occupied
                     for ( int m = 0; m < nocc; ++m )
                     {
-                        sum1 += t1(m, b-nocc) * ASTwoElectronMOIntegrals(a, m, e, f);
+                        sum1 += t1(m, b-nocc) * utilities.ASTwoElectronMOIntegrals(a, m, e, f);
                     }
 
                     double sum2 = 0.0;
                     // m -- occupied
                     for ( int m = 0; m < nocc; ++m )
                     {
-                        sum2 += t1(m, a-nocc) * ASTwoElectronMOIntegrals(b, m, e, f);
+                        sum2 += t1(m, a-nocc) * utilities.ASTwoElectronMOIntegrals(b, m, e, f);
                     }
 
                     double sum3 = 0.0;
@@ -396,12 +338,12 @@ void CCSD::fill_Wabef()
                     {
                         for ( int n = 0; n < nocc; ++n )
                         {
-                            sum3 += tau(m, n, a-nocc, b-nocc) * ASTwoElectronMOIntegrals(m, n, e, f);
+                            sum3 += tau(m, n, a-nocc, b-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, e, f);
                         }
                     }
                     sum3 *= 0.25;
 
-                    Wabef(a-nocc, b-nocc, e-nocc, f-nocc) = ASTwoElectronMOIntegrals(a, b, e, f) - sum1 + sum2 + sum3;
+                    Wabef(a-nocc, b-nocc, e-nocc, f-nocc) = utilities.ASTwoElectronMOIntegrals(a, b, e, f) - sum1 + sum2 + sum3;
                 }
             }
         }
@@ -424,14 +366,14 @@ void CCSD::fill_Wmbej()
                     // f -- unoccupied
                     for ( int f = nocc; f < size_; ++f )
                     {
-                        sum1 += t1(j, f-nocc) * ASTwoElectronMOIntegrals(m, b, e, f);
+                        sum1 += t1(j, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, b, e, f);
                     }
 
                     double sum2 = 0.0;
                     // n -- occupied
                     for ( int n = 0; n < nocc; ++n )
                     {
-                        sum2 += t1(n, b-nocc) * ASTwoElectronMOIntegrals(m, n, e, j);
+                        sum2 += t1(n, b-nocc) * utilities.ASTwoElectronMOIntegrals(m, n, e, j);
                     }
 
                     double sum3 = 0.0;
@@ -442,11 +384,11 @@ void CCSD::fill_Wmbej()
                         for ( int f = nocc; f < size_; ++f )
                         {
                             sum3 += (0.5 * t2(j, n, f-nocc, b-nocc) + t1(j, f-nocc) * t1(n, b-nocc)) * \
-                                    ASTwoElectronMOIntegrals(m, n, e, f);
+                                    utilities.ASTwoElectronMOIntegrals(m, n, e, f);
                         }
                     }
 
-                    Wmbej(m, b-nocc, e-nocc, j) = ASTwoElectronMOIntegrals(m, b, e, j) + sum1 - sum2 - sum3;
+                    Wmbej(m, b-nocc, e-nocc, j) = utilities.ASTwoElectronMOIntegrals(m, b, e, j) + sum1 - sum2 - sum3;
                 }
             }
         }
@@ -491,7 +433,7 @@ void CCSD::update_t1()
             {
                 for ( int f = nocc; f < size_; ++f )
                 {
-                    sum4 += t1(n, f-nocc) * ASTwoElectronMOIntegrals(n, a, i, f);
+                    sum4 += t1(n, f-nocc) * utilities.ASTwoElectronMOIntegrals(n, a, i, f);
                 }
             }
 
@@ -503,7 +445,7 @@ void CCSD::update_t1()
                 {
                     for ( int f = nocc; f < size_; ++f )
                     {
-                        sum5 += t2(i, m, e-nocc, f-nocc) * ASTwoElectronMOIntegrals(m, a, e, f);
+                        sum5 += t2(i, m, e-nocc, f-nocc) * utilities.ASTwoElectronMOIntegrals(m, a, e, f);
                     }
                 }
             }
@@ -517,13 +459,13 @@ void CCSD::update_t1()
                 {
                     for ( int e = nocc; e < size_; ++e )
                     {
-                        sum6 += t2(m, n, a-nocc, e-nocc) * ASTwoElectronMOIntegrals(n, m, e, i);
+                        sum6 += t2(m, n, a-nocc, e-nocc) * utilities.ASTwoElectronMOIntegrals(n, m, e, i);
                     }
                 }
             }
             sum6 *= 0.5;
 
-            t1_updated(i, a-nocc) = SOFockMatrix(i, a) + sum1 - sum2 + sum3 - sum4 - sum5 - sum6;
+            t1_updated(i, a-nocc) = utilities.SOFockMatrix(i, a) + sum1 - sum2 + sum3 - sum4 - sum5 - sum6;
             t1_updated(i, a-nocc) /= Dia(i, a-nocc);
         }
     }
@@ -628,13 +570,13 @@ void CCSD::update_t2()
                         for ( int e = nocc; e < size_; ++e )
                         {
                             sum5ijab += (t2(i, m, a-nocc, e-nocc) * Wmbej(m, b-nocc, e-nocc, j) - \
-                                         t1(i, e-nocc) * t1(m, a-nocc) * ASTwoElectronMOIntegrals(m, b, e, j));
+                                         t1(i, e-nocc) * t1(m, a-nocc) * utilities.ASTwoElectronMOIntegrals(m, b, e, j));
                             sum5ijba += (t2(i, m, b-nocc, e-nocc) * Wmbej(m, a-nocc, e-nocc, j) - \
-                                         t1(i, e-nocc) * t1(m, b-nocc) * ASTwoElectronMOIntegrals(m, a, e, j));
+                                         t1(i, e-nocc) * t1(m, b-nocc) * utilities.ASTwoElectronMOIntegrals(m, a, e, j));
                             sum5jiab += (t2(j, m, a-nocc, e-nocc) * Wmbej(m, b-nocc, e-nocc, i) - \
-                                         t1(j, e-nocc) * t1(m, a-nocc) * ASTwoElectronMOIntegrals(m, b, e, i));
+                                         t1(j, e-nocc) * t1(m, a-nocc) * utilities.ASTwoElectronMOIntegrals(m, b, e, i));
                             sum5jiba += (t2(j, m, b-nocc, e-nocc) * Wmbej(m, a-nocc, e-nocc, i) - \
-                                         t1(j, e-nocc) * t1(m, b-nocc) * ASTwoElectronMOIntegrals(m, a, e, i));
+                                         t1(j, e-nocc) * t1(m, b-nocc) * utilities.ASTwoElectronMOIntegrals(m, a, e, i));
                         }
                     }
 
@@ -646,8 +588,8 @@ void CCSD::update_t2()
                     // e -- unoccupied
                     for ( int e = nocc; e < size_; ++e )
                     {
-                        sum6ij += (t1(i, e-nocc) * ASTwoElectronMOIntegrals(a, b, e, j));
-                        sum6ji += (t1(j, e-nocc) * ASTwoElectronMOIntegrals(a, b, e, i));
+                        sum6ij += (t1(i, e-nocc) * utilities.ASTwoElectronMOIntegrals(a, b, e, j));
+                        sum6ji += (t1(j, e-nocc) * utilities.ASTwoElectronMOIntegrals(a, b, e, i));
                     }
 
                     // 2 суммы, оператор P_(a, b)
@@ -658,11 +600,11 @@ void CCSD::update_t2()
                     // m -- occupied
                     for ( int m = 0; m < nocc; ++m )
                     {
-                        sum7ab += (t1(m, a-nocc) * ASTwoElectronMOIntegrals(m, b, i, j));
-                        sum7ba += (t1(m, b-nocc) * ASTwoElectronMOIntegrals(m, a, i, j));
+                        sum7ab += (t1(m, a-nocc) * utilities.ASTwoElectronMOIntegrals(m, b, i, j));
+                        sum7ba += (t1(m, b-nocc) * utilities.ASTwoElectronMOIntegrals(m, a, i, j));
                     }
 
-                    t2_updated(i, j, a-nocc, b-nocc) = ASTwoElectronMOIntegrals(i, j, a, b) + sum1ab - sum1ba - sum2ij + sum2ji + \
+                    t2_updated(i, j, a-nocc, b-nocc) = utilities.ASTwoElectronMOIntegrals(i, j, a, b) + sum1ab - sum1ba - sum2ij + sum2ji + \
                         sum3 + sum4 + sum5ijab - sum5ijba - sum5jiab + sum5jiba + sum6ij - sum6ji - sum7ab + sum7ba;
                     t2_updated(i, j, a-nocc, b-nocc) /= Dijab(i, j, a-nocc, b-nocc);
                 }
@@ -679,7 +621,7 @@ double CCSD::computeCCSD_correction()
     {
         for ( int a = nocc; a < size_; ++a )
         {
-            sum1 += SOFockMatrix(i, a) * t1_updated(i, a-nocc);
+            sum1 += utilities.SOFockMatrix(i, a) * t1_updated(i, a-nocc);
         }
     }
     //std::cout << "(CCSD correction) sum1: " << sum1 << std::endl;
@@ -694,7 +636,7 @@ double CCSD::computeCCSD_correction()
             {
                 for ( int b = nocc; b < size_; ++b )
                 {
-                    sum2 += ASTwoElectronMOIntegrals(i, j, a, b) * t2_updated(i, j, a-nocc, b-nocc);
+                    sum2 += utilities.ASTwoElectronMOIntegrals(i, j, a, b) * t2_updated(i, j, a-nocc, b-nocc);
                 }
             }
         }
@@ -712,7 +654,7 @@ double CCSD::computeCCSD_correction()
             {
                 for ( int b = nocc; b < size_; ++b )
                 {
-                    sum3 += ASTwoElectronMOIntegrals(i, j, a, b) * t1_updated(i, a-nocc) * t1_updated(j, b-nocc);
+                    sum3 += utilities.ASTwoElectronMOIntegrals(i, j, a, b) * t1_updated(i, a-nocc) * t1_updated(j, b-nocc);
                 }
             }
         }
@@ -725,12 +667,9 @@ double CCSD::computeCCSD_correction()
 
 void CCSD::preparation( Molecule const & molecule )
 {
-    fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
-    fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
-    //std::cout << "(main) SO Hcore: " << std::endl << ccsd.get_Hcore() << std::endl;
-
-    fillSOFock();
-    //std::cout << "(main) SO F: " << std::endl << ccsd.get_SOF() << std::endl;
+    utilities.fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
+    utilities.fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
+    utilities.fillSOFock();
 
     fill_Dia();
     //std::cout << "(main) Dia: " << std::endl << ccsd.get_Dia() << std::endl;
@@ -793,8 +732,8 @@ double CCSD::run()
     }
 
     auto ccsd_end = std::chrono::high_resolution_clock::now();
-    std::cout << "CCSD iterations took " << std::chrono::duration_cast<std::chrono::seconds>(ccsd_end - ccsd_start).count()
-                                         << " seconds." << std::endl;
+    std::cout << "CCSD iterations took " << std::chrono::duration_cast<std::chrono::milliseconds>( ccsd_end - ccsd_start ).count() / 1000.0
+              << " s." << std::endl;
 
     return CCSDcorr_E;
 }
@@ -817,6 +756,8 @@ double CCSD::find_max( Eigen::MatrixXd const & B )
 
 double CCSD::run_diis()
 {
+    auto ccsd_diis_start = std::chrono::high_resolution_clock::now();
+
     std::cout << "-----------------------------------------------" << std::endl;
     std::cout << "Starting CCSD iterations (DIIS acceleration)" << std::endl;
 
@@ -851,18 +792,20 @@ double CCSD::run_diis()
         std::cout << "CCSD iteration: " << CCSD_iter << "; CCSD correlation: " << CCSDcorr_E <<
                      "; DE: " << CCSDcorr_E - CCSDcorr_E_old << "; DIIS = " << diis_size << std::endl;
 
-        if ( std::abs(CCSDcorr_E - CCSDcorr_E_old) < E_conv )
+        if ( std::abs(CCSDcorr_E - CCSDcorr_E_old) < E_conv_diis )
             break;
 
         diis_vals_t1.push_back( t1 );
         diis_vals_t2.push_back( t2 );
 
         // build error vector
-        Eigen::MatrixXd diff1 = t1 - oldt1; // пока без transpose
+        Eigen::MatrixXd diff1 = t1 - oldt1;
+        // пакуем эту разницу по строкам в Map
         Eigen::Map<Eigen::VectorXd, Eigen::RowMajor> error_t1( diff1.data(), diff1.size() );
         //std::cout << "error_t1.size: " << error_t1.size() << std::endl;
 
-        Eigen::Tensor<double, 4> diff2 = t2 - oldt2; // пока без transpose
+        Eigen::Tensor<double, 4> diff2 = t2 - oldt2;
+        // пакуем эту разницу по строкам в Map
         Eigen::Map<Eigen::VectorXd, Eigen::RowMajor> error_t2( diff2.data(), diff2.size() );
         //std::cout << "error_t2.size: " << error_t2.size() << std::endl;
 
@@ -874,12 +817,19 @@ double CCSD::run_diis()
 
         diis_errors.push_back(diis_error);
 
-        // !!!
         // обрезаем diis_vals_t1, diis_vals_t2
-        //if ( diis_size )
+        if ( static_cast<int>(diis_vals_t1.size()) > max_diis )
+        {
+            std::cout << "Max diis size is reached. Truncating diis vector." << std::endl;
 
+            diis_vals_t1.erase( diis_vals_t1.begin() );
+            diis_vals_t2.erase( diis_vals_t2.begin() );
+            diis_errors.erase( diis_errors.begin() );
+        }
 
         diis_size = diis_vals_t1.size() - 1;
+        //std::cout << "diis_size: " << diis_size << std::endl;
+
         // инициализируем матрицу DIIS минус единицами
         Eigen::MatrixXd B = Eigen::MatrixXd::Constant( diis_size + 1, diis_size + 1, -1.0 );
         B( diis_size, diis_size ) = 0.0;
@@ -910,7 +860,7 @@ double CCSD::run_diis()
 
         Eigen::VectorXd ci = B.colPivHouseholderQr().solve( resid );
 
-        std::cout << "ci: \n" << ci << std::endl;
+        //std::cout << "ci: \n" << ci << std::endl;
 
         t1_updated.setZero();
         t2_updated.setZero();
@@ -920,6 +870,14 @@ double CCSD::run_diis()
             t2_updated += ci(i) * diis_vals_t2[i + 1];
         }
 
-        std::cout << "t1_updated:\n" << t1_updated << std::endl;
+        //std::cout << "t1_updated:\n" << t1_updated << std::endl;
     }
+
+    auto ccsd_diis_end = std::chrono::high_resolution_clock::now();
+
+    std::cout << "------------------------------------------" << std::endl;
+    std::cout << "CCSD (DIIS) iterations took " << std::chrono::duration_cast<std::chrono::milliseconds>( ccsd_diis_end - ccsd_diis_start ).count() / 1000.0
+              << " s." << std::endl;
+
+    return CCSDcorr_E;
 }
