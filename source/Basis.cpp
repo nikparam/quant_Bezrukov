@@ -131,6 +131,8 @@ void Basis::parse_file( std::ifstream & infile )
             {
                 if ( isLfunction )
                 {
+                    //CGObuilder_s->normalize();
+                    //CGObuilder_p->normalize();
                     elp->add_CGOs( CGObuilder_s );
                     elp->add_CGOs( CGObuilder_p );
 
@@ -141,6 +143,7 @@ void Basis::parse_file( std::ifstream & infile )
                 {
                     //bfp->showQuantumNumbers();
                     // добавляем все построенные билдером базисные функции элементу
+                    //CGObuilder->normalize();
                     elp->add_CGOs( CGObuilder );
 
                     // разрушаем строителя контрактированных орбиталей

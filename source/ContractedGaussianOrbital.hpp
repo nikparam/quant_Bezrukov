@@ -18,6 +18,7 @@ public:
 	}
 
 	void add_primitive( double alpha, double exponent );
+    void normalize();
 
 	void show();
 	

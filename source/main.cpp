@@ -34,8 +34,20 @@ int main()
     molecule.fillKineticEnergyMatrix();
     molecule.fillNuclearAttractionMatrix();
     molecule.fillElectronRepulsionMatrix();
-    molecule.showElectronAttractionMatrix();
+    //molecule.showElectronAttractionMatrix();
 
+    Eigen::Tensor<double, 4> eri = molecule.get_two_electron_integrals();
+    for ( int i = 0; i < eri.dimension(0); ++i )
+    {
+        for ( int j = 0; j < eri.dimension(1); ++j )
+        {
+            std::cout << eri(i, j, 0, 0) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+
+    /*
     // создаем матрицу P
     molecule.makeInitialGuess();
 
@@ -70,7 +82,7 @@ int main()
     double totalCCSD_energy = SCF_energy + CCSD_correction;
     std::cout << "----------------------------------------" << std::endl;
     std::cout << "Total CCSD energy: " << totalCCSD_energy << std::endl;
-
+    */
     /*
     // CCSD(T)
     CCSD_T ccsd_t( size_, nocc, nvirt, ccsd_utilities );

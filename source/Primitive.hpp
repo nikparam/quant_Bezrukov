@@ -15,10 +15,12 @@ public:
 	
 	~Primitive() { }
 
+    void multiply_exponent( double mult ) { exponent *= mult; }
 	void normalize( QuantumNumbers const & qNumbers );
 
-	double get_exponent() { return exponent; }
-	double get_coefficient() { return coefficient; }
+    double get_exponent() const { return exponent; }
+    double get_coefficient() const { return coefficient; }
+    double get_norm( QuantumNumbers const& qNumbers ) const;
 
 	void show();
 

@@ -126,6 +126,8 @@ public:
     Eigen::MatrixXd const & get_Hcore() const { return matrixHcore; }
     Eigen::VectorXd const & get_HF_OrbitalEnergies() const { return HF_OrbitalEnergies; }
 
+    Eigen::Tensor<double, 4> const & get_two_electron_integrals() const { return electronRepulsionTensor; }
+
 private:
     int charge;
     bool set_charge = false;
@@ -155,12 +157,4 @@ private:
     // MP2
     Eigen::Tensor<double, 4> twoElectronMOIntegrals;
     Eigen::VectorXd HF_OrbitalEnergies;
-
-    // CCSD
-    Eigen::Tensor<double, 4> tau_ijab;
-    Eigen::Tensor<double, 4> tau_tilda_ijab;
-    Eigen::Tensor<double, 4> intermW;
-
-    Eigen::MatrixXd t1_updated;
-    Eigen::Tensor<double, 4> t2_updated;
 };

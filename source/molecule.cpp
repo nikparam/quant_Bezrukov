@@ -506,7 +506,7 @@ void Molecule::setOutput( std::string const & filename )
         filename_ = "out.txt";
 
     outFile.open(filename_);
-    outFile << std::fixed << std::setprecision(8);
+    outFile << std::fixed << std::setprecision(12);
 }
 
 int Molecule::size( ) const
