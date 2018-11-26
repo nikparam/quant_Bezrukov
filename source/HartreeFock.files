@@ -35,3 +35,5 @@ ccsd_t.hpp
 ccsd_t.cpp
 ccsd_utilities.hpp
 ccsd_utilities.cpp
+cis.hpp
+cis.cpp

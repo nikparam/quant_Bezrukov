@@ -8,6 +8,7 @@
 #include "ccsd_utilities.hpp"
 #include "ccsd.hpp"
 #include "ccsd_t.hpp"
+#include "cis.hpp"
 
 int main()
 {
@@ -36,6 +37,7 @@ int main()
     molecule.fillElectronRepulsionMatrix();
     //molecule.showElectronAttractionMatrix();
 
+    /*
     Eigen::Tensor<double, 4> eri = molecule.get_two_electron_integrals();
     for ( int i = 0; i < eri.dimension(0); ++i )
     {
@@ -45,9 +47,8 @@ int main()
         }
         std::cout << std::endl;
     }
+    */
 
-
-    /*
     // создаем матрицу P
     molecule.makeInitialGuess();
 
@@ -68,7 +69,34 @@ int main()
     // Вспомогательный класс, хранящий:
     // SOHcore, SOFock, антисимметризованные двуэлектронные интегралы на молекулярных орбиталях
     CCSD_Utilities ccsd_utilities( size_, nocc, nvirt );
+    // эта последовательность выполняется в ccsd.prepation()
+    ccsd_utilities.fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
+    ccsd_utilities.fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
+    ccsd_utilities.fillSOFock();
 
+    // CIS
+    CIS cis( size_, nocc, nvirt, ccsd_utilities );
+    cis.initialize();
+    cis.fill_cis_matrix();
+
+    Eigen::MatrixXd & cis_matrix = cis.get_cis_matrix();
+    for ( int i = 0; i < cis_matrix.rows(); ++i )
+    {
+        for ( int j = 0; j < cis_matrix.cols(); ++j )
+        {
+            std::cout << cis_matrix(i,j) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    /*
+    Eigen::VectorXd eigs = cis.diagonalize_cis_matrix();
+    std::cout << "CIS matrix eigenvalues: " << std::endl;
+    for ( int k = 0; k < eigs.size(); ++k )
+        std::cout << eigs(k) << std::endl;
+    */
+
+    /*
     CCSD ccsd( size_, nocc, nvirt, ccsd_utilities );
     ccsd.initialize(); // memory allocation
     ccsd.preparation( molecule );
@@ -83,6 +111,7 @@ int main()
     std::cout << "----------------------------------------" << std::endl;
     std::cout << "Total CCSD energy: " << totalCCSD_energy << std::endl;
     */
+
     /*
     // CCSD(T)
     CCSD_T ccsd_t( size_, nocc, nvirt, ccsd_utilities );
