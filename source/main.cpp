@@ -15,10 +15,13 @@ int main()
     std::cout << std::fixed << std::setprecision(12);
     std::clock_t start = std::clock();
 
-	Basis basis;
+    Basis basis;
+    //basis.DEBUG = 1;
+
     //basis.read("./basis/h2o_cc_pvdz.gamess-us.dat");
     //basis.read("./basis/h2o_sto3g_gamess-us.dat");
     basis.read("./basis/sto3g-second-period-gamess-us.dat");
+    //basis.read("./basis/basis_6-31G.txt");
     basis.show("short");
 
     Molecule molecule;
@@ -70,11 +73,12 @@ int main()
     // SOHcore, SOFock, антисимметризованные двуэлектронные интегралы на молекулярных орбиталях
     CCSD_Utilities ccsd_utilities( size_, nocc, nvirt );
     // эта последовательность выполняется в ccsd.prepation()
-    ccsd_utilities.fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
-    ccsd_utilities.fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
-    ccsd_utilities.fillSOFock();
+    //ccsd_utilities.fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
+    //ccsd_utilities.fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
+    //ccsd_utilities.fillSOFock();
 
     // CIS
+    /*
     CIS cis( size_, nocc, nvirt, ccsd_utilities );
     cis.initialize();
     cis.fill_cis_matrix();
@@ -88,6 +92,7 @@ int main()
         }
         std::cout << std::endl;
     }
+    */
 
     /*
     Eigen::VectorXd eigs = cis.diagonalize_cis_matrix();
@@ -96,23 +101,20 @@ int main()
         std::cout << eigs(k) << std::endl;
     */
 
-    /*
     CCSD ccsd( size_, nocc, nvirt, ccsd_utilities );
     ccsd.initialize(); // memory allocation
     ccsd.preparation( molecule );
 
-    double CCSD_correction = ccsd.run_diis();
-    std::cout << "Total CCSD correction (with DIIS acceleration): " << CCSD_correction << std::endl;
+    //double CCSD_correction = ccsd.run_diis();
+    //std::cout << "Total CCSD correction (with DIIS acceleration): " << CCSD_correction << std::endl;
 
-    //double CCSD_correction = ccsd.run();
-    //std::cout << "Total CCSD correction: " << CCSD_correction << std::endl;
+    double CCSD_correction = ccsd.run();
+    std::cout << "Total CCSD correction: " << CCSD_correction << std::endl;
 
     double totalCCSD_energy = SCF_energy + CCSD_correction;
     std::cout << "----------------------------------------" << std::endl;
     std::cout << "Total CCSD energy: " << totalCCSD_energy << std::endl;
-    */
 
-    /*
     // CCSD(T)
     CCSD_T ccsd_t( size_, nocc, nvirt, ccsd_utilities );
     ccsd_t.initialize();
@@ -123,6 +125,14 @@ int main()
     ccsd_t.build_connected_triples();
     ccsd_t.build_Dijkabc();
 
+    double CCSD_T_correction = ccsd_t.compute_perturbation();
+    std::cout << "CCSD(T) correction: " << CCSD_T_correction << std::endl;
+
+    double totalCCSD_T_energy = SCF_energy + CCSD_correction + CCSD_T_correction;
+    std::cout << "Total CCSD(T) energy: " << totalCCSD_T_energy << std::endl;
+
+    std::cout << "Total time elapsed: " << (std::clock() - start) / (double) CLOCKS_PER_SEC << " s" << std::endl;
+
     //Eigen::Tensor<double, 6> & t3d = ccsd_t.get_t3d();
     //for ( int i = 0; i < t3d.dimension(0); ++i )
     //{
@@ -132,15 +142,6 @@ int main()
     //    }
     //    std::cout << std::endl;
     //}
-
-    double CCSD_T_correction = ccsd_t.compute_perturbation();
-    std::cout << "CCSD(T) correction: " << CCSD_T_correction << std::endl;
-
-    double totalCCSD_T_energy = SCF_energy + CCSD_correction + CCSD_T_correction;
-    std::cout << "Total CCSD(T) energy: " << totalCCSD_T_energy << std::endl;
-    */
-
-    std::cout << "Total time elapsed: " << (std::clock() - start) / (double) CLOCKS_PER_SEC << " s" << std::endl;
 
     return 0;
 }

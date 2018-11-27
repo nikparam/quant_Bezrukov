@@ -63,8 +63,10 @@ void CGOBuilder::add_primitive( double alpha, double coeff )
         CGO->add_primitive( alpha, coeff );
 }
 
+/*
 void CGOBuilder::normalize()
 {
     for ( auto * CGO : CGOs )
         CGO->normalize();
 }
+*/

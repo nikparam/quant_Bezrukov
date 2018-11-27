@@ -32,6 +32,8 @@ public:
 	Element * getElement( const int n ) { return elements.at(n); }
 	size_t getElementsCount() { return elements.size(); }
 
+    int DEBUG = 0;
+
 private:
     const int MAXLINE = 200;
     vector<Element*> elements;

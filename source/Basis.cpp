@@ -38,19 +38,24 @@ void Basis::parse_file( std::ifstream & infile )
 	while( infile.getline( buf, MAXLINE ) ) 
 	{
 		// текущая строчка в контейнере std::string
-		current_string = buf;
+        current_string = buf;
+
+        if ( DEBUG )
+            std::cout << current_string << std::endl;
 
 		// пустая строчка или строчка с долларом ($END) являются признаками окончания базисного набора
 		// текущего элемента. поэтому если мы встречаем такую строчку, если мы заполняли до этого базисный 
 		// набор некоторого элемента, то мы запихиваем указатель на текущий элемент в наш контейнер элементов, 
 		// а текущий указатель обнуляем.	
 		if ( current_string.size() == 0 || current_string.at(0) == '!' || current_string.at(0) == '$' )
-		{
+        {
 			if ( elp != NULL )
 			{
 				elements.push_back( elp );
 				elp = NULL;
-			}
+            }
+
+            if ( DEBUG ) std::cout << "Finalizing element." << std::endl;
 
 			continue;
 		}	
@@ -69,6 +74,8 @@ void Basis::parse_file( std::ifstream & infile )
                     // создали новый элемент
             elp = new Element( current_element );
 
+            if ( DEBUG ) std::cout << "Creating new element: " << elp->getName() << std::endl;
+
             continue;
 		}
 
@@ -85,6 +92,8 @@ void Basis::parse_file( std::ifstream & infile )
                 // создаем S и P базисные функции
                 CGObuilder_s = new CGOBuilder( 'S' );
                 CGObuilder_p = new CGOBuilder( 'P' );
+
+                if ( DEBUG ) std::cout << "Creating L function." << std::endl;
             }
 
             else
@@ -97,6 +106,8 @@ void Basis::parse_file( std::ifstream & infile )
                 // скармливаем функции stoi указатель на следующую за буквой позицию строки
                 // например в строке "S  4" даем указатель на пробел, stoi убирает пробелы и возвращает (int) 4
                 primitives_counter = std::stoi(&current_string[1]);
+
+                if ( DEBUG ) std::cout << "Creating " << first_symbol << " function." << std::endl;
             }
         }
 

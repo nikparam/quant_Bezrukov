@@ -6,6 +6,8 @@ void ContractedGaussianOrbital::add_primitive( double alpha, double exponent )
 	primitives.end()[-1].normalize( qNumbers );
 }
 
+/*
+ * seems unnecessary
 void ContractedGaussianOrbital::normalize()
 {
     int L = qNumbers.getAngularMomentum();
@@ -38,6 +40,7 @@ void ContractedGaussianOrbital::normalize()
     for ( size_t i = 0; i < size_; ++i )
         primitives[i].multiply_exponent( N );
 }
+*/
 
 void ContractedGaussianOrbital::show()
 {

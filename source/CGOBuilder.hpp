@@ -15,7 +15,7 @@ public:
 	std::vector<QuantumNumbers> generateQuantumNumbers( const char angularPart );
 
     void add_primitive( double alpha, double coeff );
-    void normalize();
+    //void normalize();
 
     std::vector<ContractedGaussianOrbital*> & getCGOs() { return CGOs; }
 
