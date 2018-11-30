@@ -108,7 +108,7 @@ public:
     void setCharge( const int icharge = 0 );
     void setOutput( std::string const & filename = "" );
 
-    void showElectronAttractionMatrix();
+    void showElectronRepulsionTensor();
 
     void makeInitialGuess( );
 

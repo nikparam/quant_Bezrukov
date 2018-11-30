@@ -147,6 +147,8 @@ void Basis::parse_file( std::ifstream & infile )
                     elp->add_CGOs( CGObuilder_s );
                     elp->add_CGOs( CGObuilder_p );
 
+                    if ( DEBUG ) std::cout << "Attaching L function to the element" << std::endl;
+
                     delete CGObuilder_s;
                     delete CGObuilder_p;
                 }
@@ -156,6 +158,8 @@ void Basis::parse_file( std::ifstream & infile )
                     // добавляем все построенные билдером базисные функции элементу
                     //CGObuilder->normalize();
                     elp->add_CGOs( CGObuilder );
+
+                    if ( DEBUG ) std::cout << "Attaching CGO to the element." << std::endl;
 
                     // разрушаем строителя контрактированных орбиталей
                     delete CGObuilder;

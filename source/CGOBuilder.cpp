@@ -48,11 +48,20 @@ std::vector<QuantumNumbers> CGOBuilder::generateQuantumNumbers( const char angul
 		}
 	}
 	
-	for ( int i = 0; i <= l; i++ )
+    for ( int i = 0; i <= l; i++ )
+    {
 		for ( int j = 0; j <= l - i; j++ )
-			for ( int k = 0; i + j + k <= l; k++ )
-				if ( i + j + k == l )
+        {
+            for ( int k = 0; i + j + k <= l; k++ )
+            {
+                if ( i + j + k == l )
+                {
                     qNumbers.emplace_back( k, j, i );
+                    //std::cout << k << " " << j << " " << i << std::endl;
+                }
+            }
+        }
+    }
 
 	return qNumbers;
 }	

@@ -569,7 +569,7 @@ void Molecule::fillElectronRepulsionMatrix( )
     }
 }
 
-void Molecule::showElectronAttractionMatrix( )
+void Molecule::showElectronRepulsionTensor( )
 {
     std::ofstream out("two-electron.txt");
     out << std::fixed << std::setprecision(8);
@@ -684,8 +684,10 @@ double Molecule::SCF()
 
     for ( int it = 0; ; ++it )
     {
-        if ( energy.size() > 2 )
-            if ( std::abs(energy.end()[-1] - energy.end()[-2]) < 1e-12 )
+        std::cout << "SCF iteration: " << it << std::endl;
+
+        if ( energy.size() > 3 )
+            if ( std::abs(energy.end()[-1] - energy.end()[-2]) < 1.0e-12 )
                 break;
 
         fillGMatrix();
