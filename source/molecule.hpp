@@ -8,6 +8,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <unsupported/Eigen/MatrixFunctions>
 
 #include <iostream>
 #include <vector>
@@ -76,27 +77,12 @@ public:
 
     void SCF_initialize( );
     double SCF( );
+    double SCF_DIIS( );
 
     // MP2
     void fillTwoElectronMOIntegrals();
+    void fillTwoElectronMOIntegrals_eff();
     double computeMP2_correction( );
-
-    // CCSD
-
-    void fill_tau_ijab();
-    void fill_tau_tilda_ijab();
-
-    // intermediates
-    void fill_F();
-    void fill_W();
-
-    void fill_D1();
-    void fill_D2();
-
-    void update_t1();
-    void update_t2();
-
-    double computeCCSD_correction();
 
     void saveOverlapMatrix( std::string filename = "" );
     void saveKineticEnergyMatrix( std::string filename = "" );

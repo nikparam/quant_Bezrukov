@@ -19,9 +19,9 @@ int main()
     Basis basis;
     //basis.DEBUG = 1;
 
-    basis.read("./basis/basis_OH_ccpvdz_noopt.txt");
+    //basis.read("./basis/basis_OH_ccpvdz_noopt.txt");
     //basis.read("./basis/h2o_cc_pvdz.gamess-us.dat");
-    //basis.read("./basis/h2o_sto3g_gamess-us.dat");
+    basis.read("./basis/h2o_sto3g_gamess-us.dat");
     //basis.read("./basis/sto3g-second-period-gamess-us.dat");
     //basis.read("./basis/basis_6-31G.txt");
     basis.show("short");
@@ -50,8 +50,8 @@ int main()
     molecule.fillElectronRepulsionMatrix();
     if ( SCFDEBUG ) std::cout << "ElectronRepulsion tensor is filled." << std::endl;
 
-    molecule.showElectronRepulsionTensor();
-    if ( SCFDEBUG ) std::cout << "ElectronRepulsion tensor is written to file." << std::endl;
+    //molecule.showElectronRepulsionTensor();
+    //if ( SCFDEBUG ) std::cout << "ElectronRepulsion tensor is written to file." << std::endl;
 
     /*
     Eigen::Tensor<double, 4> eri = molecule.get_two_electron_integrals();
@@ -69,24 +69,27 @@ int main()
     molecule.makeInitialGuess();
 
     molecule.SCF_initialize();
-    double SCF_energy = molecule.SCF();
-    std::cout << "SCF Energy (total): " << SCF_energy << std::endl;
+    double SCF_energy = molecule.SCF_DIIS();
+    //std::cout << "SCF Energy (total): " << SCF_energy << std::endl;
 
     end = std::chrono::high_resolution_clock::now();
-    std::cout << "SCF took " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << " ms." << std::endl;
+    std::cout << "SCF took " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() / 1000.0 << " s." << std::endl;
 
     // MP2
-    molecule.fillTwoElectronMOIntegrals();
-    double MP2_correction = molecule.computeMP2_correction();
-    std::cout << "MP2_correction: " << MP2_correction << std::endl;
+    //auto mp2_start = std::chrono::high_resolution_clock::now();
+    //molecule.fillTwoElectronMOIntegrals_eff();
+    //double MP2_correction_eff = molecule.computeMP2_correction();
+    //std::cout << "MP2_correction (N^5 complexity): " << MP2_correction_eff << std::endl;
     
-    end = std::chrono::high_resolution_clock::now();
-    std::cout << "MP2 took " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << " ms." << std::endl;
+    //end = std::chrono::high_resolution_clock::now();
+    //std::cout << "MP2 took " << std::chrono::duration_cast<std::chrono::milliseconds>(end-mp2_start).count() / 1000.0 << " s." << std::endl;
 
+    /*
     // CCSD
-    //int size_ = 2 * molecule.size(); // количество спинорбиталей
-    //int nocc = molecule.get_charge(); // количество занятых спинорбиталей
-    //int nvirt = size_ - nocc; // количество свободных (виртуальных) спинорбиталей
+    int size_ = 2 * molecule.size(); // количество спинорбиталей
+    int nocc = molecule.get_charge(); // количество занятых спинорбиталей
+    int nvirt = size_ - nocc; // количество свободных (виртуальных) спинорбиталей
+    */
 
     // Вспомогательный класс, хранящий:
     // SOHcore, SOFock, антисимметризованные двуэлектронные интегралы на молекулярных орбиталях
@@ -118,6 +121,7 @@ int main()
     for ( int k = 0; k < eigs.size(); ++k )
         std::cout << eigs(k) << std::endl;
     */
+   
     /*
     CCSD ccsd( size_, nocc, nvirt, ccsd_utilities );
     ccsd.initialize(); // memory allocation
@@ -149,7 +153,8 @@ int main()
     double totalCCSD_T_energy = SCF_energy + CCSD_correction + CCSD_T_correction;
     std::cout << "Total CCSD(T) energy: " << totalCCSD_T_energy << std::endl;
 
-    std::cout << "Total time elapsed: " << (std::clock() - start) / (double) CLOCKS_PER_SEC << " s" << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    std::cout << "Total time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() / 1000.0 << " s." << std::endl;
     */
 
     //Eigen::Tensor<double, 6> & t3d = ccsd_t.get_t3d();

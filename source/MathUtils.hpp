@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include <boost/math/special_functions/gamma.hpp>
+//#include <boost/math/special_functions/gamma.hpp>
 
 extern "C" void boys_func_(int&, double&, double&);
 
