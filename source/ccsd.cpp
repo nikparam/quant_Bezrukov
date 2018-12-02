@@ -665,9 +665,9 @@ double CCSD::computeCCSD_correction()
     return sum1 + sum2 + sum3;
 }
 
-void CCSD::preparation( Molecule const & molecule )
+void CCSD::preparation( Molecule const & molecule, MP2 const& mp2 )
 {
-    utilities.fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
+    utilities.fillAS_MO_TwoElectronIntegrals( mp2.get_two_electron_MO_integrals() );
     utilities.fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
     utilities.fillSOFock();
 
@@ -783,6 +783,8 @@ double CCSD::run_diis()
         oldt1 = t1;
         oldt2 = t2;
 
+        //std::cout << "oldt1: \n" << oldt1 << std::endl;
+
         iterate();
         t1 = t1_updated;
         t2 = t2_updated;
@@ -820,7 +822,7 @@ double CCSD::run_diis()
         // обрезаем diis_vals_t1, diis_vals_t2
         if ( static_cast<int>(diis_vals_t1.size()) > max_diis )
         {
-            std::cout << "Max diis size is reached. Truncating diis vector." << std::endl;
+            //std::cout << "Max diis size is reached. Truncating diis vector." << std::endl;
 
             diis_vals_t1.erase( diis_vals_t1.begin() );
             diis_vals_t2.erase( diis_vals_t2.begin() );
@@ -862,15 +864,15 @@ double CCSD::run_diis()
 
         //std::cout << "ci: \n" << ci << std::endl;
 
-        t1_updated.setZero();
-        t2_updated.setZero();
+        t1.setZero();
+        t2.setZero();
         for ( size_t i = 0;  i < diis_size; ++i )
         {
-            t1_updated += ci(i) * diis_vals_t1[i + 1];
-            t2_updated += ci(i) * diis_vals_t2[i + 1];
+            t1 += ci(i) * diis_vals_t1[i + 1];
+            t2 += ci(i) * diis_vals_t2[i + 1];
         }
 
-        //std::cout << "t1_updated:\n" << t1_updated << std::endl;
+        //std::cout << "t1:\n" << t1 << std::endl;
     }
 
     auto ccsd_diis_end = std::chrono::high_resolution_clock::now();

@@ -75,14 +75,14 @@ public:
     void fillGMatrix( );
     void fillFMatrix( );
 
+    double find_max( const Eigen::MatrixXd & B );
+    double compute_E0();
+    double compute_Enuc();
+
+    // SCF procedures
     void SCF_initialize( );
     double SCF( );
     double SCF_DIIS( );
-
-    // MP2
-    void fillTwoElectronMOIntegrals();
-    void fillTwoElectronMOIntegrals_eff();
-    double computeMP2_correction( );
 
     void saveOverlapMatrix( std::string filename = "" );
     void saveKineticEnergyMatrix( std::string filename = "" );
@@ -107,7 +107,6 @@ public:
     int delta(int i, int j) { return (i == j); }
     int get_charge() const { return charge; }
 
-    Eigen::Tensor<double, 4> const & get_two_electron_MO_integrals() const { return twoElectronMOIntegrals; }
     Eigen::MatrixXd const & get_C() const { return matrixC; }
     Eigen::MatrixXd const & get_Hcore() const { return matrixHcore; }
     Eigen::VectorXd const & get_HF_OrbitalEnergies() const { return HF_OrbitalEnergies; }
@@ -138,9 +137,11 @@ private:
     Eigen::MatrixXd matrixC;
     Eigen::MatrixXd matrixHcore;
 
+    Eigen::VectorXd HF_OrbitalEnergies;
+
     std::ofstream outFile;
 
-    // MP2
-    Eigen::Tensor<double, 4> twoElectronMOIntegrals;
-    Eigen::VectorXd HF_OrbitalEnergies;
+    const double E_conv = 1.0e-8; // сходимость SCF по энергии
+    const double max_diis_size = 8;
+    const int max_diis_iter = 15;
 };

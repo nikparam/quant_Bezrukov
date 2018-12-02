@@ -647,7 +647,7 @@ void Molecule::SCF_initialize()
 
     // filling Hcore matrix
     matrixHcore = kineticEnergyMatrix + nuclearAttractionMatrix;
-    outFile << "Hcore matrix: " << std::endl << matrixHcore << std::endl << std::endl;
+    //outFile << "Hcore matrix: " << std::endl << matrixHcore << std::endl << std::endl;
 }
 
 void Molecule::fillFMatrix()
@@ -669,6 +669,59 @@ void Molecule::setCharge(const int icharge)
     set_charge = true;
 }
 
+double Molecule::find_max( const Eigen::MatrixXd & B )
+{
+    double max_ = std::abs(B(0, 0));
+    for ( int i = 0; i < B.rows() - 1; ++i )
+    {
+       for ( int j = 0; j < B.cols() - 1; ++j )
+       {
+           if ( std::abs(B(i, j)) > max_ )
+             max_ = std::abs(B(i, j));  
+       }
+    }
+
+    return max_;
+} 
+
+double Molecule::compute_Enuc()
+{
+    double Enuc = 0.0;
+    for ( size_t i = 0; i < atoms.size(); ++i )
+    {
+        for ( size_t j = i + 1; j < atoms.size(); ++j )
+        {
+            Enuc += (atoms[i].get_element()->getCharge() * atoms[j].get_element()->getCharge()) / \
+                    std::pow ( std::pow(atoms[i].get_x() - atoms[j].get_x(), 2) + \
+                            std::pow(atoms[i].get_y() - atoms[j].get_y(), 2) + \
+                            std::pow(atoms[i].get_z() - atoms[j].get_z(), 2), 0.5 );
+        }
+    }
+    
+    return Enuc;
+}
+
+double Molecule::compute_E0()
+{
+    int size_ = size();
+
+    // E_0; Szabo (3.184)
+    // \mu
+    double E_orbital = 0.0;
+    double E_electronic = 0.0;
+    for ( int i = 0; i < size_; ++i )
+    {
+        // \nu
+        for ( int j = 0; j < size_; ++j )
+        {
+            E_orbital += matrixP(j, i) * matrixF(i, j);
+            E_electronic += matrixP(j, i) * (kineticEnergyMatrix(i, j) + nuclearAttractionMatrix(i, j));
+        }
+    }
+
+    return E_orbital + E_electronic;
+}
+
 double Molecule::SCF_DIIS()
 {
     if ( !set_charge )
@@ -676,7 +729,11 @@ double Molecule::SCF_DIIS()
 
     int size_ = size();
     Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::MatrixXd> es;
-    
+
+    double Enuc = compute_Enuc();
+    double E0 = 0.0;
+    double Etot = 0.0;
+
     std::cout << "-----------------------------------------------------" << std::endl;
     std::cout << "Starting SCF procedure" << std::endl;
     
@@ -704,13 +761,91 @@ double Molecule::SCF_DIIS()
     std::vector<Eigen::MatrixXd> FockMatrices;
     std::vector<Eigen::MatrixXd> DIIS_errors;
 
-    for ( int it = 0; it < 2; ++it, matrixP = matrixP_new )
+    double Etot_old = 0.0;
+    for ( int it = 0; it < max_diis_iter; ++it, Etot_old = Etot )
     {
-        std::cout << "SCF iteration: " << it << std::endl;
-
         fillGMatrix();
         fillFMatrix();
 
+        //std::cout << "C:\n" << matrixC << std::endl;
+        //std::cout << "D:\n" << matrixP << std::endl;
+        //std::cout << "D (new):\n" << matrixP_new << std::endl;
+        //std::cout << "S:\n" << overlapMatrix << std::endl;
+        //std::cout << "F:\n" << matrixF << std::endl;
+
+        diis_error = matrixF * matrixP * overlapMatrix - overlapMatrix * matrixP * matrixF;
+        diis_error = A * diis_error * A; // wtf?
+       
+        // добавляем матрицу Фока и матрицу 'ошибок' в вектора
+        FockMatrices.push_back( matrixF );
+        DIIS_errors.push_back( diis_error );
+
+        //std::cout << "Error matrix: \n" << diis_error << std::endl;
+
+        E0 = compute_E0();
+        Etot = E0 + Enuc;
+        //std::cout << "E0: " << E0 << "; Enuc: " << Enuc << std::endl;
+        std::cout << "SCF iteration: " << it << "; Energy: " << Etot << "; dE: " << Etot - Etot_old << std::endl; 
+        
+        if ( std::abs(Etot - Etot_old) < E_conv )
+            break;
+
+        if ( it >= 1 )
+        {
+            size_t diis_size = FockMatrices.size();
+            //std::cout << "diis_size: " << diis_size << std::endl;
+            // удаляем лишние, если diis_count > diis_max_size
+            if ( diis_size > max_diis_size )
+            {
+                FockMatrices.erase( FockMatrices.begin() );
+                DIIS_errors.erase( DIIS_errors.begin() );
+                diis_size = max_diis_size;
+            }
+            //std::cout << "(after erasing) diis_size: " << diis_size << std::endl;
+
+            // инициализируем матрицу DIIS минус единицами
+            Eigen::MatrixXd B = Eigen::MatrixXd::Constant( diis_size + 1, diis_size + 1, -1.0 );
+            B( diis_size, diis_size ) = 0.0;
+          
+            for ( size_t k = 0; k < diis_size; ++k )
+            {
+                for ( size_t l = 0; l < diis_size; ++l )
+                {
+                    double res = 0.0;
+                    for ( int i = 0; i < DIIS_errors[k].rows(); ++i )
+                        for ( int j = 0; j < DIIS_errors[k].cols(); ++j )
+                            res += DIIS_errors[k](i, j) * DIIS_errors[l](i, j);
+
+                    B(k, l) = res;
+                }
+            }
+
+            // normalize 
+            double max_ = find_max( B ); 
+            for ( int i = 0; i < B.rows() - 1; ++i )
+                for ( int j = 0; j < B.cols() - 1; ++j )
+                    B(i, j) /= max_;
+
+            //std::cout << "B:\n" << B << std::endl;
+            
+            Eigen::VectorXd resid = Eigen::VectorXd::Zero( diis_size + 1 );
+            resid( diis_size ) = -1.0;
+
+            Eigen::VectorXd ci = B.colPivHouseholderQr().solve( resid );
+            //std::cout << "ci: \n" << ci << std::endl;
+
+            //Eigen::MatrixXd F_new = Eigen::MatrixXd::Zero( matrixF.rows(), matrixF.cols() );
+            matrixF = Eigen::MatrixXd::Zero( matrixF.rows(), matrixF.cols() );
+            for ( size_t k = 0; k < diis_size; ++k )
+            {
+                //F_new += ci(k) * FockMatrices[k];
+                matrixF += ci(k) * FockMatrices[k];
+                //std::cout << "adding with coefficient " << ci(k) << std::endl << FockMatrices[k] << std::endl;
+            }
+
+            //std::cout << "F:\n" << matrixF << std::endl;
+        }
+        
         es.compute( matrixF, overlapMatrix );
         HF_OrbitalEnergies = es.eigenvalues();
         matrixC = es.eigenvectors();
@@ -726,67 +861,12 @@ double Molecule::SCF_DIIS()
                 for ( int a = 0; a < charge / 2; ++a )
                     res += matrixC(i, a) * matrixC(j, a);
 
-                matrixP_new(i, j) = res; //2 * res;
+                matrixP(i, j) = res; //2 * res;
             }
         }
-
-        //std::cout << "C:\n" << matrixC << std::endl;
-        //std::cout << "D:\n" << matrixP << std::endl;
-        //std::cout << "D (new):\n" << matrixP_new << std::endl;
-        //std::cout << "S:\n" << overlapMatrix << std::endl;
-        //std::cout << "F:\n" << matrixF << std::endl;
-
-        diis_error = matrixF * matrixP * overlapMatrix - overlapMatrix * matrixP * matrixF;
-        diis_error = A * diis_error * A; // wtf?
-       
-        // добавляем матрицу Фока и матрицу 'ошибок' в вектора
-        FockMatrices.push_back( matrixF );
-        DIIS_errors.push_back( diis_error );
-
-        //std::cout << "First matrix:\n" << matrixF * matrixP * overlapMatrix << std::endl;
-        //std::cout << "Second matrix:\n" << overlapMatrix * matrixP * matrixF << std::endl;
-        std::cout << "Error matrix: \n" << diis_error << std::endl;
-
-        if ( it >= 1 )
-        {
-            size_t diis_size = FockMatrices.size();
-            std::cout << "diis_size: " << diis_size << std::endl;
-            // удаляем лишние, если diis_count > diis_max_size
-            
-            // инициализируем матрицу DIIS минус единицами
-            Eigen::MatrixXd B = Eigen::MatrixXd::Constant( diis_size + 1, diis_size + 1, -1.0 );
-            B( diis_size, diis_size ) = 0.0;
-          
-            std::cout << "B before filling: \n" << B << std::endl;
-            for ( size_t k = 0; k < diis_size; ++k )
-            {
-                for ( size_t l = 0; l < diis_size; ++l )
-                {
-                    double res = 0.0;
-                    for ( int i = 0; i < DIIS_errors[k].rows(); ++i )
-                        for ( int j = 0; j < DIIS_errors[k].cols(); ++j )
-                            res += DIIS_errors[k](i, j) * DIIS_errors[l](i, j);
-
-                    B(k, l) = res;
-                }
-            }
-
-            std::cout << "B:\n" << B << std::endl;
-            
-            Eigen::VectorXd resid = Eigen::VectorXd::Zero( diis_size + 1 );
-            resid( diis_size ) = -1.0;
-
-            Eigen::VectorXd ci = B.colPivHouseholderQr().solve( resid );
-            std::cout << "ci: \n" << ci << std::endl;
-
-            Eigen::MatrixXd F_new = Eigen::MatrixXd::Zero( matrixF.rows(), matrixF.cols() );
-            for ( size_t k = 0; k < diis_size; ++k )
-                F_new += ci(k) * FockMatrices[k];
-       
-            std::cout << "F_new:\n" << F_new << std::endl;
-        }
-
     }
+
+    return Etot;
 }
 
 double Molecule::SCF()
@@ -794,40 +874,40 @@ double Molecule::SCF()
     if ( !set_charge )
         throw std::runtime_error("Molecule charge is not set.");
 
-    std::vector<double> energy;
-
     int size_ = size();
     Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::MatrixXd> es;
 
     double E0 = 0.0;
+    double Etot_old = 0.0;
     double Etot = 0.0;
 
     outFile << "-----------------------------------------------------" << std::endl;
     outFile << "Starting SCF procedure" << std::endl;
 
-    for ( int it = 0; ; ++it )
+    // Enuc
+    double Enuc = 0.0;
+    for ( size_t i = 0; i < atoms.size(); ++i )
     {
-        std::cout << "SCF iteration: " << it << std::endl;
+        for ( size_t j = i + 1; j < atoms.size(); ++j )
+        {
+            Enuc += (atoms[i].get_element()->getCharge() * atoms[j].get_element()->getCharge()) / \
+                            std::pow ( std::pow(atoms[i].get_x() - atoms[j].get_x(), 2) + \
+                                       std::pow(atoms[i].get_y() - atoms[j].get_y(), 2) + \
+                                       std::pow(atoms[i].get_z() - atoms[j].get_z(), 2), 0.5 );
+        }
+    }
 
-        if ( energy.size() > 3 )
-            if ( std::abs(energy.end()[-1] - energy.end()[-2]) < 1.0e-12 )
-                break;
-
+    for ( int it = 0; ; ++it, Etot_old = Etot )
+    {
         fillGMatrix();
-        outFile << "matrix G: " << std::endl << matrixG << std::endl << std::endl;
-
         fillFMatrix();
-        outFile << "Fock matrix: " << std::endl << matrixF << std::endl << std::endl;
+        //outFile << "Fock matrix: " << std::endl << matrixF << std::endl << std::endl;
 
         es.compute( matrixF, overlapMatrix );
         HF_OrbitalEnergies = es.eigenvalues();
-
-        outFile << "Orbital energies: " << std::endl << HF_OrbitalEnergies << std::endl << std::endl;
-        energy.push_back( HF_OrbitalEnergies(0) );
-
         matrixC = es.eigenvectors();
 
-        outFile << "Coefficient matrix C: " << std::endl << matrixC << std::endl << std::endl;
+        //outFile << "Coefficient matrix C: " << std::endl << matrixC << std::endl << std::endl;
 
         // mu
         for ( int i = 0; i < size_; ++i )
@@ -839,208 +919,30 @@ double Molecule::SCF()
                 for ( int a = 0; a < charge / 2; ++a )
                     res += matrixC(i, a) * matrixC(j, a);
 
-                matrixP_new(i, j) = 2 * res;
+                matrixP_new(i, j) = res; //2 * res;
             }
         }
 
-        outFile << "Density matrix P: " << std::endl << matrixP_new << std::endl << std::endl;
+        //outFile << "Density matrix P: " << std::endl << matrixP_new << std::endl << std::endl;
         matrixP = matrixP_new;
 
-        // E_0; Szabo (3.184)
-        // \mu
-        double E_orbital = 0.0;
-        double E_electronic = 0.0;
-        for ( int i = 0; i < size_; ++i )
-        {
-            // \nu
-            for ( int j = 0; j < size_; ++j )
-            {
-                E_orbital += 0.5 * matrixP(j, i) * matrixF(i, j);
-                E_electronic += 0.5 * matrixP(j, i) * (kineticEnergyMatrix(i, j) + nuclearAttractionMatrix(i, j));
-            }
-        }
-        outFile << "Orbital energy: " << E_orbital << std::endl;
-        outFile << "Electronic energy: " << E_electronic << std::endl;
-
-        E0 = E_orbital + E_electronic;
-        outFile << "E0: " << E0 << std::endl;
-
-        // Enuc
-        double Enuc = 0.0;
-        for ( size_t i = 0; i < atoms.size(); ++i )
-        {
-            for ( size_t j = i + 1; j < atoms.size(); ++j )
-            {
-                Enuc += (atoms[i].get_element()->getCharge() * atoms[j].get_element()->getCharge()) / \
-                    std::pow ( std::pow(atoms[i].get_x() - atoms[j].get_x(), 2) + \
-                               std::pow(atoms[i].get_y() - atoms[j].get_y(), 2) + \
-                               std::pow(atoms[i].get_z() - atoms[j].get_z(), 2), 0.5 );
-            }
-        }
-
+        E0 = compute_E0();
         Etot = E0 + Enuc;
-        outFile << ">>> Etot: " << Etot << std::endl;
 
-        outFile << "-------------------------------" << std::endl;
-        outFile << "Iteration " << it << std::endl;
-        outFile << "Highest orbital energy = " << energy.end()[-1] << std::endl;
-        outFile << "Energy = " << Etot << std::endl;
-        outFile << "-------------------------------" << std::endl << std::endl;
+        if ( std::abs(Etot - Etot_old) < E_conv )
+            break;
+
+        std::cout << "SCF iteration: " << it << "; Energy: " << Etot << "; dE: " << Etot - Etot_old << std::endl;
+
+        //outFile << "-------------------------------" << std::endl;
+        //outFile << "Iteration " << it << std::endl;
+        //outFile << "Highest orbital energy = " << energy.end()[-1] << std::endl;
+        //outFile << "Energy = " << Etot << std::endl;
+        //outFile << "-------------------------------" << std::endl << std::endl;
     }
 
-	outFile << std::endl << "-------------------------------------------" << std::endl;
-    outFile << "SCF procedure finished." << std::endl;
+    //outFile << std::endl << "-------------------------------------------" << std::endl;
+    //outFile << "SCF procedure finished." << std::endl;
 
     return Etot;
-}
-
-void Molecule::fillTwoElectronMOIntegrals_eff()
-{
-    int size_ = size();
-
-    Eigen::Tensor<double, 4> X1, X2, X3; // промежуточное хранение
-    X1.resize( size_, size_, size_, size_ );
-    X2.resize( size_, size_, size_, size_ );
-    X3.resize( size_, size_, size_, size_ );
-    twoElectronMOIntegrals.resize( size_, size_, size_, size_);
-
-    // самый внутренний цикл
-    for ( int mu = 0; mu < size_; ++mu )
-    {
-        for ( int nu = 0; nu < size_; ++nu )
-        {
-            for ( int lambda = 0; lambda < size_; ++lambda )
-            {
-                for ( int s = 0; s < size_; ++s )
-                {
-                    double res = 0;
-                    for ( int sigma = 0; sigma < size_; ++sigma )
-                        res += matrixC(sigma, s) * electronRepulsionTensor(mu, nu, lambda, sigma);
-                    X1(mu, nu, lambda, s) = res;
-                }
-            }
-        }
-    }
-
-    for ( int mu = 0; mu < size_; ++mu )
-    {
-        for ( int nu = 0; nu < size_; ++nu )
-        {
-            for ( int s = 0; s < size_; ++s )
-            {
-                for ( int r = 0; r < size_; ++r )
-                {
-                    double res = 0.0;
-                    for ( int lambda = 0; lambda < size_; ++lambda )
-                        res += matrixC(lambda, r) * X1(mu, nu, lambda, s);
-                    X2(mu, nu, r, s) = res;
-                }
-            }
-        }
-    }
-
-    for ( int mu = 0; mu < size_; ++mu )
-    {
-        for ( int q = 0; q < size_; ++q )
-        {
-            for ( int s = 0; s < size_; ++s )
-            {
-                for ( int r = 0; r < size_; ++r )
-                {
-                    double res = 0.0;
-                    for ( int nu = 0; nu < size_; ++nu )
-                        res += matrixC(nu, q) * X2(mu, nu, r, s);
-                    X3(mu, q, r, s) = res;
-                }
-            }
-        }
-    }
-
-    for ( int p = 0; p < size_; ++p )
-    {
-        for ( int q = 0; q < size_; ++q )
-        {
-            for ( int s = 0; s < size_; ++s )
-            {
-                for ( int r = 0; r < size_; ++r )
-                {
-                    double res = 0.0;
-                    for ( int mu = 0; mu < size_; ++mu )
-                        res += matrixC(mu, p) * X3(mu, q, r, s);
-
-                    twoElectronMOIntegrals(p, q, r, s) = res;
-                }
-            }
-        }
-    }
-}
-
-
-void Molecule::fillTwoElectronMOIntegrals()
-{
-    int size_ = size();
-    twoElectronMOIntegrals.resize( size_, size_, size_, size_);
-
-    for ( int p = 0; p < size_; ++p )
-    {
-        for ( int q = 0; q < size_; ++q )
-        {
-            for ( int r = 0; r < size_; ++r )
-            {
-                for ( int s = 0; s < size_; ++s )
-                {
-                    double res = 0.0;
-
-                    for ( int mu = 0; mu < size_; ++mu )
-                    {
-                        for ( int nu = 0; nu < size_; ++nu )
-                        {
-                            for ( int lambda = 0; lambda < size_; ++lambda )
-                            {
-                                for ( int sigma = 0; sigma < size_; ++sigma )
-                                {
-                                    res += matrixC(mu, p) * matrixC(nu, q) * matrixC(lambda, r) * matrixC(sigma, s) \
-                                            * electronRepulsionTensor(mu, nu, lambda, sigma);
-                                }
-                            }
-                        }
-                    }
-
-                    twoElectronMOIntegrals(p, q, r, s) = res;
-                    //std::cout << "twoElectronMOIntegrals(" << p << ", " << q << ", " << r << ", " << s << "): " <<
-                    //             twoElectronMOIntegrals(p, q, r, s) << std::endl;
-                }
-            }
-        }
-    }
-}
-
-double Molecule::computeMP2_correction()
-{
-    double num = 0.0;
-    double MP2_Energy = 0.0;
-
-    int occ = charge / 2; // number of doubly occupied orbitals
-    int size_ = size();
-
-    std::cout << "(computeMP2_Energy) charge: " << charge << "; size_: " << size_ << std::endl;
-
-    for ( int i = 0; i < occ; ++i )
-    {
-        for ( int j = 0; j < occ; ++j )
-        {
-            for ( int a = occ; a < size_; ++a )
-            {
-                for ( int b = occ; b < size_; ++b )
-                {
-                    num = twoElectronMOIntegrals(i, a, j, b) * (2.0 * twoElectronMOIntegrals(i, a, j, b) - \
-                                                                twoElectronMOIntegrals(i, b, j, a));
-                    MP2_Energy += num / (HF_OrbitalEnergies(i) + HF_OrbitalEnergies(j) - HF_OrbitalEnergies(a) - \
-                                         HF_OrbitalEnergies(b));
-                }
-            }
-        }
-    }
-
-    return MP2_Energy;
 }

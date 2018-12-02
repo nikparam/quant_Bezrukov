@@ -2,6 +2,8 @@
 
 void CCSD_Utilities::initialize_utilities()
 {
+    std::cout << "(CCSD Utilities) Initializing..." << std::endl;
+
     // количество спинорбиталей вдвое больше количества дважды занятых орбиталей
     ASTwoElectronMOIntegrals.resize( size_, size_, size_, size_ );
     SOHcoreMatrix.resize( size_, size_ );

@@ -10,6 +10,7 @@
 
 #include "ccsd_utilities.hpp"
 #include "./molecule.hpp"
+#include "./mp2.hpp"
 
 class CCSD
 {
@@ -44,7 +45,7 @@ public:
 
     double computeCCSD_correction();
 
-    void preparation( Molecule const & molecule );
+    void preparation( const Molecule & molecule, const MP2 & mp2 );
     void iterate();
     double run();
     double run_diis();
