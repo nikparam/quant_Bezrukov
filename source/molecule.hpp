@@ -17,6 +17,8 @@
 #include <stdexcept>
 #include <sstream>
 
+#include "log.hpp"
+
 class Molecule
 {
 public:

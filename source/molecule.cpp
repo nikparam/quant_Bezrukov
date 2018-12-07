@@ -57,6 +57,9 @@ double Molecule::calculateEijt( int i, int j, int t, double Qx, double a, double
         Qx: distance between origins of Gaussian 'a' and 'b'
  */
 {
+    DEBUG_METHOD("calculateEijt");
+    std::cout << "i: " << i << "; j: " << j << "; t: " << t << "; Qx: " << Qx << "; a: " << a << "; b: " << b << std::endl;
+
     double p = a + b;
     double q = a * b / p;
 
@@ -426,6 +429,7 @@ double Molecule::electronRepulsionPrimitive(Primitive *a, QuantumNumbers *ta, st
                                             Primitive *d, QuantumNumbers *td, std::vector<double> D)
 // evaluates electron repulsion energy between primitives
 {
+    DEBUG_METHOD("electronRepulsionPrimitive");
     //std::ofstream out;
     //out.open("counter.txt", fstream::out | fstream::app);
 
@@ -476,6 +480,8 @@ double Molecule::electronRepulsionCGO(ContractedGaussianOrbital *a, std::vector<
                                       ContractedGaussianOrbital *d, std::vector<double> D )
 // compute electron repulsion between CGOs
 {
+    DEBUG_METHOD("electronRepulsionCGO");
+
     double sum = 0.0;
     for ( size_t ja = 0; ja < a->getPrimitivesCount(); ++ja )
     {
@@ -520,6 +526,8 @@ int Molecule::size( ) const
 
 void Molecule::fillElectronRepulsionMatrix( )
 {
+    //DEBUG_METHOD("fillElectronRepulsionMatrix");
+
     electronRepulsionTensor.resize( size(), size(), size(), size() );
 
     int it1 = 0;

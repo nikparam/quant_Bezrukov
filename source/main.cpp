@@ -11,6 +11,8 @@
 #include "ccsd_t.hpp"
 #include "cis.hpp"
 
+#include "log.hpp"
+
 int main()
 {
     std::cout << std::fixed << std::setprecision(12);
@@ -21,8 +23,8 @@ int main()
     //basis.DEBUG = 1;
 
     //basis.read("./basis/basis_OH_ccpvdz_noopt.txt");
-    //basis.read("./basis/h2o_sto3g_gamess-us.dat");
-    basis.read("./basis/sto3g-second-period-gamess-us.dat");
+    basis.read("./basis/h2o_sto3g_gamess-us.dat");
+    //basis.read("./basis/sto3g-second-period-gamess-us.dat");
     //basis.read("./basis/basis_6-31G.txt");
     basis.show("short");
 
@@ -36,19 +38,26 @@ int main()
     molecule.setCharge();
     molecule.setOutput("./out.txt");
 
-    bool SCFDEBUG = false;
+    //molecule.fillOverlapMatrix();
 
-    molecule.fillOverlapMatrix();
-    if ( SCFDEBUG ) std::cout << "Overlap matrix is filled." << std::endl;
+    //molecule.fillKineticEnergyMatrix();
 
-    molecule.fillKineticEnergyMatrix();
-    if ( SCFDEBUG ) std::cout << "KineticEnergy matrix is filled." << std::endl;
+    //molecule.fillNuclearAttractionMatrix();
 
-    molecule.fillNuclearAttractionMatrix();
-    if ( SCFDEBUG ) std::cout << "NuclearAttracton matrix is filled." << std::endl;
+    auto eri_start = std::chrono::high_resolution_clock::now();
+    //molecule.fillElectronRepulsionMatrix();
+    Atom * atom = molecule.getAtom(0); // атом водорода 
+    std::vector<double> coords = atom->getCoords();
+    ContractedGaussianOrbital * cgo = atom->get_element()->getCGO(0); // первая контрактированная орбиталь
+    molecule.electronRepulsionCGO(cgo, coords, 
+                                  cgo, coords, 
+                                  cgo, coords,
+                                  cgo, coords ); 
+     
+    auto eri_end = std::chrono::high_resolution_clock::now();
 
-    molecule.fillElectronRepulsionMatrix();
-    if ( SCFDEBUG ) std::cout << "ElectronRepulsion tensor is filled." << std::endl;
+    std::cout << "Computing CGO-ERI: "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(eri_end - eri_start).count() << " ms." << std::endl;
 
     //molecule.showElectronRepulsionTensor();
     //if ( SCFDEBUG ) std::cout << "ElectronRepulsion tensor is written to file." << std::endl;
@@ -58,6 +67,7 @@ int main()
     //double SCF_energy = molecule.SCF();
     //std::cout << "SCF Energy (total): " << SCF_energy << std::endl;
 
+    /*
     molecule.makeInitialGuess(); // заполняем матрицу P
     molecule.SCF_initialize();
     double SCF_energy = molecule.SCF_DIIS();
@@ -65,8 +75,10 @@ int main()
 
     end = std::chrono::high_resolution_clock::now();
     std::cout << "SCF took " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() / 1000.0 << " s." << std::endl;
+    */
 
     // MP2
+    /*
     auto mp2_start = std::chrono::high_resolution_clock::now();
     MP2 mp2( molecule.size(), molecule.get_charge() / 2, molecule.get_two_electron_integrals(), molecule.get_C(),
              molecule.get_HF_OrbitalEnergies() );
@@ -76,15 +88,16 @@ int main()
     
     end = std::chrono::high_resolution_clock::now();
     std::cout << "MP2 took " << std::chrono::duration_cast<std::chrono::milliseconds>(end-mp2_start).count() / 1000.0 << " s." << std::endl;
-
+    */
     // CCSD
+    /*
     int size_ = 2 * molecule.size(); // количество спинорбиталей
     int nocc = molecule.get_charge(); // количество занятых спинорбиталей
     int nvirt = size_ - nocc; // количество свободных (виртуальных) спинорбиталей
-
+    */
     // Вспомогательный класс, хранящий:
     // SOHcore, SOFock, антисимметризованные двуэлектронные интегралы на молекулярных орбиталях
-    CCSD_Utilities ccsd_utilities( size_, nocc, nvirt );
+    //CCSD_Utilities ccsd_utilities( size_, nocc, nvirt );
     // эта последовательность выполняется в ccsd.prepation()
     //ccsd_utilities.fillAS_MO_TwoElectronIntegrals( molecule.get_two_electron_MO_integrals() );
     //ccsd_utilities.fillSOHcore( molecule.get_C(), molecule.get_Hcore() );
@@ -113,6 +126,7 @@ int main()
         std::cout << eigs(k) << std::endl;
     */
    
+    /*
     CCSD ccsd( size_, nocc, nvirt, ccsd_utilities );
     ccsd.initialize(); // memory allocation
     ccsd.preparation( molecule, mp2 );
@@ -126,7 +140,7 @@ int main()
     double totalCCSD_energy = SCF_energy + CCSD_correction;
     std::cout << "----------------------------------------" << std::endl;
     std::cout << "Total CCSD energy: " << totalCCSD_energy << std::endl;
-
+    */
     // CCSD(T)
     /*
     CCSD_T ccsd_t( size_, nocc, nvirt, ccsd_utilities );
